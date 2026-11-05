@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elements of Information Theory</title>
+<meta name="description" content="Elements of Information Theory: lecture notes, quizzes and exercises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="assets/style.css">
+
+<script defer src="assets/site.js"></script>
+
+</head>
+<body>
+<canvas id="bitfield" aria-hidden="true"></canvas>
+<div class="page page-home">
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-text" data-quiet>
+      <p class="eyebrow">CentraleSupélec &middot; 2026–2027</p>
+      <h1>Elements of Information Theory</h1>
+      <p class="byline">Lecturer: Sheng Yang</p>
+      <blockquote class="shannon"><p>&ldquo;<em>The fundamental problem of communication is that of reproducing at one point either exactly or approximately a message selected at another point.</em>&rdquo;</p><footer>Claude Shannon, <cite>A mathematical theory of communication</cite>, 1948</footer></blockquote>
+    </div>
+    <figure class="h2-widget" data-h2>
+      <svg class="h2-chart" viewBox="0 0 320 200" role="img" aria-label="Binary entropy function H2(p) with the current crossover probability marked" data-x0="40" data-x1="306" data-y0="158" data-y1="24">
+  <line class="tick" x1="40.0" y1="158.0" x2="40.0" y2="162.0"/>
+  <text class="tick-label" x="40.0" y="175.0" text-anchor="middle">0</text>
+  <line class="tick" x1="173.0" y1="158.0" x2="173.0" y2="162.0"/>
+  <text class="tick-label" x="173.0" y="175.0" text-anchor="middle">½</text>
+  <line class="tick" x1="306.0" y1="158.0" x2="306.0" y2="162.0"/>
+  <text class="tick-label" x="306.0" y="175.0" text-anchor="middle">1</text>
+  <line class="grid" x1="40.0" y1="158.0" x2="306.0" y2="158.0"/>
+  <text class="tick-label" x="34.0" y="162.0" text-anchor="end">0</text>
+  <line class="grid" x1="40.0" y1="91.0" x2="306.0" y2="91.0"/>
+  <text class="tick-label" x="34.0" y="95.0" text-anchor="end">0.5</text>
+  <line class="grid" x1="40.0" y1="24.0" x2="306.0" y2="24.0"/>
+  <text class="tick-label" x="34.0" y="28.0" text-anchor="end">1</text>
+  <line class="axis" x1="40" y1="158" x2="306" y2="158"/>
+  <line class="axis" x1="40" y1="158" x2="40" y2="24"/>
+  <polyline class="h2-curve" points="40.00,158.00 41.33,151.91 42.66,147.17 43.99,142.94 45.32,139.05 46.65,135.40 47.98,131.95 49.31,128.67 50.64,125.53 51.97,122.52 53.30,119.62 54.63,116.83 55.96,114.12 57.29,111.50 58.62,108.97 59.95,106.50 61.28,104.11 62.61,101.78 63.94,99.51 65.27,97.31 66.60,95.15 67.93,93.06 69.26,91.01 70.59,89.01 71.92,87.07 73.25,85.16 74.58,83.30 75.91,81.49 77.24,79.71 78.57,77.98 79.90,76.28 81.23,74.62 82.56,73.00 83.89,71.42 85.22,69.87 86.55,68.35 87.88,66.87 89.21,65.42 90.54,64.00 91.87,62.62 93.20,61.26 94.53,59.94 95.86,58.64 97.19,57.38 98.52,56.14 99.85,54.93 101.18,53.75 102.51,52.59 103.84,51.46 105.17,50.36 106.50,49.29 107.83,48.24 109.16,47.22 110.49,46.22 111.82,45.24 113.15,44.29 114.48,43.37 115.81,42.47 117.14,41.59 118.47,40.74 119.80,39.91 121.13,39.10 122.46,38.31 123.79,37.55 125.12,36.81 126.45,36.10 127.78,35.40 129.11,34.73 130.44,34.07 131.77,33.44 133.10,32.83 134.43,32.25 135.76,31.68 137.09,31.13 138.42,30.61 139.75,30.11 141.08,29.62 142.41,29.16 143.74,28.72 145.07,28.29 146.40,27.89 147.73,27.51 149.06,27.15 150.39,26.81 151.72,26.49 153.05,26.18 154.38,25.90 155.71,25.64 157.04,25.40 158.37,25.17 159.70,24.97 161.03,24.78 162.36,24.62 163.69,24.47 165.02,24.35 166.35,24.24 167.68,24.15 169.01,24.09 170.34,24.04 171.67,24.01 173.00,24.00 174.33,24.01 175.66,24.04 176.99,24.09 178.32,24.15 179.65,24.24 180.98,24.35 182.31,24.47 183.64,24.62 184.97,24.78 186.30,24.97 187.63,25.17 188.96,25.40 190.29,25.64 191.62,25.90 192.95,26.18 194.28,26.49 195.61,26.81 196.94,27.15 198.27,27.51 199.60,27.89 200.93,28.29 202.26,28.72 203.59,29.16 204.92,29.62 206.25,30.11 207.58,30.61 208.91,31.13 210.24,31.68 211.57,32.25 212.90,32.83 214.23,33.44 215.56,34.07 216.89,34.73 218.22,35.40 219.55,36.10 220.88,36.81 222.21,37.55 223.54,38.31 224.87,39.10 226.20,39.91 227.53,40.74 228.86,41.59 230.19,42.47 231.52,43.37 232.85,44.29 234.18,45.24 235.51,46.22 236.84,47.22 238.17,48.24 239.50,49.29 240.83,50.36 242.16,51.46 243.49,52.59 244.82,53.75 246.15,54.93 247.48,56.14 248.81,57.38 250.14,58.64 251.47,59.94 252.80,61.26 254.13,62.62 255.46,64.00 256.79,65.42 258.12,66.87 259.45,68.35 260.78,69.87 262.11,71.42 263.44,73.00 264.77,74.62 266.10,76.28 267.43,77.98 268.76,79.71 270.09,81.49 271.42,83.30 272.75,85.16 274.08,87.07 275.41,89.01 276.74,91.01 278.07,93.06 279.40,95.15 280.73,97.31 282.06,99.51 283.39,101.78 284.72,104.11 286.05,106.50 287.38,108.97 288.71,111.50 290.04,114.12 291.37,116.83 292.70,119.62 294.03,122.52 295.36,125.53 296.69,128.67 298.02,131.95 299.35,135.40 300.68,139.05 302.01,142.94 303.34,147.17 304.67,151.91 306.00,158.00"/>
+  <line class="cap-bar" data-cap x1="69.26" y1="91.01" x2="69.26" y2="24.00"/>
+  <text class="cap-label" data-cap-label x="54.26" y="61.51">C</text>
+  <line class="guide" data-guide x1="69.26" y1="158" x2="69.26" y2="91.01"/>
+  <circle class="h2-dot" data-dot cx="69.26" cy="91.01" r="5.5"/>
+  <text class="axis-label" x="173.0" y="194" text-anchor="middle">crossover probability p</text>
+  <text class="axis-label" x="40" y="14" text-anchor="start">H&#8322;(p), bits</text>
+</svg>
+      <div class="h2-control">
+        <label for="crossover">Crossover probability <i>p</i></label>
+        <input id="crossover" type="range" min="0" max="1" step="0.005" value="0.11">
+      </div>
+      <figcaption class="h2-read" aria-live="polite">
+        <span><i>p</i> = <b data-out="p">0.110</b></span>
+        <span><i>H</i>&#8322;(<i>p</i>) = <b data-out="h">0.500</b> bit</span>
+        <span><i>C</i> = 1 &minus; <i>H</i>&#8322;(<i>p</i>) = <b data-out="c">0.500</b> bit per use</span>
+      </figcaption>
+    </figure>
+  </div>
+  <div class="channel" data-channel data-bits="1011011100000100000000110101110111110110101111110111001010101110011000110011010110110110011111110001101000001110010100" data-p="0.11" aria-label="The course title, Huffman-coded, sent through a binary symmetric channel">
+    <div class="wrap channel-grid">
+      <span class="ch-label">X<sup>n</sup></span>
+      <div class="ch-row ch-x" data-row="x">1011011100000100000000110101110111110110101111110111001010101110011000110011010110110110011111110001101000001110010100</div>
+      <span class="ch-label ch-mid">BSC(<i>p</i>)</span>
+      <div class="ch-meter"><span data-out="phat">p&#770; = 0.119 over 118 bits</span></div>
+      <span class="ch-label">Y<sup>n</sup></span>
+      <div class="ch-row ch-y" data-row="y">1011011<b class="flip">0</b>00000100000<b class="flip">1</b><b class="flip">1</b>01101<b class="flip">1</b>1110111110<b class="flip">0</b>1010111111011<b class="flip">0</b><b class="flip">1</b>010<b class="flip">0</b><b class="flip">1</b>10<b class="flip">0</b>1100110001<b class="flip">0</b>00110101101101100111111100<b class="flip">1</b>1101<b class="flip">1</b>0000111001<b class="flip">1</b>100</div>
+    </div>
+    <p class="wrap ch-caption">X<sup>n</sup>: the course title, Huffman-coded (118 bits, 3.93 bits per character against an entropy of 3.90). Y<sup>n</sup>: what comes out of a binary symmetric channel; <span class="flip-key">flipped bits</span> are marked. Drag <i>p</i> above to change the noise.</p>
+  </div>
+</header>
+<div class="sheet-wrap wrap"><main class="sheet">
+  <section class="block" id="lectures" aria-labelledby="lectures-h">
+    <div class="block-head"><h2 id="lectures-h">Lectures</h2><p class="block-sub">Notes, quiz and exercises go online after each lecture.</p></div>
+    <ol class="lectures">
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 1</span><span class="lec-bin" title="1 in binary">001</span></div>
+  <div class="lec-main">
+    <h3>Information Measures</h3>
+    <p class="lec-date">Online after the lecture on Wed 4 Nov 2026</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 2</span><span class="lec-bin" title="2 in binary">010</span></div>
+  <div class="lec-main">
+    <h3>Method of types</h3>
+    <p class="lec-date">Online after the lecture on Thu 5 Nov 2026</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 3</span><span class="lec-bin" title="3 in binary">011</span></div>
+  <div class="lec-main">
+    <h3>Lossless data compression</h3>
+    <p class="lec-date">Online after the lecture</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 4</span><span class="lec-bin" title="4 in binary">100</span></div>
+  <div class="lec-main">
+    <h3>Lossy data compression</h3>
+    <p class="lec-date">Online after the lecture</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 5</span><span class="lec-bin" title="5 in binary">101</span></div>
+  <div class="lec-main">
+    <h3>Channel coding</h3>
+    <p class="lec-date">Online after the lecture</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 6</span><span class="lec-bin" title="6 in binary">110</span></div>
+  <div class="lec-main">
+    <h3>Information Theory and Statistics</h3>
+    <p class="lec-date">Online after the lecture</p>
+  </div>
+</li>
+<li class="lec is-upcoming">
+  <div class="lec-id"><span class="lec-n">Lecture 7</span><span class="lec-bin" title="7 in binary">111</span></div>
+  <div class="lec-main">
+    <h3>Information Theory and Machine Learning</h3>
+    <p class="lec-date">Online after the lecture</p>
+  </div>
+</li>
+    </ol>
+  </section>
+  <section class="block" id="references" aria-labelledby="refs-h"><div class="block-head"><h2 id="refs-h">References</h2></div><ul class="refs"><li>T. Cover and J. Thomas, “Elements of information theory”</li><li>Y. Polyanskiy and Y. Wu, “Information theory”</li><li>I. Csiszár and J. Körner, “Information theory: Coding theorems for discrete memoryless systems”</li><li>R. Gallager, “Information theory and reliable communication”</li><li>R. Yeung, “A first course in information theory”</li><li>A. El Gamal and Y.-H. Kim, “Network information theory”</li><li>F. Hellström, G. Durisi, B. Guedj, M. Raginsky, “Generalization bounds: Perspectives from information theory and PAC-Bayes”</li></ul></section>
+</main></div>
+<footer class="site-footer" data-quiet>
+  <div class="wrap footer-grid">
+    <p class="footer-who">Elements of Information Theory &middot; 2026–2027<br>Sheng Yang &middot; CentraleSupélec &middot; <a href="mailto:sheng.yang@centralesupelec.fr">sheng.yang@centralesupelec.fr</a></p>
+  </div>
+</footer>
+</div>
+</body>
+</html>
