@@ -171,6 +171,7 @@ sup.fnref { font-family: var(--mono); font-size: 0.68em; color: var(--signal); }
 }
 
 .byline { font-size: 1.05rem; color: var(--ink-2); }
+.byline a, .lb-lect a { color: inherit; }
 
 .shannon {
   margin: 0.4rem 0 0;

@@ -1,0 +1,39 @@
+/* Shared by the Lecture 2 widgets (copied into each l2-*.css; colours are the theme tokens). */
+.l2w { margin: 1.2rem 0; padding: 0.9rem 1rem 0.8rem; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--band); font-family: var(--serif); color: var(--ink); }
+.l2w-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; align-items: center; margin-bottom: 0.6rem; }
+.l2w-ctl { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.l2w-ctl input[type="range"] { width: 8.5rem; accent-color: var(--signal); }
+.l2w-ctl-val { min-width: 2.6rem; color: var(--ink); }
+.l2w-toggle { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 999px; overflow: hidden; }
+.l2w-toggle button { font: inherit; font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.7rem; border: 0;
+  background: transparent; color: var(--ink-2); cursor: pointer; }
+.l2w-toggle button[aria-pressed="true"] { background: var(--signal); color: var(--on-accent); }
+.l2w-figure svg { display: block; width: 100%; height: auto; max-width: 36rem; margin: 0 auto; }
+.l2w-readout { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.45; }
+.l2w-stats { display: flex; flex-wrap: wrap; gap: 0.3rem 1.4rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
+.l2w-stats div { display: flex; flex-wrap: wrap; gap: 0 0.45rem; align-items: baseline; }
+.l2w-stats dt { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-3); white-space: nowrap; }
+.l2w-stats dd { margin: 0; color: var(--ink); }
+.l2w-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.l2w svg text { font-family: var(--mono); }
+.l2w .l2w-tick { font-size: 11px; fill: var(--ink-3); }
+.l2w .l2w-lbl { font-size: 12px; fill: var(--ink-2); }
+.l2w .l2w-axis { stroke: var(--rule-strong); stroke-width: 1; }
+
+/* l2-type-classes */
+.l2w-tc-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(5.2rem, 1fr)); gap: 0.4rem; min-width: min-content; }
+.l2w-tc-col { border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); padding: 0.35rem 0.3rem;
+  display: flex; flex-direction: column; }
+.l2w-tc-col.is-top { border-color: var(--signal); box-shadow: 0 0 0 1px var(--signal); }
+.l2w-tc-head { text-align: center; font-family: var(--mono); font-size: 0.7rem; line-height: 1.25; color: var(--ink-2); margin-bottom: 0.3rem; white-space: nowrap; }
+.l2w-tc-head span { display: block; }
+.l2w-tc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.l2w-tc-seq { font-family: var(--mono); font-size: 0.78rem; text-align: center; letter-spacing: 0.06em; border-radius: 4px;
+  padding: 1px 0; color: var(--ink);
+  background: color-mix(in srgb, var(--signal) calc(var(--w) * 38%), transparent); }
+.l2w-tc-seq.is-top { outline: 1.5px solid var(--noise); outline-offset: -1.5px; }
+.l2w-tc-foot { display: grid; grid-template-columns: auto 1fr; gap: 0 0.3rem; margin: 0.35rem 0 0; padding-top: 0.3rem;
+  border-top: 1px solid var(--rule); font-size: 0.66rem; }
+.l2w-tc-foot dt { font-family: var(--mono); color: var(--ink-3); }
+.l2w-tc-foot dd { margin: 0; text-align: right; font-family: var(--mono); color: var(--ink); }

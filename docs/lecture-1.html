@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 1: Information Measures · Elements of Information Theory</title>
+<meta name="description" content="Lecture 1 of Elements of Information Theory: notes, quiz and exercises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"Acal": "\\mathcal{A}", "Bern": "\\mathrm{Bern}", "EE": "\\mathbb{E}", "Ncal": "\\mathcal{N}", "P": "\\mathrm{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Xcal": "\\mathcal{X}", "Ycal": "\\mathcal{Y}", "Zcal": "\\mathcal{Z}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "rv": ["\\mathrm{#1}", 1]}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
+<script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script defer src="assets/site.js"></script>
+<link rel="stylesheet" href="assets/widgets/l1-channel.css">
+<script defer src="assets/widgets/l1-channel.js"></script>
+<link rel="stylesheet" href="assets/widgets/l1-gibbs.css">
+<script defer src="assets/widgets/l1-gibbs.js"></script>
+</head>
+<body>
+<canvas id="bitfield" aria-hidden="true"></canvas>
+<div class="page page-lecture">
+
+<header class="lec-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">&larr; Elements of Information Theory</a></nav>
+    <div class="lecture-box">
+      <div class="lb-top"><span>Elements of Information Theory</span><span>2026–2027</span></div>
+      <h1><span class="lb-n">Lecture 1:</span> Information Measures</h1>
+      <div class="lb-bottom"><span class="lb-lect">Lecturer: <a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a></span><span>Wed 4 Nov 2026</span></div>
+    </div>
+    <div class="huff" data-quiet>
+  <p class="huff-bits" aria-hidden="true"><span class="cw cw0" title="I &rarr; 0101">0101</span><span class="cw cw1" title="n &rarr; 1110">1110</span><span class="cw cw0" title="f &rarr; 0111">0111</span><span class="cw cw1" title="o &rarr; 1111">1111</span><span class="cw cw0" title="r &rarr; 000">000</span><span class="cw cw1" title="m &rarr; 1001">1001</span><span class="cw cw0" title="a &rarr; 1100">1100</span><span class="cw cw1" title="t &rarr; 1010">1010</span><span class="cw cw0" title="i &rarr; 1000">1000</span><span class="cw cw1" title="o &rarr; 1111">1111</span><span class="cw cw0" title="n &rarr; 1110">1110</span><span class="cw cw1" title="space &rarr; 0100">0100</span><span class="cw cw0" title="M &rarr; 0110">0110</span><span class="cw cw1" title="e &rarr; 1101">1101</span><span class="cw cw0" title="a &rarr; 1100">1100</span><span class="cw cw1" title="s &rarr; 001">001</span><span class="cw cw0" title="u &rarr; 1011">1011</span><span class="cw cw1" title="r &rarr; 000">000</span><span class="cw cw0" title="e &rarr; 1101">1101</span><span class="cw cw1" title="s &rarr; 001">001</span></p>
+  <p class="huff-cap">The title above, Huffman-coded from its own letter frequencies: 76 bits, 3.80 bits per character (entropy 3.72). Alternate shading separates the codewords.</p>
+</div>
+    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">8</span></a></nav>
+  </div>
+</header>
+<div class="sheet-wrap wrap"><main class="sheet">
+<section class="block" id="notes" aria-labelledby="notes-h">
+  <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
+  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>Every distribution is defined explicitly: an input distribution \(\P_{\rv{X}} \in \Pcal(\Xcal)\), a channel \(\P_{\rv{Y}|\rv{X}} \in \Pcal(\Ycal|\Xcal)\), the joint distribution \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and the output distribution \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\), a mixture.</li><li>Jensen’s inequality: \(\EE\bigl[f(\rv{X})\bigr] \ge f\bigl(\EE[\rv{X}]\bigr)\) for a convex \(f\).</li><li>Information measures: entropy \(H(\P)\), cross-entropy \(H(\P\|\Q)\), divergence \(D(\P\|\Q) = H(\P\|\Q) - H(\P)\) and mutual information \(I(\rv{X};\rv{Y}) = D(\P_{\rv{X}\rv{Y}}\|\P_{\rv{X}}\P_{\rv{Y}})\). Their conditional versions are averages over the conditioning variable, and each measure has a chain rule.</li><li>\(D(\P\|\Q) \ge 0\), with equality iff \(\P = \Q\). Hence \(I(\rv{X};\rv{Y}) \ge 0\), \(H(\P) \le H(\P\|\Q)\), conditioning reduces entropy and increases divergence, and processing reduces divergence and mutual information (data processing).</li><li>\(H(\P)\) is concave in \(\P\); \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is concave in \(\P_{\rv{X}}\) and convex in \(\P_{\rv{Y}|\rv{X}}\); \(D(\P\|\Q)\) is jointly convex.</li><li>Maximum entropy under \(\EE_\P\bigl[c(\rv{X})\bigr] \le a\): the Gibbs distribution \(q(x) = e^{-\beta c(x)}/Z\), e.g., the uniform distribution on a finite alphabet, and \(\Ncal(0,\sigma^2)\) under \(\EE_\P[\rv{X}^2] \le \sigma^2\).</li></ul></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-1-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">256 KB</span></a><a class="file-btn" href="notes/lecture-1-information-measures.pdf"><span class="file-kind">PDF</span><span class="file-name">Detailed notes and problems</span><span class="file-size">695 KB</span></a></div>
+  <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">1.1</span> <a href="#cn-1-1">Convex functions and Jensen’s inequality</a></li><li class="o-l1"><span class="o-num">1.2</span> <a href="#cn-1-2">Information measures</a></li><li class="o-l2"><span class="o-num">1.2.1</span> <a href="#cn-1-2-1">Entropy</a></li><li class="o-l2"><span class="o-num">1.2.2</span> <a href="#cn-1-2-2">Cross-entropy</a></li><li class="o-l2"><span class="o-num">1.2.3</span> <a href="#cn-1-2-3">Differential entropy and cross-entropy</a></li><li class="o-l2"><span class="o-num">1.2.4</span> <a href="#cn-1-2-4">Kullback–Leibler divergence</a></li><li class="o-l2"><span class="o-num">1.2.5</span> <a href="#cn-1-2-5">Mutual information</a></li><li class="o-l1"><span class="o-num">1.3</span> <a href="#cn-1-3">Properties</a></li><li class="o-l2"><span class="o-num">1.3.1</span> <a href="#cn-1-3-1">Positivity</a></li><li class="o-l2"><span class="o-num">1.3.2</span> <a href="#cn-1-3-2">Conditioning</a></li><li class="o-l2"><span class="o-num">1.3.3</span> <a href="#cn-1-3-3">Data processing</a></li><li class="o-l2"><span class="o-num">1.3.4</span> <a href="#cn-1-3-4">Convexity/Concavity</a></li><li class="o-l1"><span class="o-num">1.4</span> <a href="#cn-1-4">Maximum entropy</a></li><li class="o-l2"><span class="o-num">1.4.1</span> <a href="#cn-1-4-1">Finite alphabet</a></li><li class="o-l2"><span class="o-num">1.4.2</span> <a href="#cn-1-4-2">Continuous alphabet</a></li><li class="o-l2"><span class="o-num">1.4.3</span> <a href="#cn-1-4-3">General case</a></li></ol>
+  <div class="cnotes"><div class="cn-front"><h4 class="tex-h">Outline of the course:</h4>
+<ul class="tex-list"><li>Information measures</li><li>Method of types</li><li>Lossless source coding</li><li>Lossy source coding</li><li>Channel coding</li><li>Information theory &amp; statistics / machine learning</li></ul>
+<h4 class="tex-h">Notations:</h4>
+<ul class="tex-list"><li>\(\log\): base 2;   \(\ln x = \log x / \log e\).</li><li>\(\Xcal, \Ycal, \Zcal\): alphabets.</li><li>\(\Pcal(\Xcal)\): set of probability distributions over \(\Xcal\).</li><li>\(\P, \Q \in \Pcal(\Xcal)\): probability measures;  \(p\), \(q\): their densities  (pdf: Lebesgue measure; pmf: counting measure).</li><li><p>\(\P \ll \Q\): \(\P\) is <strong class="newword">absolutely continuous</strong> with respect to \(\Q\), i.e.,</p>
+<div class="math-display">\[\begin{array}{ll}
+        \text{in general:} &amp; \Q(\Acal) = 0 \Rightarrow \P(\Acal) = 0 \ \text{ for every event } \Acal, \\
+        \text{pmfs:}       &amp; q(x) = 0 \Rightarrow p(x) = 0 \ \text{ for every } x, \\
+        \text{pdfs:}       &amp; q(x) = 0 \Rightarrow p(x) = 0 \ \text{ for almost every } x.
+      \end{array}\]</div>
+<p>Then \(p/q\) (in general, the Radon–Nikodym derivative \(\mathrm{d}\P/\mathrm{d}\Q\)) is well defined \(\P\)-almost surely.</p></li><li>\(\rv{X}, \rv{Y}, \rv{Z}, \rv{U}, \rv{V}, \rv{S}\): random variables.</li><li>\(\P_{\rv{X}}\), \(\Q_{\rv{X}}\): distributions of \(\rv{X}\) (see below);   \(p(x) \equiv p_{\rv{X}}(x)\).</li><li><p>\(\P_{\rv{Y}|\rv{X}}\): transition probability kernel (channel), i.e., a family of distributions in \(\Pcal(\Ycal)\) indexed by \(x \in \Xcal\),</p>
+<div class="math-display">\[\P_{\rv{Y}|\rv{X}} := \bigl(\, \underbrace{\P_{\rv{Y}|\rv{X}=x}}_{\text{probability measure of $\rv{Y}$}} \,\bigr)_{x\in\Xcal},
+      \qquad
+      p(y\cond x) \equiv \P_{\rv{Y}|\rv{X}=x}(y) \equiv \P(y\cond \rv{X}=x).\]</div></li><li>\(\Pcal(\Ycal|\Xcal)\): set of channels from \(\Xcal\) to \(\Ycal\);  \(\P_{\rv{Y}|\rv{X}} \in \Pcal(\Ycal|\Xcal)\).</li><li><p>For any \(\P_{\rv{X}} \in \Pcal(\Xcal)\) and \(\P_{\rv{Y}|\rv{X}} \in \Pcal(\Ycal|\Xcal)\), the joint distribution of \((\rv{X},\rv{Y})\) and the output distribution of the channel are</p>
+<div class="math-display">\[\begin{aligned}
+      \P_{\rv{X}}\P_{\rv{Y}|\rv{X}} \equiv \P_{\rv{Y}|\rv{X}}\P_{\rv{X}} &amp;\in \Pcal(\Xcal\times\Ycal),
+        \qquad \text{with density } p(x)\,p(y\cond x), \\
+      \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}} := \EE_{\tilde{\rv{X}}\sim\P_{\rv{X}}}\bigl[\P_{\rv{Y}|\rv{X}=\tilde{\rv{X}}}\bigr] &amp;\in \Pcal(\Ycal),
+        \qquad \text{the $\rv{Y}$-marginal of } \P_{\rv{X}}\P_{\rv{Y}|\rv{X}}.
+    \end{aligned}\]</div>
+<p>The output distribution is a <strong class="newword">mixture</strong> of the distributions \(\P_{\rv{Y}|\rv{X}=x}\), \(x\in\Xcal\), with mixing distribution \(\P_{\rv{X}}\).</p></li></ul>
+<h4 class="tex-h">One random variable, several distributions.</h4>
+<p>A random variable \(\rv{X}\) with values in \(\Xcal\) is often considered under several distributions \(\P_{\rv{X}}, \Q_{\rv{X}} \in \Pcal(\Xcal)\), for instance the true distribution of a source and a model of it. Formally, \(\rv{X}\) can be taken as the identity map on \(\Xcal\), so that choosing a distribution in \(\Pcal(\Xcal)\) is choosing the distribution of \(\rv{X}\). Each distribution is therefore defined explicitly, in order (\(\P_{\rv{X}}\), then \(\P_{\rv{Y}|\rv{X}}\), then \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\)), and the notation says which one is used, e.g., \(\rv{X}\sim\Q_{\rv{X}}\) or \(\EE_{\P}[\,\cdot\,]\).</p>
+<h4 class="tex-h">Example (binary symmetric channel).</h4>
+<p>Let \(\Xcal = \Ycal = \{0,1\}\) and \(p, q, \varepsilon \in [0,1]\). We define, in this order,</p>
+<ul class="tex-list"><li>the input distribution \(\P_{\rv{X}} = \Bern(p)\), i.e., \(p(1) = p\) and \(p(0) = 1-p\);</li><li>the channel \(\P_{\rv{Y}|\rv{X}} = \bigl(\Bern(\varepsilon), \Bern(1-\varepsilon)\bigr)\), i.e., \(\P_{\rv{Y}|\rv{X}=0} = \Bern(\varepsilon)\) and \(\P_{\rv{Y}|\rv{X}=1} = \Bern(1-\varepsilon)\): the input bit is flipped with probability \(\varepsilon\);</li><li>the joint distribution \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\), whose pmf \(p(x)\,p(y\cond x)\) is given in the table below;</li><li>the output distribution \(\P_{\rv{Y}} := \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}} = (1-p)\Bern(\varepsilon) + p\Bern(1-\varepsilon) = \Bern(p\star\varepsilon)\), with \(p\star\varepsilon := p(1-\varepsilon) + (1-p)\varepsilon\), given by the column sums of the table;</li><li>the reverse channel \(\P_{\rv{X}|\rv{Y}}\), with pmf \(p(x\cond y) = p(x)\,p(y\cond x)/p(y)\), so that \(\P_{\rv{Y}}\P_{\rv{X}|\rv{Y}} = \P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\); for example, \(\P_{\rv{X}|\rv{Y}=1} = \Bern\bigl(p(1-\varepsilon)/(p\star\varepsilon)\bigr)\).</li></ul>
+<div class="tex-center"><div class="table-wrap"><table class="tex-table"><tbody><tr><td class="al-center br"></td><td class="al-center">\(y = 0\)</td><td class="al-center br">\(y = 1\)</td><td class="al-center">\(\P_{\rv{X}}\)</td></tr><tr class="ht"><td class="al-center br">\(x = 0\)</td><td class="al-center">\((1-p)(1-\varepsilon)\)</td><td class="al-center br">\((1-p)\varepsilon\)</td><td class="al-center">\(1-p\)</td></tr><tr><td class="al-center br">\(x = 1\)</td><td class="al-center">\(p\varepsilon\)</td><td class="al-center br">\(p(1-\varepsilon)\)</td><td class="al-center">\(p\)</td></tr><tr class="ht"><td class="al-center br">\(\P_{\rv{Y}}\)</td><td class="al-center">\(1-p\star\varepsilon\)</td><td class="al-center br">\(p\star\varepsilon\)</td><td class="al-center"></td></tr></tbody></table></div></div>
+<p>With another input distribution \(\Q_{\rv{X}} = \Bern(q)\), the same channel gives another joint distribution \(\Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and another output distribution \(\P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}} = \Bern(q\star\varepsilon)\). For \(p = \varepsilon = \frac12\), every entry of the table is \(\frac14\): \(\rv{X}\) and \(\rv{Y}\) are independent and uniform.</p>
+<div class="widget" data-widget="l1-channel" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div></div>
+<h3 class="cn-h cn-l1" id="cn-1-1"><span class="cn-num">1.1</span> Convex functions and Jensen’s inequality</h3>
+<p>A set \(\Xcal\) (in a vector space) is a <strong class="newword">convex set</strong> if</p>
+<div class="math-display">\[\forall\, x_1, x_2 \in \Xcal,\ \lambda\in[0,1]:\qquad \lambda x_1 + (1-\lambda) x_2 \in \Xcal.\]</div>
+<p>For example, \(\Pcal(\Xcal)\) is a convex set.</p>
+<p>A function \(f\colon \Xcal \to \mathbb{R}\) on a convex set \(\Xcal\) is a <strong class="newword">convex function</strong> if</p>
+<div class="math-display">\[\forall\, x_1, x_2 \in \Xcal,\ \lambda\in[0,1]:\qquad
+  \underbrace{f\bigl(\lambda x_1 + (1-\lambda) x_2\bigr)}_{f(\bar{x})}
+  \le \underbrace{\lambda f(x_1) + (1-\lambda) f(x_2)}_{\bar{f}}.\]</div>
+<div class="tex-block"><figure class="tikz"><img src="figures/lecture-1-09a99e6aea179bd6410e.svg" alt="Figure 1 of the notes" style="width:258px"></figure></div>
+<div class="tex-block"><p>\(f\) is a <strong class="newword">concave</strong> function if \(-f\) is convex.</p></div>
+<h4 class="tex-h">Jensen’s inequality.</h4>
+<p>(Jensen)</p>
+<p>For any convex function \(f\) and any distribution \(\P\) of \(\rv{X}\),</p>
+<div class="math-display">\[\EE_\P\bigl[f(\rv{X})\bigr] \ge f\bigl(\EE_\P[\rv{X}]\bigr).\]</div>
+<p>If \(f\) is concave, the inequality is reversed:</p>
+<div class="math-display">\[\EE_\P\bigl[f(\rv{X})\bigr] \le f\bigl(\EE_\P[\rv{X}]\bigr).\]</div>
+<p>Examples (check the sign of \(f''\)): \(x \mapsto \log x\) is concave on \(x&gt;0\), and \(x \mapsto x\log x\) is convex on \(x&gt;0\).</p>
+<h3 class="cn-h cn-l1" id="cn-1-2"><span class="cn-num">1.2</span> Information measures</h3>
+<ul class="tex-list"><li>Entropy</li><li>Cross-entropy</li><li>Divergence</li><li>Mutual information</li></ul>
+<h4 class="cn-h cn-l2" id="cn-1-2-1"><span class="cn-num">1.2.1</span> Entropy</h4>
+<p>Let \(\rv{X}\in\Xcal\) be discrete, \(\rv{X}\sim\P_{\rv{X}}\).</p>
+<ul class="tex-list"><li>\(\displaystyle H(\rv{X}) \equiv H(\P_{\rv{X}}) := \EE_{\rv{X}\sim\P_{\rv{X}}}\Bigl[\log\frac{1}{p(\rv{X})}\Bigr] = \sum_{x\in\Xcal} p(x)\log\frac{1}{p(x)}\).</li></ul>
+<p>For \((\rv{X},\rv{Y}) \in \Xcal\times\Ycal\) with \((\rv{X},\rv{Y}) \sim \P_{\rv{X}\rv{Y}}\), the joint and conditional entropies are</p>
+<ul class="tex-list"><li>\(\displaystyle H(\rv{X},\rv{Y}) \equiv H(\P_{\rv{X}\rv{Y}}) := \EE_{\P_{\rv{X}\rv{Y}}}\Bigl[\log\frac{1}{p(\rv{X},\rv{Y})}\Bigr]\),</li><li>\(\displaystyle H(\rv{X}\cond\rv{Y}) \equiv H(\P_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}}) := \EE_{\bar{\rv{Y}}\sim\P_{\rv{Y}}}\bigl[H(\P_{\rv{X}|\rv{Y}=\bar{\rv{Y}}})\bigr] = \EE_{\P_{\rv{X}\rv{Y}}}\Bigl[\log\frac{1}{p(\rv{X}\cond\rv{Y})}\Bigr]\).</li></ul>
+<p>“Chain rule”:</p>
+<div class="math-display">\[H(\P_{\rv{X}|\rv{Y}}\P_{\rv{Y}}) = H(\P_{\rv{Y}}) + H(\P_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}}),\]</div>
+<p>i.e., in the conventional notation, \(H(\rv{X},\rv{Y}) = H(\rv{Y}) + H(\rv{X}\cond\rv{Y})\). By induction, for \(\rv{X}^n\),</p>
+<div class="math-display">\[\begin{aligned}
+    H(\rv{X}^n) &amp;= H(\rv{X}^{n-1}) + H(\rv{X}_n\cond\rv{X}^{n-1}) \\
+    \Longrightarrow\quad
+    H(\rv{X}^n) &amp;= \sum_{i=1}^n H(\rv{X}_i\cond\rv{X}^{i-1}),
+    \qquad \text{with } \rv{X}^n \equiv [\rv{X}_1,\ldots,\rv{X}_n].
+  \end{aligned}\]</div>
+<h4 class="cn-h cn-l2" id="cn-1-2-2"><span class="cn-num">1.2.2</span> Cross-entropy</h4>
+<p>For \(\Xcal\) discrete, \(\P, \Q \in \Pcal(\Xcal)\) and \(\rv{X}\sim\P\),</p>
+<div class="math-display">\[H(\P\|\Q) := \EE_\P\Bigl[\log\frac{1}{q(\rv{X})}\Bigr] = \sum_{x\in\Xcal} p(x)\log\frac{1}{q(x)}
+    \qquad (+\infty \text{ if } \P\not\ll\Q),\]</div>
+<p>and, for conditional distributions,</p>
+<div class="math-display">\[H(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})
+    := \EE_{\bar{\rv{Y}}\sim\P_{\rv{Y}}}\bigl[H(\P_{\rv{X}|\rv{Y}=\bar{\rv{Y}}}\|\Q_{\rv{X}|\rv{Y}=\bar{\rv{Y}}})\bigr]
+    = \EE_{\P_{\rv{X}|\rv{Y}}\P_{\rv{Y}}}\Bigl[\log\frac{1}{q(\rv{X}\cond\rv{Y})}\Bigr].\]</div>
+<p>“Chain rule”:</p>
+<div class="math-display">\[\begin{aligned}
+    H(\P_{\rv{X}\rv{Y}}\|\Q_{\rv{X}\rv{Y}}) &amp;= H(\P_{\rv{X}|\rv{Y}}\P_{\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\Q_{\rv{Y}})
+      = H(\P_{\rv{Y}}\|\Q_{\rv{Y}}) + H(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}}), \\
+    H(\P_{\rv{X}^n}\|\Q_{\rv{X}^n}) &amp;= H(\P_{\rv{X}_n\rv{X}^{n-1}}\|\Q_{\rv{X}_n\rv{X}^{n-1}}) \\
+      &amp;= H(\P_{\rv{X}^{n-1}}\|\Q_{\rv{X}^{n-1}})
+         + H(\P_{\rv{X}_n|\rv{X}^{n-1}}\|\Q_{\rv{X}_n|\rv{X}^{n-1}}\mid\P_{\rv{X}^{n-1}}) \\
+      &amp;= \sum_{i=1}^n H(\P_{\rv{X}_i|\rv{X}^{i-1}}\|\Q_{\rv{X}_i|\rv{X}^{i-1}}\mid\P_{\rv{X}^{i-1}}).
+  \end{aligned}\]</div>
+<h4 class="cn-h cn-l2" id="cn-1-2-3"><span class="cn-num">1.2.3</span> Differential entropy and cross-entropy</h4>
+<p>For \(\rv{X}\) continuous with density \(p\),</p>
+<div class="math-display">\[h(\rv{X}) \equiv h(\P_{\rv{X}}) := \EE_\P\Bigl[\log\frac{1}{p(\rv{X})}\Bigr].\]</div>
+<p>Examples: uniform and Gaussian distributions. Unlike \(H\), \(h\) can be negative (\(h(\rv{X}) \ngeq 0\) in general) and is “not scale-free”: \(h(a\rv{X}) = h(\rv{X}) + \log|a|\). The differential cross-entropy \(h(\P\|\Q)\) and the conditional versions, such as \(h(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})\), are defined in the same way with densities, and the chain rules hold.</p>
+<h4 class="cn-h cn-l2" id="cn-1-2-4"><span class="cn-num">1.2.4</span> Kullback–Leibler divergence</h4>
+<p>The <strong class="newword">Kullback–Leibler (KL) divergence</strong>, or <strong class="newword">relative entropy</strong>, is</p>
+<div class="math-display">\[D(\P\|\Q) := \EE_\P\Bigl[\log\frac{p(\rv{X})}{q(\rv{X})}\Bigr]
+    \qquad (+\infty \text{ if } \P\not\ll\Q).\]</div>
+<p>If \(\Xcal\) is discrete, \(D(\P\|\Q) = H(\P\|\Q) - H(\P)\) whenever \(H(\P) &lt; \infty\); if \(\P\) and \(\Q\) have pdfs, \(D(\P\|\Q) = h(\P\|\Q) - h(\P)\) whenever \(h(\P)\) is finite.</p>
+<p>For joint distributions,</p>
+<div class="math-display">\[\begin{aligned}
+    D(\P_{\rv{X}\rv{Y}}\|\Q_{\rv{X}\rv{Y}})
+      &amp;= \EE_{\P_{\rv{X}\rv{Y}}}\Bigl[\log\frac{p(\rv{X})}{q(\rv{X})}\Bigr]
+       + \EE_{\P_{\rv{X}\rv{Y}}}\Bigl[\log\frac{p(\rv{Y}\cond\rv{X})}{q(\rv{Y}\cond\rv{X})}\Bigr] \\
+      &amp;= D(\P_{\rv{X}}\|\Q_{\rv{X}}) + \EE_{\bar{\rv{X}}\sim\P_{\rv{X}}}\bigl[D(\P_{\rv{Y}|\rv{X}=\bar{\rv{X}}}\|\Q_{\rv{Y}|\rv{X}=\bar{\rv{X}}})\bigr],
+  \end{aligned}\]</div>
+<p>where the conditional divergence is</p>
+<div class="math-display">\[D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}}) := \EE_{\bar{\rv{X}}\sim\P_{\rv{X}}}\bigl[D(\P_{\rv{Y}|\rv{X}=\bar{\rv{X}}}\|\Q_{\rv{Y}|\rv{X}=\bar{\rv{X}}})\bigr].\]</div>
+<p>Then, we get the “chain rule”</p>
+<div class="math-display">\[D(\P_{\rv{Y}|\rv{X}}\P_{\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\Q_{\rv{X}})
+      = D(\P_{\rv{X}}\|\Q_{\rv{X}}) + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}})\]</div>
+<p>and, by induction,</p>
+<div class="math-display">\[D(\P_{\rv{X}^n}\|\Q_{\rv{X}^n}) = \sum_{i=1}^n D(\P_{\rv{X}_i|\rv{X}^{i-1}}\|\Q_{\rv{X}_i|\rv{X}^{i-1}}\mid\P_{\rv{X}^{i-1}}).\]</div>
+<h4 class="cn-h cn-l2" id="cn-1-2-5"><span class="cn-num">1.2.5</span> Mutual information</h4>
+<div class="math-display">\[\begin{aligned}
+    I(\rv{X};\rv{Y}) &amp;\equiv I(\P_{\rv{X}\rv{Y}}) \equiv I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}) \equiv I(\P_{\rv{Y}},\P_{\rv{X}|\rv{Y}}) \\
+      &amp;:= D(\P_{\rv{X}\rv{Y}}\|\underbrace{\P_{\rv{X}}\P_{\rv{Y}}}_{\text{ind. distributions}}) \\
+      &amp;= D(\P_{\rv{X}|\rv{Y}}\|\P_{\rv{X}}\mid\P_{\rv{Y}}) \\
+      &amp;= D(\P_{\rv{Y}|\rv{X}}\|\P_{\rv{Y}}\mid\P_{\rv{X}}),
+  \end{aligned}\]</div>
+<p>where \(\P_{\rv{X}\rv{Y}} = \P_{\rv{X}}\P_{\rv{Y}|\rv{X}} = \P_{\rv{Y}}\P_{\rv{X}|\rv{Y}}\), and \(\P_{\rv{X}}\), \(\P_{\rv{Y}}\) are the marginals of \(\P_{\rv{X}\rv{Y}}\). Similarly, the conditional mutual information is</p>
+<div class="math-display">\[\begin{aligned}
+    I(\rv{X};\rv{Y}\cond\rv{Z}) &amp;\equiv I(\P_{\rv{X}\rv{Y}|\rv{Z}}\mid\P_{\rv{Z}}) \\
+      &amp;:= D(\P_{\rv{X}\rv{Y}|\rv{Z}}\|\P_{\rv{X}|\rv{Z}}\P_{\rv{Y}|\rv{Z}}\mid\P_{\rv{Z}}) \\
+      &amp;= D(\P_{\rv{X}|\rv{Y}\rv{Z}}\|\P_{\rv{X}|\rv{Z}}\mid\P_{\rv{Z}}\P_{\rv{Y}|\rv{Z}})
+       = D(\P_{\rv{X}|\rv{Y}\rv{Z}}\|\P_{\rv{X}|\rv{Z}}\mid\P_{\rv{Y}\rv{Z}}) \\
+      &amp;= D(\P_{\rv{Y}|\rv{X}\rv{Z}}\|\P_{\rv{Y}|\rv{Z}}\mid\P_{\rv{Z}}\P_{\rv{X}|\rv{Z}})
+       = D(\P_{\rv{Y}|\rv{X}\rv{Z}}\|\P_{\rv{Y}|\rv{Z}}\mid\P_{\rv{X}\rv{Z}}).
+  \end{aligned}\]</div>
+<p>If \(\rv{X}\) is discrete,</p>
+<div class="math-display">\[\begin{aligned}
+    I(\rv{X};\rv{Y}) &amp;= D(\P_{\rv{X}|\rv{Y}}\|\P_{\rv{X}}\mid\P_{\rv{Y}}) \\
+      &amp;= \EE_{\P_{\rv{Y}}}\biggl[\EE_{\P_{\rv{X}|\rv{Y}}}\Bigl[\log\frac{p(\rv{X}\cond\rv{Y})}{p(\rv{X})}\Bigr]\biggr] \\
+      &amp;= \EE\Bigl[\log\frac{1}{p(\rv{X})}\Bigr] - \EE\Bigl[\log\frac{1}{p(\rv{X}\cond\rv{Y})}\Bigr] \\
+      &amp;= H(\rv{X}) - H(\rv{X}\cond\rv{Y}).
+  \end{aligned}\]</div>
+<p>If \(\P_{\rv{X}|\rv{Y}=y}\) has a density for \(\P_{\rv{Y}}\)-almost every \(y\) (then so does \(\P_{\rv{X}}\)) and \(h(\rv{X})\), \(h(\rv{X}\cond\rv{Y})\) are finite, \(I(\rv{X};\rv{Y}) = h(\rv{X}) - h(\rv{X}\cond\rv{Y})\).</p>
+<p>If \(\rv{X}\) and \(\rv{Y}\) are both discrete, the entropies and the mutual information satisfy the <strong class="newword">Venn diagram</strong> relations</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-1-35a3ff2a615cd479c884.svg" alt="Figure 2 of the notes" style="width:277px"></figure></div>
+<div class="math-display">\[\begin{aligned}
+    H(\rv{X},\rv{Y}) &amp;= H(\rv{X}) + H(\rv{Y}\cond\rv{X}) = H(\rv{Y}) + H(\rv{X}\cond\rv{Y})
+      = H(\rv{X}\cond\rv{Y}) + I(\rv{X};\rv{Y}) + H(\rv{Y}\cond\rv{X}), \\
+    I(\rv{X};\rv{Y}) &amp;= H(\rv{X}) - H(\rv{X}\cond\rv{Y}) = H(\rv{Y}) - H(\rv{Y}\cond\rv{X})
+      = H(\rv{X}) + H(\rv{Y}) - H(\rv{X},\rv{Y}).
+  \end{aligned}\]</div>
+<p>The same relations hold with \(h\) in place of \(H\) if \((\rv{X},\rv{Y})\) has a pdf and all the terms are finite.</p>
+<p>“Chain rule”:</p>
+<div class="math-display">\[\begin{aligned}
+    I(\rv{X};\rv{Y},\rv{Z})
+      &amp;= D(\P_{\rv{X}\rv{Y}\rv{Z}}\|\P_{\rv{X}}\P_{\rv{Y}\rv{Z}}) \\
+      &amp;= D(\P_{\rv{X}\rv{Y}}\P_{\rv{Z}|\rv{X}\rv{Y}}\|\P_{\rv{X}}\P_{\rv{Y}}\P_{\rv{Z}|\rv{Y}}) \\
+      &amp;= D(\P_{\rv{X}\rv{Y}}\|\P_{\rv{X}}\P_{\rv{Y}}) + D(\P_{\rv{Z}|\rv{X}\rv{Y}}\|\P_{\rv{Z}|\rv{Y}}\mid\P_{\rv{X}\rv{Y}}) \\
+      &amp;= I(\rv{X};\rv{Y}) + I(\rv{X};\rv{Z}\cond\rv{Y}),
+  \end{aligned}\]</div>
+<p>and, applying it repeatedly,</p>
+<div class="math-display">\[\begin{aligned}
+    I(\rv{X};\rv{Y}^n) &amp;= I(\rv{X};\rv{Y}^{n-1},\rv{Y}_n) \\
+      &amp;= I(\rv{X};\rv{Y}^{n-1}) + I(\rv{X};\rv{Y}_n\cond\rv{Y}^{n-1}) \\
+      &amp;\;\;\vdots \\
+      &amp;= \sum_{i=1}^n I(\rv{X};\rv{Y}_i\cond\rv{Y}^{i-1}).
+  \end{aligned}\]</div>
+<h3 class="cn-h cn-l1" id="cn-1-3"><span class="cn-num">1.3</span> Properties</h3>
+
+<h4 class="cn-h cn-l2" id="cn-1-3-1"><span class="cn-num">1.3.1</span> Positivity</h4>
+<ul class="tex-list"><li>\(H(\P) \ge 0\) for discrete \(\P\).</li><li><p>By Jensen’s inequality with the convex function \(x\mapsto x\log x\),<br> \(\displaystyle D(\P\|\Q) = \EE_\Q\Bigl[\frac{p(\rv{X})}{q(\rv{X})}\log\frac{p(\rv{X})}{q(\rv{X})}\Bigr] \ge \Bigl(\EE_\Q\Bigl[\frac{p(\rv{X})}{q(\rv{X})}\Bigr]\Bigr) \log\Bigl(\EE_\Q\Bigl[\frac{p(\rv{X})}{q(\rv{X})}\Bigr]\Bigr) = 0\). Hence</p>
+<div class="math-display">\[D(\P\|\Q) \ge 0 \qquad \circnum{\star} \qquad \text{with equality iff } \P = \Q.\]</div>
+<p>Since \(H(\P\|\Q) - H(\P) = D(\P\|\Q)\), we get</p>
+<div class="math-display">\[\begin{aligned}
+    H(\P) &amp;\le H(\P\|\Q), \quad \forall\,\P,\Q, \\
+    H(\P) &amp;= \min_{\Q} H(\P\|\Q).
+  \end{aligned}\]</div></li><li>By \(\circnum{\star}\), \(I(\rv{X};\rv{Y}) \ge 0\), with equality iff \(\P_{\rv{X}\rv{Y}} = \P_{\rv{X}}\P_{\rv{Y}}\), i.e., \(\rv{X}\) and \(\rv{Y}\) are independent. Similarly, \(I(\rv{X};\rv{Z}\cond\rv{Y}) \ge 0\), with equality iff \(\P_{\rv{X}\rv{Z}|\rv{Y}} = \P_{\rv{X}|\rv{Y}}\P_{\rv{Z}|\rv{Y}}\) (\(\P_{\rv{Y}}\)-a.s.), i.e., \(\rv{X}\) and \(\rv{Z}\) are independent conditionally on \(\rv{Y}\), i.e., \(\rv{X}\to\rv{Y}\to\rv{Z}\) forms a Markov chain.</li></ul>
+<h4 class="cn-h cn-l2" id="cn-1-3-2"><span class="cn-num">1.3.2</span> Conditioning</h4>
+<ul class="tex-list"><li>\(H(\rv{X}) \ge H(\rv{X}\cond\rv{Y})\), i.e., \(H(\P_{\rv{X}}) \ge H(\P_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})\): “conditioning reduces entropy”, since \(H(\rv{X}) - H(\rv{X}\cond\rv{Y}) = I(\rv{X};\rv{Y}) \ge 0\).</li><li><p>\(D(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}}) \ge D(\tilde{\P}_{\rv{X}}\|\tilde{\Q}_{\rv{X}})\),  where \(\begin{aligned}[t] \tilde{\P}_{\rv{X}} &amp;= \EE_{\tilde{\rv{Y}}\sim\P_{\rv{Y}}}\bigl[\P_{\rv{X}|\rv{Y}=\tilde{\rv{Y}}}\bigr] \equiv \P_{\rv{X}|\rv{Y}}\circ\P_{\rv{Y}}, \\ \tilde{\Q}_{\rv{X}} &amp;= \EE_{\tilde{\rv{Y}}\sim\P_{\rv{Y}}}\bigl[\Q_{\rv{X}|\rv{Y}=\tilde{\rv{Y}}}\bigr] \equiv \Q_{\rv{X}|\rv{Y}}\circ\P_{\rv{Y}}. \end{aligned}\) <br> Indeed, let \(\P_{\rv{X}\rv{Y}} = \P_{\rv{Y}}\P_{\rv{X}|\rv{Y}}\) and \(\Q_{\rv{X}\rv{Y}} = \P_{\rv{Y}}\Q_{\rv{X}|\rv{Y}}\), whose \(\rv{X}\)-marginals are \(\tilde{\P}_{\rv{X}}\) and \(\tilde{\Q}_{\rv{X}}\). The chain rule of \(D\), applied in both orders, gives</p>
+<div class="math-display">\[\begin{aligned}
+      D(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})
+      &amp;= D(\P_{\rv{X}\rv{Y}}\|\Q_{\rv{X}\rv{Y}})
+       = D(\tilde{\P}_{\rv{X}}\|\tilde{\Q}_{\rv{X}})
+        + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\tilde{\P}_{\rv{X}}) \\
+      &amp;\ge D(\tilde{\P}_{\rv{X}}\|\tilde{\Q}_{\rv{X}}).
+    \end{aligned}\]</div></li></ul>
+<h4 class="cn-h cn-l2" id="cn-1-3-3"><span class="cn-num">1.3.3</span> Data processing</h4>
+<p>For any channel \(\P_{\rv{Y}|\rv{X}} \in \Pcal(\Ycal|\Xcal)\) and any \(\P_{\rv{X}}, \Q_{\rv{X}} \in \Pcal(\Xcal)\),</p>
+<div class="math-display">\[D(\P_{\rv{X}}\|\Q_{\rv{X}}) \ge D(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\|\P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}}).\]</div>
+<p>Indeed, let \(\tilde{\P}_{\rv{Y}} = \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\) and \(\tilde{\Q}_{\rv{Y}} = \P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}}\) be the \(\rv{Y}\)-marginals of \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and \(\Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}\), and \(\tilde{\P}_{\rv{X}|\rv{Y}}\), \(\tilde{\Q}_{\rv{X}|\rv{Y}}\) their conditionals. The chain rule of \(D\), applied in both orders, gives</p>
+<div class="math-display">\[\begin{aligned}
+  D(\P_{\rv{X}}\|\Q_{\rv{X}})
+    &amp;= D(\P_{\rv{X}}\|\Q_{\rv{X}}) + D(\P_{\rv{Y}|\rv{X}}\|\P_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}}) \\
+    &amp;= D(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}) \\
+    &amp;= D(\tilde{\P}_{\rv{X}|\rv{Y}}\tilde{\P}_{\rv{Y}}\|\tilde{\Q}_{\rv{X}|\rv{Y}}\tilde{\Q}_{\rv{Y}}) \\
+    &amp;= D(\tilde{\P}_{\rv{Y}}\|\tilde{\Q}_{\rv{Y}})
+     + D(\tilde{\P}_{\rv{X}|\rv{Y}}\|\tilde{\Q}_{\rv{X}|\rv{Y}}\mid\tilde{\P}_{\rv{Y}}) \\
+    &amp;\ge D(\tilde{\P}_{\rv{Y}}\|\tilde{\Q}_{\rv{Y}}).
+\end{aligned}\]</div>
+<div class="widget" data-widget="l1-channel" data-args="view=dpi"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<p>For mutual information, if \(\rv{X}\to\rv{Y}\to\rv{Z}\) is a Markov chain, then \(I(\rv{X};\rv{Z}) \le I(\rv{X};\rv{Y})\). Indeed, \(I(\rv{X};\rv{Z}\cond\rv{Y}) = 0\) for a Markov chain, so</p>
+<div class="math-display">\[\begin{aligned}
+  I(\rv{X};\rv{Y})
+    &amp;= I(\rv{X};\rv{Y}) + \overbrace{I(\rv{X};\rv{Z}\cond\rv{Y})}^{0} \\
+    &amp;= I(\rv{X};\rv{Y},\rv{Z}) \\
+    &amp;= I(\rv{X};\rv{Z}) + \underbrace{I(\rv{X};\rv{Y}\cond\rv{Z})}_{\ge 0} \\
+    &amp;\ge I(\rv{X};\rv{Z}).
+\end{aligned}\]</div>
+<h4 class="cn-h cn-l2" id="cn-1-3-4"><span class="cn-num">1.3.4</span> Convexity/Concavity</h4>
+<ul class="tex-list"><li><p>\(\P \mapsto H(\P)\) is concave on \(\Pcal(\Xcal)\). Let \(\rv{S}\sim\P_{\rv{S}} = \Bern(\lambda)\), \(\P_{\rv{X}|\rv{S}=0} = \P_0\) and \(\P_{\rv{X}|\rv{S}=1} = \P_1\), so that \(\P_{\rv{X}} = (1-\lambda)\P_0 + \lambda\P_1\). Then</p>
+<div class="math-display">\[\begin{aligned}
+    \lambda H(\P_1) + (1-\lambda) H(\P_0)
+      &amp;= \sum_{s\in\{0,1\}} p(s)\, H(\P_{\rv{X}|\rv{S}=s}) \\
+      &amp;= \EE_{\bar{\rv{S}}\sim\Bern(\lambda)}\bigl[H(\P_{\rv{X}|\rv{S}=\bar{\rv{S}}})\bigr] \\
+      &amp;= H(\rv{X}\cond\rv{S}) \le H(\rv{X}) \equiv H(\P_{\rv{X}}) \\
+      &amp;= H\bigl((1-\lambda)\P_0 + \lambda\P_1\bigr),
+  \end{aligned}\]</div>
+<p>since conditioning reduces entropy.</p></li><li><p>\(\P_{\rv{X}} \mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is concave on \(\Pcal(\Xcal)\). With \(\rv{S}\) and \(\rv{X}\) as above, let \(\rv{Y}\) be the output of the channel \(\P_{\rv{Y}|\rv{X}}\), so that \(\rv{S}\to\rv{X}\to\rv{Y}\). Then</p>
+<div class="math-display">\[\begin{aligned}
+    \lambda I(\P_1,\P_{\rv{Y}|\rv{X}}) + (1-\lambda) I(\P_0,\P_{\rv{Y}|\rv{X}})
+      &amp;= I(\rv{X};\rv{Y}\cond\rv{S}) \le I(\rv{X},\rv{S};\rv{Y}) = I(\rv{X};\rv{Y}) \\
+      &amp;= I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}) = I\bigl((1-\lambda)\P_0 + \lambda\P_1,\P_{\rv{Y}|\rv{X}}\bigr),
+  \end{aligned}\]</div>
+<p>by the chain rule and since \(I(\rv{S};\rv{Y}\cond\rv{X}) = 0\).</p></li><li><p>\((\P,\Q) \mapsto D(\P\|\Q)\) is convex on \(\Pcal(\Xcal)\times\Pcal(\Xcal)\). With \(\rv{S}\) as above, let \(\P_{\rv{X}|\rv{S}=s} = \P_s\) and \(\Q_{\rv{X}|\rv{S}=s} = \Q_s\), \(s\in\{0,1\}\). By “conditioning”,</p>
+<div class="math-display">\[\begin{aligned}
+    \lambda D(\P_1\|\Q_1) + (1-\lambda) D(\P_0\|\Q_0)
+      &amp;= D(\P_{\rv{X}|\rv{S}}\|\Q_{\rv{X}|\rv{S}}\mid\P_{\rv{S}}) \\
+      &amp;\ge D(\tilde{\P}_{\rv{X}}\|\tilde{\Q}_{\rv{X}}) \\
+      &amp;= D\bigl((1-\lambda)\P_0 + \lambda\P_1 \,\big\|\, (1-\lambda)\Q_0 + \lambda\Q_1\bigr).
+  \end{aligned}\]</div></li><li><p>\(\P_{\rv{Y}|\rv{X}} \mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is convex on \(\Pcal(\Ycal|\Xcal)\). This follows from the joint convexity of \(D\): for a fixed \(\P_{\rv{X}}\), both arguments of \(D\) in \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}) = D(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\|\P_{\rv{X}}\P_{\rv{Y}})\), where \(\P_{\rv{Y}} = \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\), are linear in \(\P_{\rv{Y}|\rv{X}}\). Explicitly, let \(\P_{\rv{Y}|\rv{X}} = (1-\lambda)\P^{(0)}_{\rv{Y}|\rv{X}} + \lambda\P^{(1)}_{\rv{Y}|\rv{X}}\) with \(\P^{(0)}_{\rv{Y}|\rv{X}}, \P^{(1)}_{\rv{Y}|\rv{X}} \in \Pcal(\Ycal|\Xcal)\). Then \(\P_{\rv{Y}} = (1-\lambda)\P^{(0)}_{\rv{Y}} + \lambda\P^{(1)}_{\rv{Y}}\), where \(\P^{(s)}_{\rv{Y}} := \P^{(s)}_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\), and</p>
+<div class="math-display">\[\begin{aligned}
+    &amp;\lambda I(\P_{\rv{X}},\P^{(1)}_{\rv{Y}|\rv{X}}) + (1-\lambda) I(\P_{\rv{X}},\P^{(0)}_{\rv{Y}|\rv{X}}) \\
+    &amp;\qquad= \lambda D(\P_{\rv{X}}\P^{(1)}_{\rv{Y}|\rv{X}}\|\P_{\rv{X}}\P^{(1)}_{\rv{Y}})
+       + (1-\lambda) D(\P_{\rv{X}}\P^{(0)}_{\rv{Y}|\rv{X}}\|\P_{\rv{X}}\P^{(0)}_{\rv{Y}}) \\
+    &amp;\qquad\ge D\bigl((1-\lambda)\P_{\rv{X}}\P^{(0)}_{\rv{Y}|\rv{X}} + \lambda\P_{\rv{X}}\P^{(1)}_{\rv{Y}|\rv{X}}
+       \,\big\|\, (1-\lambda)\P_{\rv{X}}\P^{(0)}_{\rv{Y}} + \lambda\P_{\rv{X}}\P^{(1)}_{\rv{Y}}\bigr) \\
+    &amp;\qquad= D(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\|\P_{\rv{X}}\P_{\rv{Y}}) \\
+    &amp;\qquad= I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}).
+  \end{aligned}\]</div></li></ul>
+<h3 class="cn-h cn-l1" id="cn-1-4"><span class="cn-num">1.4</span> Maximum entropy</h3>
+<p>The method relies on the following equivalence: for any \(\P\) and \(\Q\),</p>
+<div class="math-display">\[D(\P\|\Q) \ge 0 \quad\iff\quad H(\P) \le H(\P\|\Q).\]</div>
+<h4 class="cn-h cn-l2" id="cn-1-4-1"><span class="cn-num">1.4.1</span> Finite alphabet</h4>
+<p>Let \(|\Xcal| = M\). Take \(\Q \in \Pcal(\Xcal)\) uniform, \(q(x) = \dfrac{1}{M}\). Then</p>
+<div class="math-display">\[\begin{aligned}
+    H(\P) \le H(\P\|\Q) &amp;= \EE_\P[\log M] \\
+      &amp;= \log M,
+  \end{aligned}\]</div>
+<p>with equality iff \(\P = \Q\) is uniform.</p>
+<h4 class="cn-h cn-l2" id="cn-1-4-2"><span class="cn-num">1.4.2</span> Continuous alphabet</h4>
+<p>Which \(\P\) with \(\EE_\P[\rv{X}^2] \le \sigma^2\) maximizes \(h(\P)\)? Take \(\Q = \Ncal(0,\sigma^2)\). Then</p>
+<div class="math-display">\[\begin{aligned}
+    h(\P) \le h(\P\|\Q)
+      &amp;= \EE_\P\Bigl[\log\sqrt{2\pi\sigma^2} + \frac{\rv{X}^2}{2\sigma^2}\log e\Bigr] \\
+      &amp;\le \log\sqrt{2\pi\sigma^2} + \frac{1}{2}\log e = \log\sqrt{2\pi e\sigma^2} \\
+      &amp;= h(\Q),
+  \end{aligned}\]</div>
+<p>with equality iff \(\P = \Q = \Ncal(0,\sigma^2)\).</p>
+<h4 class="cn-h cn-l2" id="cn-1-4-3"><span class="cn-num">1.4.3</span> General case</h4>
+<p>Which \(\P\) with \(\EE_\P\bigl[c(\rv{X})\bigr] \le a\) maximizes \(h(\P)\), for a cost function \(c \ge 0\)? Take</p>
+<div class="math-display">\[q(x) = \frac{e^{-\beta c(x)}}{\int_\Xcal e^{-\beta c(x)}\,\mathrm{d}x}
+         = \frac{1}{Z}\, e^{-\beta c(x)},\]</div>
+<p>with \(\beta \ge 0\) chosen such that \(\EE_\Q\bigl[c(\rv{X})\bigr] = a\) (or \(\beta = 0\) if \(\EE_\Q\bigl[c(\rv{X})\bigr] \le a\) already holds for \(\beta = 0\)). Then</p>
+<div class="math-display">\[\begin{aligned}
+    h(\P) \le h(\P\|\Q)
+      &amp;= \EE_\P\bigl[\log Z + \beta\, c(\rv{X})\log e\bigr] \\
+      &amp;\le \EE_\Q\bigl[\log Z + \beta\, c(\rv{X})\log e\bigr] \\
+      &amp;= h(\Q),
+  \end{aligned}\]</div>
+<p>since \(\beta\,\EE_\P\bigl[c(\rv{X})\bigr] \le \beta a = \beta\,\EE_\Q\bigl[c(\rv{X})\bigr]\), with equality iff \(\P = \Q\). This \(\Q\) is called the <strong class="newword">Gibbs distribution</strong>, \(\beta\) the <strong class="newword">inverse temperature</strong>, and \(Z\) the <strong class="newword">partition function</strong>. The same argument holds for a discrete \(\Xcal\), with a sum in place of the integral and \(H\) in place of \(h\). Both examples above are Gibbs distributions: \(c(x) = 0\) (no constraint) with \(\beta = 0\) on a finite \(\Xcal\) gives the uniform \(\Q\), and \(c(x) = x^2\) with \(\beta = \frac{1}{2\sigma^2}\) gives \(\Q = \Ncal(0,\sigma^2)\) (on \(\Xcal = \mathbb{R}\), \(Z &lt; \infty\) forces \(\beta &gt; 0\)).</p>
+<div class="widget" data-widget="l1-gibbs" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div></div>
+</section>
+<section class="block" id="quiz" aria-labelledby="quiz-h">
+  <div class="block-head"><h2 id="quiz-h">Quiz</h2><p class="block-sub">22 questions &middot; one correct answer each</p></div>
+  <p class="hint">Pick an answer to check it. Your answers are kept in this browser only.</p>
+  <noscript><p class="hint">Turn on JavaScript to check your answers.</p></noscript>
+  <div class="scoreboard" data-board>
+    <div class="score-bits" data-score-bits></div>
+    <p class="score-text" data-score-text>0 of 22 answered</p>
+    <button type="button" class="btn-quiet" data-reset>Start again</button>
+  </div>
+  <ol class="quiz" data-quiz="lecture-1">
+<li class="q" id="q1" data-key="9bd66de4" data-check="b1570a44">
+  <div class="q-num" aria-hidden="true">Q1</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \Ycal = \{0,1\}\), \(\P_{\rv{X}} = \Bern(p)\), and let \(\P_{\rv{Y}|\rv{X}}\) be the binary symmetric channel with crossover probability \(\varepsilon\), i.e., \(\P_{\rv{Y}|\rv{X}=0} = \Bern(\varepsilon)\) and \(\P_{\rv{Y}|\rv{X}=1} = \Bern(1-\varepsilon)\). What is the output distribution \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 1"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\Bern\bigl(p(1-\varepsilon)\bigr)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\Bern\bigl(p\varepsilon + (1-p)(1-\varepsilon)\bigr)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\Bern\bigl(p(1-\varepsilon) + (1-p)\varepsilon\bigr)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\Bern(p + \varepsilon)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q2" data-key="996ac11b" data-check="7df88e38">
+  <div class="q-num" aria-hidden="true">Q2</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the setting of Question 1, what is the pmf of the joint distribution \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) at \((x,y) = (1,0)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 2"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(p\varepsilon\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(p(1-\varepsilon)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\((1-p)\varepsilon\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\varepsilon\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q3" data-key="115f501a" data-check="4e1ac8f7">
+  <div class="q-num" aria-hidden="true">Q3</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the setting of Question 1, let \(p\star\varepsilon := p(1-\varepsilon) + (1-p)\varepsilon\). What is the reverse channel at \(y = 0\), i.e., \(\P_{\rv{X}|\rv{Y}=0}\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 3"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\Bern(\varepsilon)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\Bern\bigl(p\varepsilon/(1-p\star\varepsilon)\bigr)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\Bern\bigl(p(1-\varepsilon)/(p\star\varepsilon)\bigr)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\Bern(p)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q4" data-key="fd80a35c" data-check="96dbdd0d">
+  <div class="q-num" aria-hidden="true">Q4</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P_{\rv{X}} = \Bern(\tfrac12)\) and \(\Q_{\rv{X}} = \Bern(\tfrac14)\) be two distributions of \(\rv{X}\), and let \(\P_{\rv{Y}|\rv{X}}\) be the binary symmetric channel of Question 1 with \(0 &lt; \varepsilon &lt; \tfrac12\). Which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 4"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}} = \Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}\), since the channel is the same.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}} = \P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}}\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H(\P_{\rv{X}}) = H(\Q_{\rv{X}})\), since both are the entropy of \(\rv{X}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">Under both joint distributions \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and \(\Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}\), the conditional distribution of \(\rv{Y}\) given \(\rv{X} = x\) is \(\P_{\rv{Y}|\rv{X}=x}\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q5" data-key="bc08f46d" data-check="d3b1ed01">
+  <div class="q-num" aria-hidden="true">Q5</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P_{\rv{X}}\) be uniform on \(\Xcal = \{-1,+1\}\) and \(\P_{\rv{Y}|\rv{X}=x} = \Ncal(x,1)\) for \(x\in\Xcal\). What is the output distribution \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 5"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\Ncal(0,1)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\Ncal(0,2)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\tfrac12\Ncal(-1,1) + \tfrac12\Ncal(1,1)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\Ncal(\rv{X},1)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q6" data-key="ecff9849" data-check="19ec945a">
+  <div class="q-num" aria-hidden="true">Q6</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P\) be a pmf on \(\Xcal\) with support \(\mathcal{S} := \{x : p(x) &gt; 0\}\). Jensen’s inequality for the concave function \(\log\) gives \(H(\P) = \EE_\P\bigl[\log\frac{1}{p(\rv{X})}\bigr] \le \log\EE_\P\bigl[\frac{1}{p(\rv{X})}\bigr]\). What is the right-hand side?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 6"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\log|\mathcal{S}|\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\P)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\log\frac{1}{\max_x p(x)}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(+\infty\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q7" data-key="b4ab835b" data-check="935300a8">
+  <div class="q-num" aria-hidden="true">Q7</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P = \bigl[\tfrac12, \tfrac14, \tfrac14\bigr]\) and let \(\Q\) be uniform on \(\Xcal = \{a,b,c\}\). What is the cross-entropy \(H(\P\|\Q)\), in bits?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 7"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\log 3 - \tfrac32\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\tfrac32\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\tfrac32 - \log 3\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\log 3\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q8" data-key="f778f2f2" data-check="656b8815">
+  <div class="q-num" aria-hidden="true">Q8</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P = \Bern(\tfrac12)\) and \(\Q = \Bern(\tfrac14)\). Which statement is true, in bits?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 8"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(D(\P\|\Q) = D(\Q\|\P)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(D(\P\|\Q) = 1 - \tfrac12\log 3\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(D(\P\|\Q) = H(\Q) - H(\P)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\P\|\Q) &lt; 0\), since \(H(\Q) &lt; H(\P)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q9" data-key="3a033243" data-check="c2802b43">
+  <div class="q-num" aria-hidden="true">Q9</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P = \bigl[\tfrac12, \tfrac12, 0\bigr]\) and \(\Q = \bigl[\tfrac13, \tfrac13, \tfrac13\bigr]\) on \(\Xcal = \{a,b,c\}\). Which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 9"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(D(\P\|\Q) &lt; \infty\) and \(D(\Q\|\P) &lt; \infty\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(D(\P\|\Q) = +\infty\) and \(D(\Q\|\P) &lt; \infty\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(D(\P\|\Q) &lt; \infty\) and \(D(\Q\|\P) = +\infty\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\P\|\Q) = D(\Q\|\P) = +\infty\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q10" data-key="75fecc76" data-check="cb6e3f71">
+  <div class="q-num" aria-hidden="true">Q10</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P_{\rv{Y}} = \Bern(\tfrac12)\), \(\P_{\rv{X}|\rv{Y}=0} = \Bern(0)\) (that is, \(\rv{X} = 0\) when \(\rv{Y} = 0\)) and \(\P_{\rv{X}|\rv{Y}=1} = \Bern(\tfrac12)\). What is \(H(\rv{X}\cond\rv{Y}) \equiv H(\P_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})\), in bits?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 10"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\tfrac14\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H\bigl(\Bern(\tfrac14)\bigr)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(1\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\tfrac12\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q11" data-key="68249f9a" data-check="eb12b461">
+  <div class="q-num" aria-hidden="true">Q11</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which equality is the chain rule of the KL divergence?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 11"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(D(\P_{\rv{Y}|\rv{X}}\P_{\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\Q_{\rv{X}}) = D(\P_{\rv{X}}\|\Q_{\rv{X}}) + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(D(\P_{\rv{Y}|\rv{X}}\P_{\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\Q_{\rv{X}}) = D(\P_{\rv{X}}\|\Q_{\rv{X}}) + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\Q_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(D(\P_{\rv{Y}|\rv{X}}\P_{\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\Q_{\rv{X}}) = D(\P_{\rv{X}}\|\Q_{\rv{X}})\, D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\P_{\rv{Y}|\rv{X}}\P_{\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\Q_{\rv{X}}) = D(\P_{\rv{Y}}\|\Q_{\rv{Y}}) + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}})\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q12" data-key="b65e930c" data-check="1f1604a4">
+  <div class="q-num" aria-hidden="true">Q12</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\rv{X}\) be uniform on \([0,\tfrac12]\). What are \(h(\rv{X})\) and \(h(4\rv{X})\), in bits?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 12"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(h(\rv{X}) = 1\) and \(h(4\rv{X}) = 3\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(h(\rv{X}) = 0\) and \(h(4\rv{X}) = 2\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(h(\rv{X}) = -1\) and \(h(4\rv{X}) = -4\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(h(\rv{X}) = -1\) and \(h(4\rv{X}) = 1\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q13" data-key="62fbc4c3" data-check="87b5fe14">
+  <div class="q-num" aria-hidden="true">Q13</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which expression is <strong>not</strong> equal to \(I(\rv{X};\rv{Y})\) in general?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 13"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(D(\P_{\rv{X}\rv{Y}}\|\P_{\rv{X}}\P_{\rv{Y}})\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(D(\P_{\rv{X}}\P_{\rv{Y}}\|\P_{\rv{X}\rv{Y}})\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(D(\P_{\rv{Y}|\rv{X}}\|\P_{\rv{Y}}\mid\P_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\P_{\rv{X}|\rv{Y}}\|\P_{\rv{X}}\mid\P_{\rv{Y}})\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q14" data-key="c1d8609a" data-check="8ef5fad2">
+  <div class="q-num" aria-hidden="true">Q14</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P_{\rv{Y}|\rv{X}}\) be the binary symmetric channel with crossover probability \(\varepsilon\), and let \(H_2(\varepsilon) := H\bigl(\Bern(\varepsilon)\bigr)\). What are the mutual informations \(I\bigl(\Bern(\tfrac12),\P_{\rv{Y}|\rv{X}}\bigr)\) and \(I\bigl(\Bern(0),\P_{\rv{Y}|\rv{X}}\bigr)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 14"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(1 - H_2(\varepsilon)\) and \(1 - H_2(\varepsilon)\), since the channel is the same</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H_2(\varepsilon)\) and \(0\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(1 - H_2(\varepsilon)\) and \(0\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1\) and \(0\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q15" data-key="dea1dacf" data-check="68d17042">
+  <div class="q-num" aria-hidden="true">Q15</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\rv{X}\) and \(\rv{Y}\) be discrete with \(H(\rv{X}) = 1\), \(H(\rv{Y}) = 1.5\) and \(H(\rv{X},\rv{Y}) = 2\), in bits. What are \(I(\rv{X};\rv{Y})\) and \(H(\rv{Y}\cond\rv{X})\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(I(\rv{X};\rv{Y}) = 0.5\) and \(H(\rv{Y}\cond\rv{X}) = 0.5\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(I(\rv{X};\rv{Y}) = 0.5\) and \(H(\rv{Y}\cond\rv{X}) = 1\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(I(\rv{X};\rv{Y}) = 1.5\) and \(H(\rv{Y}\cond\rv{X}) = 1\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(I(\rv{X};\rv{Y}) = -0.5\) and \(H(\rv{Y}\cond\rv{X}) = 1\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q16" data-key="446e54b2" data-check="95a1765b">
+  <div class="q-num" aria-hidden="true">Q16</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For a fixed \(\P\in\Pcal(\Xcal)\), which \(\Q\in\Pcal(\Xcal)\) minimizes the cross-entropy \(H(\P\|\Q)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 16"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">The uniform distribution on \(\Xcal\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">A point mass at a most likely symbol of \(\P\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">Every \(\Q\): \(H(\P\|\Q)\) does not depend on \(\Q\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\Q = \P\), and the minimum is \(H(\P)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q17" data-key="d90af0df" data-check="590fd3ea">
+  <div class="q-num" aria-hidden="true">Q17</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which inequality holds for all discrete \(\rv{X}\), \(\rv{Y}\), \(\rv{Z}\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 17"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(H(\P_{\rv{X}|\rv{Y}=y}) \le H(\P_{\rv{X}})\) for every \(y\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\rv{X}\cond\rv{Y}) \le H(\rv{X}\cond\rv{Y},\rv{Z})\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H(\rv{X}\cond\rv{Y}) \le H(\rv{X})\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(I(\rv{X};\rv{Y}\cond\rv{Z}) \le I(\rv{X};\rv{Y})\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q18" data-key="1a71af32" data-check="f067ef4f">
+  <div class="q-num" aria-hidden="true">Q18</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\rv{X}\to\rv{Y}\to\rv{Z}\) be a Markov chain. Which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 18"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(I(\rv{X};\rv{Y}\cond\rv{Z}) = 0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\rv{Z}) \le H(\rv{X})\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(I(\rv{X};\rv{Z}) \ge I(\rv{X};\rv{Y})\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(I(\rv{X};\rv{Z}) \le I(\rv{X};\rv{Y})\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q19" data-key="7e9435fb" data-check="d188e6c5">
+  <div class="q-num" aria-hidden="true">Q19</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P_{\rv{X}} = \Bern(0)\), \(\Q_{\rv{X}} = \Bern(1)\), and let \(\P_{\rv{Y}|\rv{X}}\) be the binary symmetric channel with crossover probability \(\tfrac12\). What are \(D(\P_{\rv{X}}\|\Q_{\rv{X}})\) and \(D(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\|\P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}})\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 19"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(+\infty\) and \(0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(+\infty\) and \(+\infty\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(1\) and \(0\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1\) and \(1\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q20" data-key="1a38e108" data-check="0fdf25e2">
+  <div class="q-num" aria-hidden="true">Q20</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 20"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\P\mapsto H(\P)\) is convex on \(\Pcal(\Xcal)\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">For a fixed channel \(\P_{\rv{Y}|\rv{X}}\), \(\P_{\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is concave on \(\Pcal(\Xcal)\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">For a fixed \(\P_{\rv{X}}\), \(\P_{\rv{Y}|\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is concave on \(\Pcal(\Ycal|\Xcal)\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\((\P,\Q)\mapsto D(\P\|\Q)\) is concave on \(\Pcal(\Xcal)\times\Pcal(\Xcal)\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q21" data-key="f6a7979b" data-check="fd3e9d2e">
+  <div class="q-num" aria-hidden="true">Q21</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Among the distributions \(\P\) on \(\Xcal = \{0,1,2,\ldots\}\) with \(\EE_\P[\rv{X}] \le a\), for a given \(a &gt; 0\), which one maximizes \(H(\P)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 21"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">The uniform distribution on \(\{0,1,\ldots,\lfloor 2a\rfloor\}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">The geometric distribution \(q(x) = \frac{1}{1+a}\bigl(\frac{a}{1+a}\bigr)^x\), whose mean is \(a\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">The Poisson distribution with mean \(a\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">None: \(H(\P)\) is unbounded under this constraint</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q22" data-key="5fc9da60" data-check="5282c8be">
+  <div class="q-num" aria-hidden="true">Q22</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Among the pdfs on \(\mathbb{R}\) with \(\EE_\P[\rv{X}^2] \le \sigma^2\), which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 22"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(h(\P) \le \tfrac12\log(2\pi e\sigma^2)\), with equality iff \(\P = \Ncal(0,\sigma^2)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(h(\P) \le \log(2\sigma)\), with equality iff \(\P\) is uniform on \([-\sigma,\sigma]\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(h(\P) \le \tfrac12\log(2\pi\sigma^2)\), with equality iff \(\P = \Ncal(0,\sigma^2)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(h(\P)\) is unbounded under this constraint</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+  </ol>
+</section>
+<section class="block" id="exercises" aria-labelledby="exo-h">
+  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">8 problems</p></div>
+  
+  <ol class="problems">
+<li class="problem" id="p1">
+  <h3 class="p-head"><span class="p-num">Problem 1</span> <span class="p-title">One channel, two input distributions</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \Ycal = \{0,1\}\) and \(\varepsilon\in[0,1]\). The Z-channel \(\P_{\rv{Y}|\rv{X}}\) is defined by \(\P_{\rv{Y}|\rv{X}=0} = \Bern(0)\) and \(\P_{\rv{Y}|\rv{X}=1} = \Bern(1-\varepsilon)\): a \(0\) is always received correctly, and a \(1\) is received as \(0\) with probability \(\varepsilon\). Let \(\P_{\rv{X}} = \Bern(p)\) and \(\Q_{\rv{X}} = \Bern(q)\).</p>
+<ul class="tex-list"><li>Give the pmfs of the joint distributions \(\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) and \(\Q_{\rv{X}}\P_{\rv{Y}|\rv{X}}\) as \(2\times 2\) tables, and the output distributions \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\) and \(\P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}}\).</li><li>Compute the reverse channels of both joint distributions. Are they equal?</li><li>Show that \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}) = H_2\bigl(p(1-\varepsilon)\bigr) - p\,H_2(\varepsilon)\). For \(\varepsilon = \tfrac12\), compare the values at \(p = \tfrac12\) and \(p = \tfrac25\).</li><li>For \(p = \tfrac12\), \(q = \tfrac14\) and \(\varepsilon = \tfrac12\), compute \(D(\P_{\rv{X}}\|\Q_{\rv{X}})\) and \(D(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\|\P_{\rv{Y}|\rv{X}}\circ\Q_{\rv{X}})\), and check the data processing inequality.</li></ul></div>
+</li>
+<li class="problem" id="p2">
+  <h3 class="p-head"><span class="p-num">Problem 2</span> <span class="p-title">Conditional measures are averages</span></h3>
+  <div class="p-body"><p>Let \(\P_{\rv{Y}} = \Bern(\tfrac12)\), \(\P_{\rv{X}|\rv{Y}=0} = \Bern(\tfrac14)\) and \(\P_{\rv{X}|\rv{Y}=1} = \Bern(\tfrac34)\), and let \(\Q_{\rv{X}|\rv{Y}=0} = \Q_{\rv{X}|\rv{Y}=1} = \Bern(\tfrac12)\).</p>
+<ul class="tex-list"><li>Compute \(\P_{\rv{X}} := \P_{\rv{X}|\rv{Y}}\circ\P_{\rv{Y}}\), \(H(\P_{\rv{X}})\), \(H(\P_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})\) and \(I(\rv{X};\rv{Y})\). Check that conditioning reduces entropy.</li><li>Compute \(D(\P_{\rv{X}|\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\mid\P_{\rv{Y}})\) and \(D(\P_{\rv{X}|\rv{Y}}\circ\P_{\rv{Y}}\|\Q_{\rv{X}|\rv{Y}}\circ\P_{\rv{Y}})\). Check that conditioning increases divergence.</li><li>Conditioning reduces entropy only on average. Give \(\P_{\rv{Y}}\) and \(\P_{\rv{X}|\rv{Y}}\) such that \(H(\P_{\rv{X}|\rv{Y}=y}) &gt; H(\P_{\rv{X}})\) for some \(y\).</li></ul></div>
+</li>
+<li class="problem" id="p3">
+  <h3 class="p-head"><span class="p-num">Problem 3</span> <span class="p-title">Chain rules for sequences</span></h3>
+  <div class="p-body"><p>Let \(\rv{X}^n = [\rv{X}_1,\ldots,\rv{X}_n] \sim \P_{\rv{X}^n}\) with marginals \(\P_{\rv{X}_1},\ldots,\P_{\rv{X}_n}\) on a finite \(\Xcal\). For \(\P\in\Pcal(\Xcal)\), \(\P^n\) denotes the product distribution, with pmf \(\prod_{i=1}^n p(x_i)\).</p>
+<ul class="tex-list"><li>Show that \(H(\P^n) = n H(\P)\) and \(D(\P^n\|\Q^n) = n D(\P\|\Q)\).</li><li>Show that \(H(\rv{X}^n) \le \sum_{i=1}^n H(\rv{X}_i)\), with equality iff \(\rv{X}_1,\ldots,\rv{X}_n\) are independent.</li><li><p>Let \(\Q_1,\ldots,\Q_n\in\Pcal(\Xcal)\), and let \(\Q_{\rv{X}^n}\) have pmf \(\prod_{i=1}^n q_i(x_i)\). Show that</p>
+<div class="math-display">\[\begin{aligned}
+        D(\P_{\rv{X}^n}\|\Q_{\rv{X}^n})
+          &amp;= D\bigl(\P_{\rv{X}^n}\|\P_{\rv{X}_1}\cdots\P_{\rv{X}_n}\bigr) + \sum_{i=1}^n D(\P_{\rv{X}_i}\|\Q_i) \\
+          &amp;\ge \sum_{i=1}^n D(\P_{\rv{X}_i}\|\Q_i),
+      \end{aligned}\]</div>
+<p>where \(\P_{\rv{X}_1}\cdots\P_{\rv{X}_n}\) is the product of the marginals.</p></li></ul></div>
+</li>
+<li class="problem" id="p4">
+  <h3 class="p-head"><span class="p-num">Problem 4</span> <span class="p-title">Erasure channel and convexity</span></h3>
+  <div class="p-body"><p>In the binary erasure channel, \(\Xcal = \{0,1\}\), \(\Ycal = \{0,1,\mathrm{e}\}\), and \(\P_{\rv{Y}|\rv{X}=x}\) gives \(\rv{Y} = x\) with probability \(1-\alpha\) and \(\rv{Y} = \mathrm{e}\) (erasure) with probability \(\alpha\).</p>
+<ul class="tex-list"><li>For \(\P_{\rv{X}} = \Bern(p)\), give the pmf of \(\P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\), and show that \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}) = (1-\alpha) H_2(p)\). Which \(\P_{\rv{X}}\) maximizes it?</li><li>Show that the erasure channel is the mixture \((1-\alpha)\P^{(0)}_{\rv{Y}|\rv{X}} + \alpha\P^{(1)}_{\rv{Y}|\rv{X}}\) of the noiseless channel \(\P^{(0)}_{\rv{Y}|\rv{X}}\) (\(\rv{Y} = \rv{X}\)) and the channel \(\P^{(1)}_{\rv{Y}|\rv{X}}\) that always erases. Check the convexity of \(I\) in the channel here.</li><li>For \(\varepsilon\in[0,\tfrac12]\), write the binary symmetric channel with crossover probability \(\varepsilon\) as a mixture of the binary symmetric channels with crossover probabilities \(0\) and \(\tfrac12\). Deduce from the convexity of \(I\) in the channel that \(H_2(\varepsilon) \ge 2\varepsilon\).</li></ul></div>
+</li>
+<li class="problem" id="p5">
+  <h3 class="p-head"><span class="p-num">Problem 5</span> <span class="p-title">Functions and data processing</span></h3>
+  <div class="p-body"><p>Let \(\rv{X}\) be discrete and \(g\) a function on \(\Xcal\).</p>
+<ul class="tex-list"><li>Apply the chain rule to \(H\bigl(\rv{X}, g(\rv{X})\bigr)\) in both orders to show that \(H\bigl(g(\rv{X})\bigr) \le H(\rv{X})\), with equality iff \(g\) is one-to-one on the support of \(\P_{\rv{X}}\). Compute \(H(\rv{X})\) and \(H(\rv{X}^2)\) for \(\rv{X}\) uniform on \(\{-2,-1,0,1,2\}\).</li><li>For \(\P_{\rv{X}},\Q_{\rv{X}}\in\Pcal(\Xcal)\), let \(\P_{g(\rv{X})}\) and \(\Q_{g(\rv{X})}\) be the distributions of \(g(\rv{X})\) when \(\rv{X}\sim\P_{\rv{X}}\) and when \(\rv{X}\sim\Q_{\rv{X}}\). Show that \(D(\P_{g(\rv{X})}\|\Q_{g(\rv{X})}) \le D(\P_{\rv{X}}\|\Q_{\rv{X}})\). <em>Hint: write \(\P_{g(\rv{X})}\) as the output distribution of a channel.</em></li><li>Let \(\rv{X}\to\rv{Y}\to\rv{Z}\) be a Markov chain. Show that \(I(\rv{X};\rv{Z}) \le I(\rv{Y};\rv{Z})\), in addition to \(I(\rv{X};\rv{Z}) \le I(\rv{X};\rv{Y})\), and that \(H(\rv{X}\cond\rv{Z}) \ge H(\rv{X}\cond\rv{Y})\).</li></ul></div>
+</li>
+<li class="problem" id="p6">
+  <h3 class="p-head"><span class="p-num">Problem 6</span> <span class="p-title">Mixtures and the concavity of entropy</span></h3>
+  <div class="p-body"><p>Let \(\P_0,\P_1\in\Pcal(\Xcal)\) on a finite \(\Xcal\), \(\lambda\in[0,1]\) and \(\P_\lambda := (1-\lambda)\P_0 + \lambda\P_1\). As in the lecture, let \(\rv{S}\sim\Bern(\lambda)\) and \(\P_{\rv{X}|\rv{S}=s} = \P_s\) for \(s\in\{0,1\}\).</p>
+<ul class="tex-list"><li>Show that \(\P_{\rv{X}|\rv{S}}\circ\P_{\rv{S}} = \P_\lambda\) and that \(H(\P_\lambda) - (1-\lambda)H(\P_0) - \lambda H(\P_1) = I(\rv{S};\rv{X})\).</li><li>Show that \(I(\rv{S};\rv{X}) = (1-\lambda)D(\P_0\|\P_\lambda) + \lambda D(\P_1\|\P_\lambda)\).</li><li>Deduce that \(0 \le H(\P_\lambda) - (1-\lambda)H(\P_0) - \lambda H(\P_1) \le H_2(\lambda)\). When does equality hold on each side?</li></ul></div>
+</li>
+<li class="problem" id="p7">
+  <h3 class="p-head"><span class="p-num">Problem 7</span> <span class="p-title">Maximum entropy distributions</span></h3>
+  <div class="p-body"><p>Use the Gibbs distribution of the lecture, with the constraint \(\EE_\P\bigl[c(\rv{X})\bigr] \le a\) for a given \(a &gt; 0\).</p>
+<ul class="tex-list"><li>On \(\Xcal = \{0,1,2,\ldots\}\), find the pmf that maximizes \(H(\P)\) under \(\EE_\P[\rv{X}] \le a\), and show that the maximum is \((1+a)\log(1+a) - a\log a\).</li><li>On \(\Xcal = [0,\infty)\), find the pdf that maximizes \(h(\P)\) under \(\EE_\P[\rv{X}] \le a\), and the maximum.</li><li>On \(\Xcal = \mathbb{R}\), find the pdf that maximizes \(h(\P)\) under \(\EE_\P\bigl[|\rv{X}|\bigr] \le a\), and the maximum.</li><li>On \(\Xcal = \mathbb{R}\), show that \(h(\P)\) is unbounded under \(\EE_\P[\rv{X}] \le a\). Which assumption of the lecture fails?</li></ul></div>
+</li>
+<li class="problem" id="p8">
+  <h3 class="p-head"><span class="p-num">Problem 8</span> <span class="p-title">Cross-entropy as a loss</span></h3>
+  <div class="p-body"><p>A label \(\rv{Y}\in\Ycal\) is predicted from a feature \(\rv{X}\in\Xcal\), both finite, with \((\rv{X},\rv{Y})\sim\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\). A model \(\Q_{\rv{Y}|\rv{X}}\in\Pcal(\Ycal|\Xcal)\) is chosen to minimize the expected log-loss \(L(\Q_{\rv{Y}|\rv{X}}) := \EE_{\P_{\rv{X}}\P_{\rv{Y}|\rv{X}}}\bigl[\log\frac{1}{q(\rv{Y}\cond\rv{X})}\bigr]\).</p>
+<ul class="tex-list"><li>Show that \(L(\Q_{\rv{Y}|\rv{X}}) = H(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}}) = H(\P_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}}) + D(\P_{\rv{Y}|\rv{X}}\|\Q_{\rv{Y}|\rv{X}}\mid\P_{\rv{X}})\).</li><li>Deduce that \(L(\Q_{\rv{Y}|\rv{X}}) \ge H(\rv{Y}\cond\rv{X})\), with equality iff \(\Q_{\rv{Y}|\rv{X}=x} = \P_{\rv{Y}|\rv{X}=x}\) for every \(x\) with \(p(x) &gt; 0\).</li><li>A model that ignores the feature has \(\Q_{\rv{Y}|\rv{X}=x} = \Q_{\rv{Y}}\) for every \(x\). Show that the best such model is \(\Q_{\rv{Y}} = \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\), and that its loss exceeds the smallest loss by \(I(\rv{X};\rv{Y})\).</li></ul></div>
+</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Other lectures"><span></span><a class="next" href="lecture-2.html"><span class="dir">Lecture 2 &rarr;</span><span class="ttl">Method of types</span></a></nav>
+</main></div>
+<footer class="site-footer" data-quiet>
+  <div class="wrap footer-grid">
+    <p class="footer-who">Elements of Information Theory &middot; 2026–2027<br><a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a> &middot; CentraleSupélec &middot; <a href="mailto:sheng.yang@centralesupelec.fr">sheng.yang@centralesupelec.fr</a></p>
+  </div>
+</footer>
+</div>
+</body>
+</html>

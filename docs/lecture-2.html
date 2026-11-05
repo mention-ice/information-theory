@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 2: Method of types · Elements of Information Theory</title>
+<meta name="description" content="Lecture 2 of Elements of Information Theory: notes, quiz and exercises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"EE": "\\mathbb{E}", "P": "\\mathrm{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Tcal": "\\mathcal{T}", "Xcal": "\\mathcal{X}", "Ycal": "\\mathcal{Y}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "epsilon": "\\varepsilon", "ind": ["\\pmb{1}{\\left\\{#1\\right\\}}", 1], "qedhere": "", "rv": ["\\mathrm{#1}", 1]}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
+<script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script defer src="assets/site.js"></script>
+<link rel="stylesheet" href="assets/widgets/l2-type-classes.css">
+<script defer src="assets/widgets/l2-type-classes.js"></script>
+<link rel="stylesheet" href="assets/widgets/l2-simplex.css">
+<script defer src="assets/widgets/l2-simplex.js"></script>
+<link rel="stylesheet" href="assets/widgets/l2-concentration.css">
+<script defer src="assets/widgets/l2-concentration.js"></script>
+</head>
+<body>
+<canvas id="bitfield" aria-hidden="true"></canvas>
+<div class="page page-lecture">
+
+<header class="lec-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">&larr; Elements of Information Theory</a></nav>
+    <div class="lecture-box">
+      <div class="lb-top"><span>Elements of Information Theory</span><span>2026–2027</span></div>
+      <h1><span class="lb-n">Lecture 2:</span> Method of types</h1>
+      <div class="lb-bottom"><span class="lb-lect">Lecturer: <a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a></span><span>Thu 5 Nov 2026</span></div>
+    </div>
+    <div class="huff" data-quiet>
+  <p class="huff-bits" aria-hidden="true"><span class="cw cw0" title="M &rarr; 1010">1010</span><span class="cw cw1" title="e &rarr; 010">010</span><span class="cw cw0" title="t &rarr; 100">100</span><span class="cw cw1" title="h &rarr; 1101">1101</span><span class="cw cw0" title="o &rarr; 011">011</span><span class="cw cw1" title="d &rarr; 1011">1011</span><span class="cw cw0" title="space &rarr; 001">001</span><span class="cw cw1" title="o &rarr; 011">011</span><span class="cw cw0" title="f &rarr; 1100">1100</span><span class="cw cw1" title="space &rarr; 001">001</span><span class="cw cw0" title="t &rarr; 100">100</span><span class="cw cw1" title="y &rarr; 000">000</span><span class="cw cw0" title="p &rarr; 1110">1110</span><span class="cw cw1" title="e &rarr; 010">010</span><span class="cw cw0" title="s &rarr; 1111">1111</span></p>
+  <p class="huff-cap">The title above, Huffman-coded from its own letter frequencies: 51 bits, 3.40 bits per character (entropy 3.37). Alternate shading separates the codewords.</p>
+</div>
+    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">8</span></a></nav>
+  </div>
+</header>
+<div class="sheet-wrap wrap"><main class="sheet">
+<section class="block" id="notes" aria-labelledby="notes-h">
+  <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
+  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>The type \(\hat{\P}_{x^n}\) of a sequence is its empirical distribution. There are only \(K_{n,M} \le (n+1)^{M-1}\) types, polynomially many, for \(M^n\) sequences.</li><li>All sequences of a type class have the same probability under an i.i.d. source: \(\Q^n(x^n) = 2^{-nH(\hat{\P}\|\Q)}\) for \(x^n\in\Tcal^{(n)}(\hat{\P})\). The most likely source for \(x^n\) is its type.</li><li>A type class has \(|\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\,2^{nH(\hat{\P})}\) sequences and probability \(\Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) = \gamma_n(\hat{\P})\,2^{-nD(\hat{\P}\|\Q)}\), where \(\gamma_n(\hat{\P})\in\bigl[K_{n,M}^{-1},1\bigr]\) is polynomial in \(n\). On the exponential scale, the size is \(2^{nH}\) and the probability is \(2^{-nD}\).</li><li>The typical set \(\Tcal_\epsilon^{(n)}(\P)\) is the union of the type classes close to \(\P\). It has probability at least \(1-\delta_T(\epsilon,n,\P)\to 1\) and about \(2^{nH(\P)}\) sequences, each of probability about \(2^{-nH(\P)}\) (AEP).</li><li>An \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of a typical \(y^n\) is jointly typical with it with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</li></ul></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-2-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">278 KB</span></a><a class="file-btn" href="notes/lecture-2-method-of-types.pdf"><span class="file-kind">PDF</span><span class="file-name">Detailed notes and problems</span><span class="file-size">340 KB</span></a></div>
+  <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">2.1</span> <a href="#cn-2-1">Types, type classes</a></li><li class="o-l1"><span class="o-num">2.2</span> <a href="#cn-2-2">Size and probability of type classes</a></li><li class="o-l2"><span class="o-num">2.2.1</span> <a href="#cn-2-2-1">Number of type classes</a></li><li class="o-l2"><span class="o-num">2.2.2</span> <a href="#cn-2-2-2">Size of each type class</a></li><li class="o-l2"><span class="o-num">2.2.3</span> <a href="#cn-2-2-3">Probability of type classes</a></li><li class="o-l1"><span class="o-num">2.3</span> <a href="#cn-2-3">Typical sequences</a></li><li class="o-l1"><span class="o-num">2.4</span> <a href="#cn-2-4">Jointly and conditionally typical sequences</a></li></ol>
+  <div class="cnotes"><h3 class="cn-h cn-l1" id="cn-2-1"><span class="cn-num">2.1</span> Types, type classes</h3>
+<p>Let \(\Xcal = \{a_1,\ldots,a_M\}\) be a finite alphabet, \(M = |\Xcal|\). The <strong class="newword">type</strong> of a sequence \(x^n\in\Xcal^n\) is its empirical distribution:</p>
+<div class="math-display">\[\begin{aligned}
+  \hat{\P}_{x^n}(a) &amp;:= \frac{1}{n}\sum_{i=1}^n \ind{x_i = a}, \qquad a\in\Xcal, \\
+  \hat{\P}_{x^n} &amp;:= \bigl[\,\hat{\P}_{x^n}(a) :\ a\in\Xcal\,\bigr].
+\end{aligned}\]</div>
+<p>A type is thus of the form \(\hat{\P} = \frac{1}{n}\,[n_1,\ldots,n_M]\), where \(n_i\) is the number of occurrences of \(a_i\) in the sequence.</p>
+<p>The <strong class="newword">set of types</strong> is</p>
+<div class="math-display">\[\begin{aligned}
+  \Pcal_n \equiv \Pcal_n(\Xcal) &amp;:= \bigl\{\hat{\P}_{x^n} :\ x^n\in\Xcal^n\bigr\} \\
+    &amp;= \Bigl\{\frac{1}{n}\,[n_1,\ldots,n_M] :\ n_i\in\mathbb{Z}_+,\ \sum_{i=1}^M n_i = n\Bigr\} \\
+    &amp;\subset \Pcal(\Xcal) := \Bigl\{[p_1,\ldots,p_M] :\ p_i \ge 0,\ \sum_{i=1}^M p_i = 1\Bigr\},
+\end{aligned}\]</div>
+<p>where the set of distributions \(\Pcal(\Xcal)\) is the \((M-1)\)-simplex.</p>
+<p>The <strong class="newword">type class</strong> of a type \(\hat{\P}\in\Pcal_n\) is</p>
+<div class="math-display">\[\Tcal^{(n)}(\hat{\P}) := \bigl\{x^n\in\Xcal^n :\ \hat{\P}_{x^n} = \hat{\P}\bigr\}.\]</div>
+<p><em>Example.</em> Let \(\Xcal = \{0,1\}\) (so \(a_1 = 0\), \(a_2 = 1\), \(M = 2\)) and \(n = 4\). The sequence \(x^4 = 0110\) contains \(n_1 = 2\) zeros and \(n_2 = 2\) ones, so its type is</p>
+<div class="math-display">\[\hat{\P}_{0110} = \frac{1}{4}\,[2,2] = \Bigl[\frac{1}{2},\frac{1}{2}\Bigr].\]</div>
+<p>The set of types has \(n+1 = 5\) elements,</p>
+<div class="math-display">\[\Pcal_4 = \Bigl\{[0,1],\ \Bigl[\frac{1}{4},\frac{3}{4}\Bigr],\ \Bigl[\frac{1}{2},\frac{1}{2}\Bigr],\
+    \Bigl[\frac{3}{4},\frac{1}{4}\Bigr],\ [1,0]\Bigr\},\]</div>
+<p>equally spaced points on the segment \(\Pcal(\Xcal) = \bigl\{[p,1-p] :\ p\in[0,1]\bigr\}\), which is the \(1\)-simplex. The type class of \(\bigl[\frac{1}{2},\frac{1}{2}\bigr]\) consists of the \(\binom{4}{2} = 6\) sequences with two zeros and two ones:</p>
+<div class="math-display">\[\Tcal^{(4)}\Bigl(\Bigl[\frac{1}{2},\frac{1}{2}\Bigr]\Bigr)
+    = \{0011,\ 0101,\ 0110,\ 1001,\ 1010,\ 1100\}.\]</div>
+<p>The five type classes, of sizes \(1, 4, 6, 4, 1\), partition the \(2^4 = 16\) sequences of \(\Xcal^4\).</p>
+<div class="widget" data-widget="l2-type-classes" data-args="n=4 q=0.25"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<p>In this lecture, we answer three questions:</p>
+<ul class="tex-list"><li>the number of types,</li><li>the size of each type class,</li><li>the probability of each type class.</li></ul>
+<h3 class="cn-h cn-l1" id="cn-2-2"><span class="cn-num">2.2</span> Size and probability of type classes</h3>
+
+<h4 class="cn-h cn-l2" id="cn-2-2-1"><span class="cn-num">2.2.1</span> Number of type classes</h4>
+<p>By “stars and bars”,</p>
+<div class="math-display">\[\begin{aligned}
+  K_{n,M} := |\Pcal_n| = \binom{n+M-1}{M-1}
+    &amp;\le (n+1)^{M-1} \\
+    &amp;\le n^M \qquad \text{if } n\ge M \text{ and } n\ge 3.
+\end{aligned}\]</div>
+<div class="widget" data-widget="l2-simplex" data-args="n=6"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h4 class="cn-h cn-l2" id="cn-2-2-2"><span class="cn-num">2.2.2</span> Size of each type class</h4>
+<p>For a type \(\hat{\P}\in\Pcal_n\),</p>
+<div class="math-display">\[\begin{aligned}
+  |\Tcal^{(n)}(\hat{\P})|
+    &amp;= \binom{n}{n_1,\ldots,n_M}
+     = \binom{n}{n\hat{\P}(a_1),\ldots,n\hat{\P}(a_M)} \\
+    &amp;= \frac{n!}{\prod_{a\in\Xcal}\bigl(n\hat{\P}(a)\bigr)!}.
+\end{aligned}\]</div>
+<p>For \(M = 2\), a type is \(\hat{\P} = \frac{1}{n}[k, n-k]\) with \(k\in\{0,\ldots,n\}\), and we get the binomial coefficient</p>
+<div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = \binom{n}{k} = \frac{n!}{k!\,(n-k)!},\]</div>
+<p>the number of binary sequences of length \(n\) with \(k\) occurrences of \(a_1\). For example, \(\binom{4}{2} = 6\) in the example of Section 2.1.</p>
+<p>The type classes partition \(\Xcal^n\), as sketched below. Counting the sequences class by class therefore gives</p>
+<div class="math-display">\[\sum_{\hat{\P}\in\Pcal_n} |\Tcal^{(n)}(\hat{\P})|
+  = \sum_{\substack{n_1,\ldots,n_M\in\mathbb{Z}_+\\ n_1+\cdots+n_M = n}} \binom{n}{n_1,\ldots,n_M}
+  = M^n,\]</div>
+<p>which is the multinomial theorem for \((1+\cdots+1)^n\). For \(M = 2\), it reads \(\sum_{k=0}^n \binom{n}{k} = 2^n\), e.g., \(1+4+6+4+1 = 16\) for \(n = 4\).</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-2-48a6e4527d60fc35ff32.svg" alt="Figure 1 of the notes" style="width:248px"></figure></div>
+<h4 class="tex-h">Stirling’s approximation.</h4>
+<div class="math-display">\[n! = \sqrt{2\pi n}\,\Bigl(\frac{n}{e}\Bigr)^n e^{\frac{1}{12n+\theta_n}},
+  \qquad \theta_n\in[0,1].\]</div>
+<p>Applied to each factorial, it gives, for \(\hat{\P}\in\Pcal_n\) with \(n_i = n\hat{\P}(a_i) \ge 1\) for all \(i\),</p>
+<div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{nH(\hat{\P})}\,
+    \sqrt{\frac{n}{n_1\cdots n_M}\,(2\pi)^{-(M-1)}}\;
+    e^{\frac{1}{12n+\theta_n} - \sum_{i=1}^{M}\frac{1}{12n_i+\theta_{n_i}}}.\]</div>
+<p>The factor after \(2^{nH(\hat{\P})}\) is polynomial in \(n\); we come back to it in Section 2.2.3. If \(n_i = 0\) for some \(i\), we simply remove \(a_i\) from the alphabet: the formula above holds with \(M\) replaced by \(\tilde{M} := |\{a\in\Xcal :\ \hat{\P}(a) &gt; 0\}|\), the effective size of the alphabet for the type \(\hat{\P}\).</p>
+<h4 class="cn-h cn-l2" id="cn-2-2-3"><span class="cn-num">2.2.3</span> Probability of type classes</h4>
+<p>Let \(\Q\in\Pcal(\Xcal)\) be a probability measure with pmf \(q\), and let \(\Q^n\) be the i.i.d. distribution on \(\Xcal^n\), that is, the product measure with pmf \(q^n(x^n) := \prod_{i=1}^n q(x_i)\). Since the alphabet is finite, a measure is determined by its pmf, and we use the same letter for both: \(\Q(a) := \Q(\{a\}) = q(a)\), \(\Q^n(x^n) := \Q^n(\{x^n\}) = q^n(x^n)\), and \(\Q^n(\mathcal{A}) = \sum_{x^n\in\mathcal{A}} \Q^n(x^n)\) for every \(\mathcal{A}\subseteq\Xcal^n\). The same shorthand is used for \(\P\) and for types.</p>
+<ul class="tex-list"><li><p><strong class="newword">Probability of a sequence under \(\Q^n\).</strong></p>
+<div class="math-display">\[\begin{aligned}
+    \Q^n(x^n) &amp;= \prod_{i=1}^n \Q(x_i) = \prod_{a\in\Xcal}\Q(a)^{n\hat{\P}(a)} \\
+      &amp;= 2^{n\sum_{a\in\Xcal}\hat{\P}(a)\log\Q(a)} \\
+      &amp;= 2^{-nH(\hat{\P}\|\Q)},
+  \end{aligned}\]</div>
+<p>where \(\hat{\P} := \hat{\P}_{x^n}\) is the type of \(x^n\). Since \(H(\hat{\P}\|\Q) = H(\hat{\P}) + D(\hat{\P}\|\Q)\), with \(D(\hat{\P}\|\Q) = 0\) if and only if \(\Q = \hat{\P}\), the <strong class="newword">maximum-likelihood</strong> estimate of the source from \(x^n\) is its type:</p>
+<div class="math-display">\[\Q^* := \operatorname*{arg\,max}_{\Q\in\Pcal(\Xcal)} \Q^n(x^n) = \hat{\P}_{x^n}.\]</div></li><li><p><strong class="newword">Probability of a type class.</strong> For every \(\hat{\P}\in\Pcal_n\),</p>
+<div class="math-display">\[\begin{aligned}
+    \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)
+      &amp;= \sum_{x^n\in\Tcal^{(n)}(\hat{\P})} \Q^n(x^n) \\
+      &amp;= |\Tcal^{(n)}(\hat{\P})|\, 2^{-nH(\hat{\P}\|\Q)}.
+      \qquad\qquad \circnum{\star}
+  \end{aligned}\]</div></li><li><p><strong class="newword">Most likely source for a type class.</strong> For every \(\hat{\P}\in\Pcal_n\) and every \(\Q\in\Pcal(\Xcal)\),</p>
+<div class="math-display">\[\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) \ge \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr),\]</div>
+<p>from \(\circnum{\star}\), since \(H(\hat{\P}\|\Q) \ge H(\hat{\P})\).</p></li><li><p><strong class="newword">Most likely type class under a source.</strong> For every \(\hat{\P},\hat{\Q}\in\Pcal_n\),</p>
+<div class="math-display">\[\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) \ge \hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\Q})\bigr),\]</div>
+<p>that is, the type class of \(\hat{\P}\) is the most likely one under \(\hat{\P}^n\). Indeed, using \(s!/t! \ge t^{s-t}\), we have</p>
+<div class="math-display">\[\frac{|\Tcal^{(n)}(\hat{\P})|}{|\Tcal^{(n)}(\hat{\Q})|}
+    \ge 2^{n(H(\hat{\P}) - H(\hat{\Q}\|\hat{\P}))},\]</div>
+<p>so, by \(\circnum{\star}\),</p>
+<div class="math-display">\[\begin{aligned}
+    \frac{\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)}{\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\Q})\bigr)}
+      &amp;= \frac{|\Tcal^{(n)}(\hat{\P})|}{|\Tcal^{(n)}(\hat{\Q})|}\,
+         \frac{2^{-nH(\hat{\P}\|\hat{\P})}}{2^{-nH(\hat{\Q}\|\hat{\P})}} \\
+      &amp;\ge 2^{n(H(\hat{\P})-H(\hat{\Q}\|\hat{\P})) - n(H(\hat{\P}) - H(\hat{\Q}\|\hat{\P}))} \\
+      &amp;= 1.
+  \end{aligned}\]</div>
+<p>If the uniform distribution \(\hat{\P}\) is a type (\(M\) divides \(n\)), then \(H(\hat{\Q}\|\hat{\P}) = \log M = H(\hat{\P})\) for every \(\hat{\Q}\), so the size bound above has exponent \(0\): the uniform type class is the largest.</p></li><li><p><strong class="newword">Maximum-likelihood probability of a type class.</strong> For \(\hat{\P}\in\Pcal_n\), it is defined as</p>
+<div class="math-display">\[\gamma_n(\hat{\P}) := \hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)
+      = \max_{\Q\in\Pcal(\Xcal)} \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr),\]</div>
+<p>since the maximum is attained at \(\Q = \hat{\P}\), as shown above. By \(\circnum{\star}\) with \(\Q = \hat{\P}\),</p>
+<div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{nH(\hat{\P})}\, \gamma_n(\hat{\P}).\]</div>
+<p>Since the \(K_{n,M}\) type classes partition \(\Xcal^n\) and \(\Tcal^{(n)}(\hat{\P})\) is the most likely one under \(\hat{\P}^n\), we have \(1 \ge \gamma_n(\hat{\P}) \ge K_{n,M}^{-1}\). Hence, with \(\eta_n := \frac{1}{n}\log \gamma_n(\hat{\P})\),</p>
+<div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{n(H(\hat{\P})+\eta_n)},
+    \qquad -\frac{\log K_{n,M}}{n} \le \eta_n \le 0,\]</div>
+<p>so that \(\eta_n\to 0\) as \(n\to\infty\), uniformly over \(\hat{\P}\in\Pcal_n\). Moreover, Stirling’s approximation in Section 2.2.2 gives (exercise)</p>
+<div class="math-display">\[\gamma_n(\hat{\P}) \simeq (2\pi n)^{-\frac{\tilde{M}-1}{2}}\,
+      \tilde{M}^{\frac{\tilde{M}}{2}}\, 2^{\frac{\tilde{M}}{2} D(\mathrm{U}\|\hat{\P})},\]</div>
+<p>where \(\mathrm{U}\) is the uniform distribution on \(\mathrm{supp}(\hat{\P})\), \(\tilde{M}\) is the effective alphabet size defined in Section 2.2.2, and \(\simeq\) means that the ratio of both sides tends to \(1\) as \(n\to\infty\). So \(\gamma_n(\hat{\P})\) is polynomial in \(n\), and goes to \(0\) polynomially fast if \(\tilde{M} \ge 2\)! Among types with the same support size \(\tilde{M}\), the uniform type has the smallest maximum-likelihood probability, although its type class is the largest.</p></li><li><p>For \(\hat{\P}\in\Pcal_n\) and \(\Q\in\Pcal(\Xcal)\),</p>
+<div class="math-display">\[\begin{aligned}
+    \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) &amp;= |\Tcal^{(n)}(\hat{\P})|\, 2^{-nH(\hat{\P}\|\Q)} \\
+      &amp;= \gamma_n(\hat{\P})\, 2^{nH(\hat{\P})-nH(\hat{\P}\|\Q)} \\
+      &amp;= \gamma_n(\hat{\P})\, 2^{-nD(\hat{\P}\|\Q)}.
+  \end{aligned}\]</div>
+<p>If \(\hat{\P}\ne\Q\), then \(D(\hat{\P}\|\Q) &gt; 0\), and the type class of \(\hat{\P}\) has an exponentially low probability under \(\Q^n\).</p></li></ul>
+<div class="widget" data-widget="l2-concentration" data-args="q=0.3 n=50 scale=log"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Summary.</strong> For \(\hat{\P}\in\Pcal_n\), \(x^n\in\Tcal^{(n)}(\hat{\P})\), and \(\Q\in\Pcal(\Xcal)\),</p>
+<div class="math-display">\[\begin{aligned}
+    |\Pcal_n| &amp;= K_{n,M} \le (n+1)^{M-1}, &amp;
+    \Q^n(x^n) &amp;= 2^{-nH(\hat{\P}\|\Q)}, \\
+    |\Tcal^{(n)}(\hat{\P})| &amp;= \gamma_n(\hat{\P})\, 2^{nH(\hat{\P})}, &amp;
+    \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) &amp;= \gamma_n(\hat{\P})\, 2^{-nD(\hat{\P}\|\Q)},
+  \end{aligned}\]</div>
+<p>where \(\gamma_n(\hat{\P}) := \hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) \in \bigl[K_{n,M}^{-1}, 1\bigr]\).</p></div></div></div>
+<h3 class="cn-h cn-l1" id="cn-2-3"><span class="cn-num">2.3</span> Typical sequences</h3>
+<p>Let \(\P\in\Pcal(\Xcal)\) and \(\epsilon\in[0,1]\). A sequence \(x^n\in\Xcal^n\) is called <strong class="newword">\(\epsilon\)-typical</strong> with respect to \(\P\), denoted by \(x^n\in\Tcal_\epsilon^{(n)}(\P)\), if its type is close to \(\P\):</p>
+<div class="math-display">\[|\hat{\P}_{x^n}(a) - \P(a)| \le \epsilon\,\P(a),\quad\text{i.e.,}\quad
+  (1-\epsilon)\P(a) \le \hat{\P}_{x^n}(a) \le (1+\epsilon)\P(a),
+  \qquad \forall\,a\in\Xcal.\]</div>
+<p>Therefore, we call</p>
+<div class="math-display">\[\begin{aligned}
+  \Tcal_\epsilon^{(n)}(\P)
+    &amp;:= \bigl\{x^n :\ |\hat{\P}_{x^n}(a) - \P(a)| \le \epsilon\,\P(a),\ \forall\,a\in\Xcal\bigr\} \\
+    &amp;= \bigcup\bigl\{\Tcal^{(n)}(\hat{\P}) :\ \hat{\P}\in\Pcal_n,\
+       |\hat{\P}(a) - \P(a)| \le \epsilon\,\P(a),\ \forall\,a\in\Xcal\bigr\}
+\end{aligned}\]</div>
+<p>the <strong class="newword">strongly typical set</strong>, or set of \(\epsilon\)-typical \(n\)-sequences; it is a union of type classes. If \(\P(a) = 0\), the constraint forces \(\hat{\P}_{x^n}(a) = 0\), so the type of a typical sequence is absolutely continuous with respect to \(\P\): \(\hat{\P}_{x^n}\ll\P\) for every \(x^n\in\Tcal_\epsilon^{(n)}(\P)\). If \(\epsilon &lt; 1\), then \(\hat{\P}_{x^n}(a) \ge (1-\epsilon)\P(a) &gt; 0\) whenever \(\P(a) &gt; 0\), so the two even have the same support. For \(\epsilon = 0\), the typical set is \(\Tcal^{(n)}(\P)\) if \(\P\) is a type, and \(\emptyset\) otherwise. Typicality can also be written as</p>
+<div class="math-display">\[\Bigl|\frac{\hat{\P}_{x^n}(a)}{\P(a)} - 1\Bigr| \le \epsilon, \qquad \forall\,a\in\Xcal,\]</div>
+<p>with the conventions \(c/0 = \infty\) for \(c &gt; 0\) and \(0/0 = 1\).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Typical average lemma.</strong> For every function \(g:\Xcal\to\mathbb{R}\) and every \(x^n\in\Tcal_\epsilon^{(n)}(\P)\),</p>
+<div class="math-display">\[\Bigl|\frac{1}{n}\sum_{i=1}^n g(x_i) - \EE_\P\bigl[g(\rv{X})\bigr]\Bigr|
+    \le \epsilon\,\EE_\P\bigl[|g(\rv{X})|\bigr].\]</div></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>The average is \(\EE_{\hat{\P}_{x^n}}[g(\rv{X})]\), and \(|\hat{\P}_{x^n}(a)/\P(a) - 1| \le \epsilon\) for all \(a\). Since \(\hat{\P}_{x^n}\ll\P\), the ratio \(\hat{\P}_{x^n}(a)/\P(a)\) is the Radon–Nikodym derivative \(\frac{\mathrm{d}\hat{\P}_{x^n}}{\mathrm{d}\P}(a)\), and by a change of measure,</p>
+<div class="math-display">\[\Bigl|\EE_{\hat{\P}_{x^n}}\bigl[g(\rv{X})\bigr] - \EE_\P\bigl[g(\rv{X})\bigr]\Bigr|
+    = \Bigl|\EE_\P\Bigl[\Bigl(\frac{\hat{\P}_{x^n}(\rv{X})}{\P(\rv{X})} - 1\Bigr) g(\rv{X})\Bigr]\Bigr|
+    \le \epsilon\,\EE_\P\bigl[|g(\rv{X})|\bigr]. \qedhere\]</div></div>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Properties.</strong> Let \(M^* := |\{a\in\Xcal :\ \P(a)&gt;0\}|\), \(c_\P := \min_{a:\,\P(a)&gt;0} \P(a)^2\), and \(\rv{X}^n\sim\P^n\).</p>
+<ol class="tex-list enum-decimal enum-dot"><li><p><strong class="newword">Probability of a sequence.</strong> For every \(x^n\in\Tcal_\epsilon^{(n)}(\P)\),</p>
+<div class="math-display">\[2^{-n(1+\epsilon)H(\P)} \le \P^n(x^n) \le 2^{-n(1-\epsilon)H(\P)},\]</div>
+<p>\(D(\hat{\P}_{x^n}\|\P) \le \log(1+\epsilon)\), and \(|H(\hat{\P}_{x^n}) - H(\P)| \le \epsilon H(\P) + \log(1+\epsilon)\).</p></li><li><p><strong class="newword">Probability of the set.</strong></p>
+<div class="math-display">\[\P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr)
+        \le \delta_T(\epsilon,n,\P) := 2M^* e^{-2n\epsilon^2 c_\P},\]</div>
+<p>so \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \to 1\) if \(n\epsilon^2\to\infty\).</p></li><li><p><strong class="newword">Size of the set.</strong></p>
+<div class="math-display">\[\bigl(1-\delta_T(\epsilon,n,\P)\bigr)\, 2^{n(1-\epsilon)H(\P)}
+        \le |\Tcal_\epsilon^{(n)}(\P)| \le 2^{n(1+\epsilon)H(\P)}.\]</div></li></ol></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li><p>Apply the lemma to \(g := \log\P\): we have \(\frac{1}{n}\log\P^n(x^n) = \frac{1}{n}\sum_{i=1}^n \log\P(x_i)\) and \(\EE_\P\bigl[|\log\P(\rv{X})|\bigr] = H(\P)\). Next, \(\log\frac{\hat{\P}_{x^n}(a)}{\P(a)} \le \log(1+\epsilon)\) whenever \(\hat{\P}_{x^n}(a) &gt; 0\), and averaging under \(\hat{\P}_{x^n}\) bounds the divergence. Finally, \(H(\hat{\P}_{x^n}) = H(\hat{\P}_{x^n}\|\P) - D(\hat{\P}_{x^n}\|\P)\), and the lemma with \(g = \log\P\) also gives \(|H(\hat{\P}_{x^n}\|\P) - H(\P)| \le \epsilon H(\P)\).</p>
+<p>We write the bounds on \(\P^n(x^n)\) as \(\P^n(x^n)\approx 2^{-nH(\P)}\). Sequences satisfying them are called <strong class="newword">weakly typical</strong>, so strong typicality implies weak typicality. The converse fails: if \(\P\) is uniform and \(M\ge 2\), every \(x^n\) is weakly typical, including \(x^n = a_1 a_1\cdots a_1\), which is not strongly typical for \(\epsilon &lt; 1\).</p></li><li><p>For each \(a\in\Xcal\), the random variables \(\ind{\rv{X}_1 = a},\ldots,\ind{\rv{X}_n = a}\) are i.i.d., with values in \([0,1]\) and mean \(\P(a)\), and their arithmetic mean is \(\hat{\P}_{\rv{X}^n}(a)\). If \(\P(a) = 0\), then \(\hat{\P}_{\rv{X}^n}(a) = 0\) with probability \(1\). By the union bound and <strong class="newword">Hoeffding’s inequality</strong> (the mean of \(n\) independent random variables with values in \([0,1]\) deviates from its expectation by more than \(t\) with probability at most \(2e^{-2nt^2}\)),</p>
+<div class="math-display">\[\begin{aligned}
+        \P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr)
+          &amp;\le \sum_{a:\,\P(a)&gt;0} \P^n\Bigl(\Bigl|\frac{1}{n}\sum_{i=1}^n \ind{\rv{X}_i = a} - \P(a)\Bigr| &gt; \epsilon\P(a)\Bigr) \\
+          &amp;\le \sum_{a:\,\P(a)&gt;0} 2e^{-2n\epsilon^2\P(a)^2}
+           \le 2M^* e^{-2n\epsilon^2 c_\P}.
+      \end{aligned}\]</div></li><li>By item 1, \(|\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1+\epsilon)H(\P)} \le \P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le |\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1-\epsilon)H(\P)}\). Use \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le 1\) on the left and \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \ge 1-\delta_T(\epsilon,n,\P)\) (item 2) on the right.</li></ol></div>
+<p>So the probability of an i.i.d. source \(\P^n\) concentrates on \(\Tcal_\epsilon^{(n)}(\P)\), a set of about \(2^{nH(\P)}\) sequences out of all \(M^n = 2^{n\log M}\), and every sequence in it has probability about \(2^{-nH(\P)}\). This is the <strong class="newword">asymptotic equipartition property</strong> (AEP).</p>
+<div class="widget" data-widget="l2-concentration" data-args="q=0.2 n=1000 eps=0.2"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h4 class="tex-h">Comparison with type classes.</h4>
+<p>The properties above parallel those of a type class (Section 2.2.3), with probabilities under \(\hat{\P}^n\) for the type class \(\Tcal^{(n)}(\hat{\P})\) and under \(\P^n\) for the typical set \(\Tcal_\epsilon^{(n)}(\P)\):</p>
+<div class="tex-center"><div class="table-wrap"><table class="tex-table"><tbody><tr><td class="al-left br"></td><td class="al-center br">type class \(\Tcal^{(n)}(\hat{\P})\)</td><td class="al-center">typical set \(\Tcal_\epsilon^{(n)}(\P)\)</td></tr><tr class="ht"><td class="al-left br">probability of a sequence</td><td class="al-center br">\(2^{-nH(\hat{\P})}\)</td><td class="al-center">\(2^{-n(1\pm\epsilon)H(\P)}\)</td></tr><tr><td class="al-left br">size of the set</td><td class="al-center br">\(\gamma_n(\hat{\P})\, 2^{nH(\hat{\P})}\)</td><td class="al-center">\(2^{n(1\pm\epsilon)H(\P)}\)</td></tr><tr><td class="al-left br">probability of the set</td><td class="al-center br">\(\gamma_n(\hat{\P})\to 0\) polynomially</td><td class="al-center">\(\ge 1-\delta_T(\epsilon,n,\P)\to 1\)</td></tr></tbody></table></div></div>
+<p>where the exponents \((1\pm\epsilon)H(\P)\) stand for the bounds of items 1 and 3. A single type class has a vanishing probability, but only polynomially fast: \(\gamma_n(\hat{\P}) \ge K_{n,M}^{-1} \ge (n+1)^{-(M-1)}\), so the loss is invisible on the exponential scale. In contrast, \(\Tcal_\epsilon^{(n)}(\P)\), a union of the type classes close to \(\P\), carries almost all the probability; the price is the slack \(\pm\epsilon\) in the exponents.</p>
+<p>Conversely, type classes give a tighter lower bound on the size, without any concentration argument. For every type \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| \le \epsilon\P(a)\) for all \(a\),</p>
+<div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P)| \ge |\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\, 2^{nH(\hat{\P})}
+  \ge K_{n,M}^{-1}\, 2^{nH(\hat{\P})}.\]</div>
+<p>Such a type exists for \(n\) large enough. Rounding each \(n\P(a)\) up or down gives \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| &lt; \frac{1}{n}\) for all \(a\), and \(\hat{\P}(a) = 0\) if \(\P(a) = 0\). With \(\P_{\min} := \min_{a:\,\P(a)&gt;0}\P(a)\) and \(\tau_n := \frac{1}{n\P_{\min}}\), we get \(|\hat{\P}(a)-\P(a)| \le \tau_n\P(a)\) for all \(a\), so item 1, applied with \(\tau_n\) to any \(x^n\in\Tcal^{(n)}(\hat{\P})\), gives</p>
+<div class="math-display">\[H(\hat{\P}) \ge (1-\tau_n)H(\P) - \log(1+\tau_n)
+  \ge H(\P) - \frac{H(\P)+\log e}{n\P_{\min}}.\]</div>
+<p>Hence, for \(n \ge \frac{1}{\epsilon\P_{\min}}\) (so that \(\tau_n \le \epsilon\)),</p>
+<div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P)| \ge K_{n,M}^{-1}\, 2^{nH(\P) - \frac{H(\P)+\log e}{\P_{\min}}},\]</div>
+<p>that is, \(\frac{1}{n}\log|\Tcal_\epsilon^{(n)}(\P)| \ge H(\P) - O\bigl(\frac{\log n}{n}\bigr)\), much better than \((1-\epsilon)H(\P)\).</p>
+<h3 class="cn-h cn-l1" id="cn-2-4"><span class="cn-num">2.4</span> Jointly and conditionally typical sequences</h3>
+<p>Let \(\P_{\rv{X}\rv{Y}}\in\Pcal(\Xcal\times\Ycal)\) be a joint distribution with marginals \(\P_{\rv{X}}\) and \(\P_{\rv{Y}}\). In the same way, the <strong class="newword">jointly typical set</strong> is</p>
+<div class="math-display">\[\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}) := \Bigl\{(x^n,y^n) :\
+    \bigl|\hat{\P}_{x^n,y^n}(a,b) - \P_{\rv{X}\rv{Y}}(a,b)\bigr|
+     \le \epsilon\,\P_{\rv{X}\rv{Y}}(a,b),\ \forall\,(a,b)\in\Xcal\times\Ycal\Bigr\},\]</div>
+<p>and, for \(y^n\in\Ycal^n\), the <strong class="newword">conditionally typical set</strong> is</p>
+<div class="math-display">\[\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n) := \bigl\{x^n :\ (x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\bigr\}.\]</div>
+<p>By definition,</p>
+<div class="math-display">\[(x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})
+  \iff x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)
+  \iff y^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond x^n).\]</div>
+<p>Below, \(\P^n(x^n)\approx 2^{-n(1\pm\epsilon)H}\) means \(2^{-n(1+\epsilon)H} \le \P^n(x^n) \le 2^{-n(1-\epsilon)H}\), and \(\delta_T\) is defined in Section 2.3.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Properties.</strong></p>
+<ol class="tex-list enum-decimal enum-dot"><li><p>If \((x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\), then \(x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}})\), \(y^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{Y}})\),</p>
+<div class="math-display">\[\begin{gathered}
+        \P_{\rv{X}}^n(x^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X})},\quad
+        \P_{\rv{Y}}^n(y^n)\approx 2^{-n(1\pm\epsilon)H(\rv{Y})}, \\
+        \P_{\rv{X}\rv{Y}}^n(x^n,y^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X},\rv{Y})}, \\
+        \P_{\rv{Y}|\rv{X}}^n(y^n\cond x^n)\approx 2^{-n(1\pm\epsilon)H(\rv{Y}\cond\rv{X})},\quad
+        \P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X}\cond\rv{Y})}.
+      \end{gathered}\]</div></li><li>\(\bigl(1-\delta_T(\epsilon,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{n(1-\epsilon)H(\rv{X},\rv{Y})} \le |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})| \le 2^{n(1+\epsilon)H(\rv{X},\rv{Y})}\).</li><li>For every \(y^n\in\Ycal^n\), \(|\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)| \le 2^{n(1+\epsilon)H(\rv{X}\cond\rv{Y})}\).</li><li><p><strong class="newword">Conditional typicality lemma.</strong> Let \(\P_{\rv{X}^n|\rv{Y}^n} = \P_{\rv{X}|\rv{Y}}^n\). For every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
+<div class="math-display">\[\P_{\rv{X}^n|\rv{Y}^n=y^n}\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
+        \le \delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}}),\]</div>
+<p>which tends to \(0\) if \(n\epsilon^2\to\infty\).</p></li><li><p>For every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
+<div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)|
+        \ge \bigl(1-\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{n(1-\epsilon)H(\rv{X}\cond\rv{Y})}.\]</div></li><li><p><strong class="newword">Joint typicality lemma.</strong> For every \(y^n\in\Ycal^n\),</p>
+<div class="math-display">\[\P_{\rv{X}}^n\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
+        \le 2^{-n(I(\rv{X};\rv{Y}) - 2\epsilon H(\rv{X}))},\]</div>
+<p>and for every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
+<div class="math-display">\[\P_{\rv{X}}^n\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
+        \ge \bigl(1-\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{-n(I(\rv{X};\rv{Y}) + 2\epsilon H(\rv{X}))}.\]</div>
+<p>So an \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of \(y^n\) is jointly typical with \(y^n\) with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</p></li></ol></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li>Summing over \(b\), \(\hat{\P}_{x^n}(a) = \sum_b \hat{\P}_{x^n,y^n}(a,b)\) is within \(\epsilon\P_{\rv{X}}(a)\) of \(\P_{\rv{X}}(a)\), and similarly for \(y^n\). The bounds follow from the typical average lemma for \(\P_{\rv{X}\rv{Y}}\) with \(g(a,b) = \log\P_{\rv{X}}(a)\), \(\log\P_{\rv{Y}}(b)\), \(\log\P_{\rv{X}\rv{Y}}(a,b)\), \(\log\P_{\rv{Y}|\rv{X}}(b\cond a)\) and \(\log\P_{\rv{X}|\rv{Y}}(a\cond b)\). For example, \(\log\P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n) = \sum_{i=1}^n \log\P_{\rv{X}|\rv{Y}}(x_i\cond y_i)\) and \(\EE\bigl[|\log\P_{\rv{X}|\rv{Y}}(\rv{X}\cond\rv{Y})|\bigr] = H(\rv{X}\cond\rv{Y})\).</li><li>This is property 3 of Section 2.3 applied to \(\P_{\rv{X}\rv{Y}}\).</li><li><p>By item 1,</p>
+<div class="math-display">\[1 \ge \sum_{x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)} \P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n)
+          \ge |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)|\, 2^{-n(1+\epsilon)H(\rv{X}\cond\rv{Y})}.\]</div></li><li>Given \(\rv{Y}^n = y^n\), the \(\rv{X}_i\) are independent with \(\rv{X}_i\sim\P_{\rv{X}|\rv{Y}=y_i}\). If \(\P_{\rv{X}\rv{Y}}(a,b) = 0\), then \(\hat{\P}_{\rv{X}^n,y^n}(a,b) = 0\) with probability \(1\). Otherwise, \(\hat{\P}_{\rv{X}^n,y^n}(a,b)\) is the mean of the \(n\) independent random variables \(\ind{(\rv{X}_i,y_i) = (a,b)}\), with values in \([0,1]\), and its expectation is \(\hat{\P}_{y^n}(b)\P_{\rv{X}|\rv{Y}}(a\cond b)\). Since \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\), this expectation is within \(\frac{\epsilon}{2}\P_{\rv{X}\rv{Y}}(a,b)\) of \(\P_{\rv{X}\rv{Y}}(a,b)\). A deviation from \(\P_{\rv{X}\rv{Y}}(a,b)\) by more than \(\epsilon\P_{\rv{X}\rv{Y}}(a,b)\) therefore needs a deviation from the expectation by more than \(\frac{\epsilon}{2}\P_{\rv{X}\rv{Y}}(a,b)\), which has probability at most \(2e^{-n\epsilon^2\P_{\rv{X}\rv{Y}}(a,b)^2/2}\) by Hoeffding’s inequality. The union bound over the pairs with \(\P_{\rv{X}\rv{Y}}(a,b) &gt; 0\) gives \(\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})\). (With \(y^n\) only in \(\Tcal_\epsilon^{(n)}(\P_{\rv{Y}})\), the expectation can lie on the boundary, and the probability need not tend to \(1\).)</li><li><p>By item 4 and item 1,</p>
+<div class="math-display">\[\begin{aligned}
+        1-\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})
+         &amp;\le \P_{\rv{X}^n|\rv{Y}^n=y^n}\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr) \\
+         &amp;\le |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)|\, 2^{-n(1-\epsilon)H(\rv{X}\cond\rv{Y})}.
+      \end{aligned}\]</div></li><li><p>Every \(x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\) is in \(\Tcal_\epsilon^{(n)}(\P_{\rv{X}})\), so \(\P_{\rv{X}}^n(x^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X})}\). With item 3,</p>
+<div class="math-display">\[\P_{\rv{X}}^n\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
+        \le 2^{n(1+\epsilon)H(\rv{X}\cond\rv{Y})}\, 2^{-n(1-\epsilon)H(\rv{X})}
+        \le 2^{-n(I(\rv{X};\rv{Y}) - 2\epsilon H(\rv{X}))},\]</div>
+<p>since \(H(\rv{X}\cond\rv{Y}) \le H(\rv{X})\). The lower bound follows in the same way from item 5.</p></li></ol></div></div>
+</section>
+<section class="block" id="quiz" aria-labelledby="quiz-h">
+  <div class="block-head"><h2 id="quiz-h">Quiz</h2><p class="block-sub">22 questions &middot; one correct answer each</p></div>
+  <p class="hint">Pick an answer to check it. Your answers are kept in this browser only.</p>
+  <noscript><p class="hint">Turn on JavaScript to check your answers.</p></noscript>
+  <div class="scoreboard" data-board>
+    <div class="score-bits" data-score-bits></div>
+    <p class="score-text" data-score-text>0 of 22 answered</p>
+    <button type="button" class="btn-quiet" data-reset>Start again</button>
+  </div>
+  <ol class="quiz" data-quiz="lecture-2">
+<li class="q" id="q1" data-key="46a2a380" data-check="823b33b7">
+  <div class="q-num" aria-hidden="true">Q1</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1,2\}\). What is the type of the sequence \(x^6 = 012001\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 1"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\hat{\P}_{x^6} = \bigl[\tfrac13, \tfrac13, \tfrac13\bigr]\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\hat{\P}_{x^6} = [3, 2, 1]\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\hat{\P}_{x^6} = \bigl[\tfrac12, \tfrac13, \tfrac16\bigr]\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\hat{\P}_{x^6} = \bigl[\tfrac16, \tfrac13, \tfrac12\bigr]\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q2" data-key="a794f398" data-check="1b53af6a">
+  <div class="q-num" aria-hidden="true">Q2</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Two sequences \(x^n, y^n \in \Xcal^n\) have the same type if and only if</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 2"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(x^n = y^n\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(y^n\) is obtained by reordering the symbols of \(x^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(x^n\) and \(y^n\) have the same first symbol.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(x^n\) and \(y^n\) differ in at most one position.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q3" data-key="096fa055" data-check="bd0d21f7">
+  <div class="q-num" aria-hidden="true">Q3</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\) and \(n = 4\). Which of the following distributions on \(\Xcal\) is <strong>not</strong> in \(\Pcal_4\), i.e., is not the type of any \(x^4\in\Xcal^4\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 3"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\bigl[\tfrac14, \tfrac34\bigr]\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\bigl[\tfrac12, \tfrac12\bigr]\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\([1, 0]\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\bigl[\tfrac13, \tfrac23\bigr]\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q4" data-key="518c5943" data-check="9797a732">
+  <div class="q-num" aria-hidden="true">Q4</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(M = |\Xcal| = 3\) and \(n = 4\). What is the number of types \(K_{4,3} = |\Pcal_4|\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 4"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(4\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(12\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(15\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(25\)</span></button><button type="button" class="opt" data-letter="E"><span class="opt-letter">E</span><span class="opt-text">\(81\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q5" data-key="df543b82" data-check="625be0b4">
+  <div class="q-num" aria-hidden="true">Q5</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For a fixed alphabet size \(M \ge 2\), as \(n\to\infty\), the number of types \(K_{n,M}\)</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 5"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">grows at most polynomially in \(n\), since \(K_{n,M} \le (n+1)^{M-1}\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">grows exponentially in \(n\), like the number of sequences \(M^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">does not depend on \(n\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">is equal to \(2^{nH(\hat{\P})}\) for some type \(\hat{\P}\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q6" data-key="957050f9" data-check="c3c84e43">
+  <div class="q-num" aria-hidden="true">Q6</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1,2\}\), \(n = 6\), and \(\hat{\P} = \bigl[\tfrac12, \tfrac13, \tfrac16\bigr]\). What is \(|\Tcal^{(6)}(\hat{\P})|\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 6"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(12\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(20\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(60\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(729\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q7" data-key="f0c44dd1" data-check="45fe6435">
+  <div class="q-num" aria-hidden="true">Q7</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\) and \(n = 5\). What is \(\sum_{\hat{\P}\in\Pcal_5} |\Tcal^{(5)}(\hat{\P})|\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 7"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(6\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(10\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(25\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(32\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q8" data-key="c8b2e4d1" data-check="de521159">
+  <div class="q-num" aria-hidden="true">Q8</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\) and \(n = 10\). Which type class is the largest?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 8"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\Tcal^{(10)}\bigl(\bigl[\tfrac12, \tfrac12\bigr]\bigr)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\Tcal^{(10)}\bigl(\bigl[\tfrac{1}{10}, \tfrac{9}{10}\bigr]\bigr)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\Tcal^{(10)}([1, 0])\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">All type classes have the same size.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q9" data-key="127c34cb" data-check="ca3c288a">
+  <div class="q-num" aria-hidden="true">Q9</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which bounds hold for every \(n\) and every type \(\hat{\P}\in\Pcal_n\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 9"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(2^{nH(\hat{\P})} \le |\Tcal^{(n)}(\hat{\P})| \le (n+1)^{M-1}\, 2^{nH(\hat{\P})}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\((n+1)^{-(M-1)}\, 2^{nH(\hat{\P})} \le |\Tcal^{(n)}(\hat{\P})| \le 2^{nH(\hat{\P})}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(|\Tcal^{(n)}(\hat{\P})| = 2^{nH(\hat{\P})}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(|\Tcal^{(n)}(\hat{\P})| \le 2^{-nH(\hat{\P})}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q10" data-key="dcd42a23" data-check="3ea5b2f3">
+  <div class="q-num" aria-hidden="true">Q10</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Q\in\Pcal(\Xcal)\) and let \(x^n\) have type \(\hat{\P}\). Then \(\Q^n(x^n)\) is equal to</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 10"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(2^{-nH(\hat{\P}\|\Q)}\), where \(H(\hat{\P}\|\Q) = H(\hat{\P}) + D(\hat{\P}\|\Q)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(2^{-nH(\Q)}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(2^{-nH(\hat{\P})}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(2^{-nD(\hat{\P}\|\Q)}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q11" data-key="0d22e98e" data-check="0aa52a7e">
+  <div class="q-num" aria-hidden="true">Q11</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\) and \(x^6 = 001010\). Which \(\Q\in\Pcal(\Xcal)\) maximizes the likelihood \(\Q^6(x^6)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 11"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\bigl[\tfrac12, \tfrac12\bigr]\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\bigl[\tfrac13, \tfrac23\bigr]\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\([1, 0]\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\bigl[\tfrac23, \tfrac13\bigr]\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q12" data-key="df612dba" data-check="6ff04eca">
+  <div class="q-num" aria-hidden="true">Q12</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\), \(n = 4\), and \(\Q = \bigl[\tfrac12, \tfrac12\bigr]\). What is \(\Q^4\bigl(\Tcal^{(4)}\bigl(\bigl[\tfrac14, \tfrac34\bigr]\bigr)\bigr)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 12"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\tfrac{1}{16}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\tfrac18\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\tfrac14\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\tfrac38\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q13" data-key="fbf1ba32" data-check="76b599a0">
+  <div class="q-num" aria-hidden="true">Q13</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\), \(n = 4\), and \(\hat{\P} = \bigl[\tfrac12, \tfrac12\bigr]\). What is \(\gamma_4(\hat{\P}) = \hat{\P}^4\bigl(\Tcal^{(4)}(\hat{\P})\bigr)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 13"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\tfrac{1}{16}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\tfrac38\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\tfrac12\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q14" data-key="d3b31130" data-check="7f45b74b">
+  <div class="q-num" aria-hidden="true">Q14</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\hat{\P}\in\Pcal_n\). Under \(\hat{\P}^n\), which type class has the largest probability?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 14"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\Tcal^{(n)}(\hat{\P})\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">The type class of the uniform type, when it is a type.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">The largest type class.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">All type classes have the same probability.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q15" data-key="1c3773e3" data-check="1cb2b7fb">
+  <div class="q-num" aria-hidden="true">Q15</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\), \(\Q = \bigl[\tfrac12, \tfrac12\bigr]\), and \(\hat{\P} = \bigl[\tfrac14, \tfrac34\bigr]\). As \(n\to\infty\) over the multiples of \(4\), \(-\frac{1}{n}\log \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)\) tends to</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\hat{\P}) = h(\tfrac14) \approx 0.81\) bit</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H(\hat{\P}\|\Q) = 1\) bit</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\hat{\P}\|\Q) = 1 - h(\tfrac14) \approx 0.19\) bit</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q16" data-key="761a39e7" data-check="556d6245">
+  <div class="q-num" aria-hidden="true">Q16</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\) and \(\hat{\P} = [p, 1-p]\) with \(0 &lt; p &lt; 1\). As \(n\to\infty\) over the \(n\) for which \(\hat{\P}\in\Pcal_n\), the probability \(\gamma_n(\hat{\P})\) of the most likely type class</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 16"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">tends to \(1\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">tends to \(0\) exponentially fast, like \(2^{-nH(\hat{\P})}\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">tends to \(0\) polynomially fast, like \(\frac{1}{\sqrt{2\pi n p(1-p)}}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">stays equal to \(\tfrac12\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q17" data-key="9657303e" data-check="e37c8271">
+  <div class="q-num" aria-hidden="true">Q17</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{a,b,c\}\), \(\P = \bigl[\tfrac12, \tfrac14, \tfrac14\bigr]\), \(\epsilon = 0.2\), and \(n = 8\). Which sequence is in \(\Tcal_\epsilon^{(8)}(\P)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 17"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(aaaaabbc\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(aaaabbcc\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(abcabcab\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(aaaaaaaa\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q18" data-key="007e93a3" data-check="d422960e">
+  <div class="q-num" aria-hidden="true">Q18</div>
+  <div class="q-body">
+    <div class="q-stem"><p>With \(\P\) and \(n\) as in the previous question, which sequence \(x^8\) has the largest probability \(\P^8(x^8)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 18"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(aaaabbcc\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(abcabcab\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(aaaaaaaa\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">All sequences have the same probability.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q19" data-key="bb698623" data-check="0d95c719">
+  <div class="q-num" aria-hidden="true">Q19</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\Xcal = \{a,b,c\}\), \(\P = \bigl[\tfrac12, \tfrac12, 0\bigr]\), and \(\epsilon\in(0,1)\). If \(x^n \in \Tcal_\epsilon^{(n)}(\P)\), then</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 19"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the letter \(c\) appears at most \(\epsilon n\) times in \(x^n\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the letter \(c\) does not appear in \(x^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the letter \(c\) appears exactly once in \(x^n\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">nothing can be said about the letter \(c\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q20" data-key="2e0d3b62" data-check="6ad96147">
+  <div class="q-num" aria-hidden="true">Q20</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Fix \(\epsilon\in(0,1)\) and let \(\rv{X}^n\sim\P^n\). As \(n\to\infty\), \(\P^n\bigl(\rv{X}^n\in\Tcal_\epsilon^{(n)}(\P)\bigr)\)</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 20"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">tends to \(0\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">tends to \(1-\epsilon\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">stays equal to \(\gamma_n(\P)\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">tends to \(1\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q21" data-key="5b06d084" data-check="098c8249">
+  <div class="q-num" aria-hidden="true">Q21</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For large \(n\), the typical set \(\Tcal_\epsilon^{(n)}(\P)\) contains about ......... sequences, each with probability about ......... (up to factors \(2^{\pm n\epsilon H(\P)}\)).</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 21"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(2^{nH(\P)}\) and \(2^{-nH(\P)}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(M^n\) and \(M^{-n}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(K_{n,M}\) and \(K_{n,M}^{-1}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(2^{nD(\P\|\mathrm{U})}\) and \(2^{-nD(\P\|\mathrm{U})}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q22" data-key="0e2c802d" data-check="3fccb52b">
+  <div class="q-num" aria-hidden="true">Q22</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\P\) have at least two letters in its support, and let \(\rv{X}^n\sim\P^n\). As \(n\to\infty\) over the \(n\) for which \(\P\in\Pcal_n\), unlike the typical set, the single type class \(\Tcal^{(n)}(\P)\) has probability</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 22"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">tending to \(1\), like the typical set.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\gamma_n(\P)\), which tends to \(0\), but only polynomially fast.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">tending to \(0\) exponentially fast.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">equal to \(K_{n,M}^{-1}\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+  </ol>
+</section>
+<section class="block" id="exercises" aria-labelledby="exo-h">
+  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">8 problems</p></div>
+  
+  <ol class="problems">
+<li class="problem" id="p1">
+  <h3 class="p-head"><span class="p-num">Problem 1</span> <span class="p-title">Types and type classes by hand</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \{a,b,c\}\) and \(n = 3\).</p>
+<ul class="tex-list"><li>List the types in \(\Pcal_3\) and check that \(K_{3,3} = \binom{5}{2}\). Compare with the bound \((n+1)^{M-1}\).</li><li>Give the size of each type class, and check that the sizes add up to \(|\Xcal^3| = 27\).</li><li>Let \(\Q = \bigl[\tfrac12, \tfrac14, \tfrac14\bigr]\). Compute \(\Q^3(aab)\) directly, then with the formula \(\Q^n(x^n) = 2^{-nH(\hat{\P}_{x^n}\|\Q)}\).</li><li>Compute \(\Q^3\bigl(\Tcal^{(3)}(\hat{\P})\bigr)\) for every \(\hat{\P}\in\Pcal_3\), and check that the probabilities add up to \(1\). Which sequence is the most likely under \(\Q^3\)? Which type classes are the most likely?</li></ul></div>
+</li>
+<li class="problem" id="p2">
+  <h3 class="p-head"><span class="p-num">Problem 2</span> <span class="p-title">Number of types</span> <span class="p-ref">CK 2.1</span></h3>
+  <div class="p-body"><p>Let \(M = |\Xcal|\).</p>
+<ul class="tex-list"><li>Show that \(K_{n,M} = |\Pcal_n| = \binom{n+M-1}{M-1}\). <em>Hint: a type is given by the counts \((n_1,\ldots,n_M)\). Write \(n\) stars on a line and put \(M-1\) bars among them to split the stars into \(M\) groups; for instance, \(\star\star|\,|\star\) stands for \((2,0,1)\).</em></li><li>Show that \(K_{n,M} \le (n+1)^{M-1}\) without computing \(K_{n,M}\). <em>Hint: the last count is fixed by the others.</em></li><li>Compute \(K_{n,2}\) and \(K_{4,3}\), and compare with the bound.</li></ul></div>
+</li>
+<li class="problem" id="p3">
+  <h3 class="p-head"><span class="p-num">Problem 3</span> <span class="p-title">Size of a type class</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \{a_1,\ldots,a_M\}\), let \(\hat{\P}\in\Pcal_n\) with counts \(n_i := n\hat{\P}(a_i)\), and let \(x^n, \tilde{x}^n \in \Tcal^{(n)}(\hat{\P})\).</p>
+<ul class="tex-list"><li>Show that exactly \(\prod_{i=1}^M n_i!\) permutations \(\sigma\) of \(\{1,\ldots,n\}\) satisfy \(x_{\sigma(k)} = \tilde{x}_k\) for all \(k\). <em>Example: \(x^4 = 0110\) and \(\tilde{x}^4 = 1100\).</em></li><li><p>Deduce that</p>
+<div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = \frac{n!}{\prod_{i=1}^M n_i!} = \binom{n}{n_1,\ldots,n_M}.\]</div>
+<p><em>Hint: count the \(n!\) permutations of \(x^n\) according to the sequence they produce.</em></p></li><li>Deduce the multinomial identity \(\sum \binom{n}{n_1,\ldots,n_M} = M^n\), where the sum is over \((n_1,\ldots,n_M)\in\mathbb{Z}_+^M\) with \(\sum_i n_i = n\).</li></ul></div>
+</li>
+<li class="problem" id="p4">
+  <h3 class="p-head"><span class="p-num">Problem 4</span> <span class="p-title">Maximum-likelihood probability of a type class</span></h3>
+  <div class="p-body"><p>For \(\hat{\P}\in\Pcal_n\), recall that \(\gamma_n(\hat{\P}) := \hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) = |\Tcal^{(n)}(\hat{\P})|\,2^{-nH(\hat{\P})}\).</p>
+<ul class="tex-list"><li>Let \(\Xcal = \{0,1\}\). Show that \(\gamma_n\bigl(\bigl[\tfrac{k}{n}, 1-\tfrac{k}{n}\bigr]\bigr) = \binom{n}{k}\bigl(\tfrac{k}{n}\bigr)^k\bigl(1-\tfrac{k}{n}\bigr)^{n-k}\), compute it for \(n = 4\) and \(k = 0,\ldots,4\), and check that \(K_{4,2}^{-1} \le \gamma_4 \le 1\).</li><li><p>Let \(\tilde{M}\) be the size of the support of \(\hat{\P}\), and \(\mathrm{U}\) the uniform distribution on it. With the Stirling approximation of \(|\Tcal^{(n)}(\hat{\P})|\) from the lecture, show that, for a fixed \(\hat{\P}\), as \(n\to\infty\) over the \(n\) for which \(\hat{\P}\in\Pcal_n\),</p>
+<div class="math-display">\[\gamma_n(\hat{\P}) \simeq (2\pi n)^{-\frac{\tilde{M}-1}{2}}\,
+          \tilde{M}^{\frac{\tilde{M}}{2}}\, 2^{\frac{\tilde{M}}{2} D(\mathrm{U}\|\hat{\P})}.\]</div>
+<p><em>Hint: write \(n_1\cdots n_{\tilde{M}} = n^{\tilde{M}}\prod_{a:\,\hat{\P}(a)&gt;0}\hat{\P}(a)\) and</em></p>
+<div class="math-display">\[-\frac12\sum_{a:\,\hat{\P}(a)&gt;0}\log\hat{\P}(a)
+        = \frac{\tilde{M}}{2}\bigl(\log\tilde{M} + D(\mathrm{U}\|\hat{\P})\bigr).\]</div></li><li>Deduce that \(\gamma_n([p,1-p]) \simeq \frac{1}{\sqrt{2\pi n p(1-p)}}\) for \(0 &lt; p &lt; 1\), and compare with the values for \(n = 4\).</li><li>Among the types with support size \(\tilde{M}\), which one has the smallest \(\gamma_n\) for large \(n\)? Is its type class large or small?</li></ul></div>
+</li>
+<li class="problem" id="p5">
+  <h3 class="p-head"><span class="p-num">Problem 5</span> <span class="p-title">Probability of a rare event</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \{0,1\}\), \(\P = [0.8,\ 0.2]\) (so that \(\P(1) = 0.2\)), \(\rv{X}^n\sim\P^n\), and let \(\mathcal{A}_n\) be the set of sequences \(x^n\) with at least \(\frac{n}{2}\) ones, i.e., with \(\hat{\P}_{x^n}(1) \ge \frac12\).</p>
+<ul class="tex-list"><li>Write \(\P^n(\mathcal{A}_n)\) as a sum over types, and show that \(\P^n(\mathcal{A}_n) \le (n+1)\,2^{-nD^*}\), with \(D^* := D\bigl(\bigl[\tfrac12,\tfrac12\bigr]\big\|\P\bigr)\). <em>Hint: show that \(t\mapsto D([1-t,t]\|\P)\) is increasing on \([0.2, 1]\).</em></li><li>Show that \(\P^n(\mathcal{A}_n) \ge (n+1)^{-1}\,2^{-nD^*}\) for even \(n\).</li><li>Conclude that \(-\frac1n\log\P^n(\mathcal{A}_n)\to D^*\), and compute \(D^*\). Why does the sum over types not change the exponent?</li></ul></div>
+</li>
+<li class="problem" id="p6">
+  <h3 class="p-head"><span class="p-num">Problem 6</span> <span class="p-title">Universal source coding</span></h3>
+  <div class="p-body"><p>To encode \(x^n\in\Xcal^n\) with bits, send first the index of its type \(\hat{\P}_{x^n}\) in \(\Pcal_n\), then the index of \(x^n\) in its type class \(\Tcal^{(n)}(\hat{\P}_{x^n})\), with fixed-length binary indices of \(\lceil\log K_{n,M}\rceil\) and \(\lceil\log|\Tcal^{(n)}(\hat{\P}_{x^n})|\rceil\) bits.</p>
+<ul class="tex-list"><li>Explain why the decoder recovers \(x^n\), and why the code does not depend on the distribution of the source.</li><li>Show that the length \(\ell(x^n)\) of the code word of \(x^n\) satisfies \(\ell(x^n) \le nH(\hat{\P}_{x^n}) + (M-1)\log(n+1) + 2\).</li><li>Let \(\rv{X}^n\sim\P^n\). Show that \(\EE\bigl[\hat{\P}_{\rv{X}^n}\bigr] = \P\) and deduce that \(\frac1n\EE\bigl[\ell(\rv{X}^n)\bigr] \le H(\P) + \frac{(M-1)\log(n+1)+2}{n}\). <em>Hint: \(H\) is concave.</em></li></ul></div>
+</li>
+<li class="problem" id="p7">
+  <h3 class="p-head"><span class="p-num">Problem 7</span> <span class="p-title">Typical set of a binary source</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \{0,1\}\), \(\P = [0.2,\ 0.8]\), \(n = 1000\) and \(\epsilon = 0.2\). This problem uses the properties of typical sequences (Section 2.3).</p>
+<ul class="tex-list"><li>Which numbers of zeros \(k\) make \(x^n\) \(\epsilon\)-typical? Express \(|\Tcal_\epsilon^{(n)}(\P)|\) and \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr)\) as sums over \(k\).</li><li>Give an upper bound on \(\P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr)\).</li><li>Give lower and upper bounds on \(\log|\Tcal_\epsilon^{(n)}(\P)|\), first with the properties of the typical set, then with the largest type class contained in it.</li><li>With a computer, evaluate the sums of the first part and compare.</li></ul></div>
+</li>
+<li class="problem" id="p8">
+  <h3 class="p-head"><span class="p-num">Problem 8</span> <span class="p-title">Exact size of the typical set</span></h3>
+  <div class="p-body"><p>Let \(\P\in\Pcal(\Xcal)\) and \(\epsilon &gt; 0\), and define</p>
+<div class="math-display">\[H_\epsilon(\P) := \max\bigl\{ H(\Q) :\ \Q\in\Pcal(\Xcal),\
+      |\Q(a) - \P(a)| \le \epsilon\P(a),\ \forall\,a\in\Xcal \bigr\}.\]</div>
+<ul class="tex-list"><li><p>Using that \(\Tcal_\epsilon^{(n)}(\P)\) is a union of type classes, show that \(|\Tcal_\epsilon^{(n)}(\P)| \le K_{n,M}\, 2^{nH_\epsilon(\P)}\), and that \(|\Tcal_\epsilon^{(n)}(\P)| \ge K_{n,M}^{-1}\, 2^{nH(\hat{\P})}\) for every type \(\hat{\P}\) that satisfies the constraint. Choosing types \(\hat{\P}_n\) that converge to a maximizer, conclude that</p>
+<div class="math-display">\[\lim_{n\to\infty}\frac1n\log|\Tcal_\epsilon^{(n)}(\P)| = H_\epsilon(\P).\]</div></li><li>Show that \(H(\P)\le H_\epsilon(\P)\le(1+\epsilon)H(\P)\), and that \(H_\epsilon(\P) = H(\P)\) if and only if \(\P\) is uniform on its support. <em>Hint: \(H(\Q) \le H(\Q\|\P) = \EE_\Q\bigl[\log\frac{1}{\P(\rv{X})}\bigr]\).</em></li><li><p>Show that a maximizer is</p>
+<div class="math-display">\[\Q^*(a) = \min\bigl\{\max\{c,\ (1-\epsilon)\P(a)\},\ (1+\epsilon)\P(a)\bigr\},
+        \qquad a\in\Xcal,\]</div>
+<p>where \(c\) is chosen such that \(\sum_a\Q^*(a) = 1\): it flattens \(\P\) toward the uniform distribution as much as the constraint allows. <em>Hint: \(H\) is concave; write the KKT conditions.</em></p></li><li>Compute \(H_\epsilon(\P)\) for the binary source of the previous problem. Compare it with \((1-\epsilon)H(\P)\), \(H(\P)\) and \((1+\epsilon)H(\P)\), and with the value of \(\frac1n\log|\Tcal_\epsilon^{(n)}(\P)|\) computed in the previous problem.</li></ul></div>
+</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Other lectures"><a class="prev" href="lecture-1.html"><span class="dir">&larr; Lecture 1</span><span class="ttl">Information Measures</span></a></nav>
+</main></div>
+<footer class="site-footer" data-quiet>
+  <div class="wrap footer-grid">
+    <p class="footer-who">Elements of Information Theory &middot; 2026–2027<br><a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a> &middot; CentraleSupélec &middot; <a href="mailto:sheng.yang@centralesupelec.fr">sheng.yang@centralesupelec.fr</a></p>
+  </div>
+</footer>
+</div>
+</body>
+</html>

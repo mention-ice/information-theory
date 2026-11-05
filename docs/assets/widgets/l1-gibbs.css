@@ -1,0 +1,33 @@
+/* Shared by the Lecture 1 widgets (copied into each l1-*.css; colours are the theme tokens). */
+.l1w { margin: 1.2rem 0; padding: 0.9rem 1rem 0.8rem; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--band); font-family: var(--serif); color: var(--ink); }
+.l1w-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 1.4rem; align-items: center; margin-bottom: 0.6rem; }
+.l1w-ctl { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.l1w-ctl input[type="range"] { width: 8.5rem; accent-color: var(--signal); }
+.l1w-ctl-val { min-width: 2.6rem; color: var(--ink); }
+.l1w-ctl-name sub, .l1w sub { font-size: 0.75em; line-height: 0; }
+.l1w-ctl-name { white-space: nowrap; }
+@media (max-width: 520px) {
+  .l1w-controls { gap: 0.45rem; }
+  .l1w-ctl { width: 100%; }
+  .l1w-ctl input[type="range"] { flex: 1 1 auto; width: auto; min-width: 0; }
+}
+.l1w-toggle { display: inline-flex; border: 1px solid var(--rule-strong); border-radius: 999px; overflow: hidden; }
+.l1w-toggle button { font: inherit; font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.7rem; border: 0;
+  background: transparent; color: var(--ink-2); cursor: pointer; }
+.l1w-toggle button[aria-pressed="true"] { background: var(--signal); color: var(--on-accent); }
+.l1w-figure { min-width: 0; }
+.l1w-figure svg { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+.l1w-readout { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.45; }
+.l1w svg text { font-family: var(--mono); }
+.l1w .l1w-tick { font-size: 11px; fill: var(--ink-3); }
+.l1w .l1w-lbl { font-size: 12px; fill: var(--ink-2); }
+.l1w .l1w-axis { stroke: var(--rule-strong); stroke-width: 1; }
+.l1w-stats { display: flex; flex-wrap: wrap; gap: 0.3rem 1.4rem; margin: 0.5rem 0 0; font-size: 0.85rem; }
+.l1w-stats div { display: flex; flex-wrap: wrap; gap: 0 0.45rem; align-items: baseline; }
+.l1w-stats dt { font-family: var(--mono); font-size: 0.75rem; color: var(--ink-3); white-space: nowrap; }
+.l1w-stats dd { margin: 0; color: var(--ink); font-family: var(--mono); font-size: 0.8rem; }
+
+/* l1-gibbs */
+.l1g .l1g-bar { fill: var(--signal); }
+.l1g .l1g-uni { stroke: var(--noise); stroke-width: 1.2; stroke-dasharray: 4 3; }
