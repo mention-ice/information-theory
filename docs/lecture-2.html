@@ -43,7 +43,7 @@
 <section class="block" id="notes" aria-labelledby="notes-h">
   <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
   <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>The type \(\hat{\P}_{x^n}\) of a sequence is its empirical distribution. There are only \(K_{n,M} \le (n+1)^{M-1}\) types, polynomially many, for \(M^n\) sequences.</li><li>All sequences of a type class have the same probability under an i.i.d. source: \(\Q^n(x^n) = 2^{-nH(\hat{\P}\|\Q)}\) for \(x^n\in\Tcal^{(n)}(\hat{\P})\). The most likely source for \(x^n\) is its type.</li><li>A type class has \(|\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\,2^{nH(\hat{\P})}\) sequences and probability \(\Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) = \gamma_n(\hat{\P})\,2^{-nD(\hat{\P}\|\Q)}\), where \(\gamma_n(\hat{\P})\in\bigl[K_{n,M}^{-1},1\bigr]\) is polynomial in \(n\). On the exponential scale, the size is \(2^{nH}\) and the probability is \(2^{-nD}\).</li><li>The typical set \(\Tcal_\epsilon^{(n)}(\P)\) is the union of the type classes close to \(\P\). It has probability at least \(1-\delta_T(\epsilon,n,\P)\to 1\) and about \(2^{nH(\P)}\) sequences, each of probability about \(2^{-nH(\P)}\) (AEP).</li><li>An \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of a typical \(y^n\) is jointly typical with it with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</li></ul></div>
-  <div class="files"><a class="file-btn" href="notes/lecture-2-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">278 KB</span></a><a class="file-btn" href="notes/lecture-2-method-of-types.pdf"><span class="file-kind">PDF</span><span class="file-name">Detailed notes and problems</span><span class="file-size">340 KB</span></a></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-2-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">279 KB</span></a></div>
   <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">2.1</span> <a href="#cn-2-1">Types, type classes</a></li><li class="o-l1"><span class="o-num">2.2</span> <a href="#cn-2-2">Size and probability of type classes</a></li><li class="o-l2"><span class="o-num">2.2.1</span> <a href="#cn-2-2-1">Number of type classes</a></li><li class="o-l2"><span class="o-num">2.2.2</span> <a href="#cn-2-2-2">Size of each type class</a></li><li class="o-l2"><span class="o-num">2.2.3</span> <a href="#cn-2-2-3">Probability of type classes</a></li><li class="o-l1"><span class="o-num">2.3</span> <a href="#cn-2-3">Typical sequences</a></li><li class="o-l1"><span class="o-num">2.4</span> <a href="#cn-2-4">Jointly and conditionally typical sequences</a></li></ol>
   <div class="cnotes"><h3 class="cn-h cn-l1" id="cn-2-1"><span class="cn-num">2.1</span> Types, type classes</h3>
 <p>Let \(\Xcal = \{a_1,\ldots,a_M\}\) be a finite alphabet, \(M = |\Xcal|\). The <strong class="newword">type</strong> of a sequence \(x^n\in\Xcal^n\) is its empirical distribution:</p>
@@ -76,15 +76,16 @@
 <h3 class="cn-h cn-l1" id="cn-2-2"><span class="cn-num">2.2</span> Size and probability of type classes</h3>
 
 <h4 class="cn-h cn-l2" id="cn-2-2-1"><span class="cn-num">2.2.1</span> Number of type classes</h4>
-<p>By “stars and bars”,</p>
+<p>By “stars and bars” (Problem 2 of the exercises),</p>
 <div class="math-display">\[\begin{aligned}
   K_{n,M} := |\Pcal_n| = \binom{n+M-1}{M-1}
     &amp;\le (n+1)^{M-1} \\
     &amp;\le n^M \qquad \text{if } n\ge M \text{ and } n\ge 3.
 \end{aligned}\]</div>
+<div class="tex-proof"><em>Proof.</em> <p>For the last bound, \((n+1)^{M-1} = n^{M-1}\bigl(1+\frac1n\bigr)^{M-1} \le n^{M-1}\bigl(1+\frac1n\bigr)^n &lt; e\,n^{M-1} \le n^M\) when \(M-1\le n\) and \(n\ge 3\).</p></div>
 <div class="widget" data-widget="l2-simplex" data-args="n=6"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
 <h4 class="cn-h cn-l2" id="cn-2-2-2"><span class="cn-num">2.2.2</span> Size of each type class</h4>
-<p>For a type \(\hat{\P}\in\Pcal_n\),</p>
+<p>For a type \(\hat{\P}\in\Pcal_n\) (Problem 3 of the exercises),</p>
 <div class="math-display">\[\begin{aligned}
   |\Tcal^{(n)}(\hat{\P})|
     &amp;= \binom{n}{n_1,\ldots,n_M}
@@ -101,13 +102,14 @@
 <p>which is the multinomial theorem for \((1+\cdots+1)^n\). For \(M = 2\), it reads \(\sum_{k=0}^n \binom{n}{k} = 2^n\), e.g., \(1+4+6+4+1 = 16\) for \(n = 4\).</p>
 <div class="tex-center"><figure class="tikz"><img src="figures/lecture-2-48a6e4527d60fc35ff32.svg" alt="Figure 1 of the notes" style="width:248px"></figure></div>
 <h4 class="tex-h">Stirling’s approximation.</h4>
+<p>For every integer \(n\ge 1\) (Robbins’ form, which we use without proof),</p>
 <div class="math-display">\[n! = \sqrt{2\pi n}\,\Bigl(\frac{n}{e}\Bigr)^n e^{\frac{1}{12n+\theta_n}},
   \qquad \theta_n\in[0,1].\]</div>
 <p>Applied to each factorial, it gives, for \(\hat{\P}\in\Pcal_n\) with \(n_i = n\hat{\P}(a_i) \ge 1\) for all \(i\),</p>
 <div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{nH(\hat{\P})}\,
     \sqrt{\frac{n}{n_1\cdots n_M}\,(2\pi)^{-(M-1)}}\;
     e^{\frac{1}{12n+\theta_n} - \sum_{i=1}^{M}\frac{1}{12n_i+\theta_{n_i}}}.\]</div>
-<p>The factor after \(2^{nH(\hat{\P})}\) is polynomial in \(n\); we come back to it in Section 2.2.3. If \(n_i = 0\) for some \(i\), we simply remove \(a_i\) from the alphabet: the formula above holds with \(M\) replaced by \(\tilde{M} := |\{a\in\Xcal :\ \hat{\P}(a) &gt; 0\}|\), the effective size of the alphabet for the type \(\hat{\P}\).</p>
+<p>Indeed, since \(n = \sum_i n_i\), the factors \(e^{-n}\) and \(\prod_i e^{-n_i}\) cancel, and \(n^n/\prod_i n_i^{n_i} = 2^{nH(\hat{\P})}\) since \(n_i/n = \hat{\P}(a_i)\). The factor after \(2^{nH(\hat{\P})}\) is polynomial in \(n\); we come back to it in Section 2.2.3. If \(n_i = 0\) for some \(i\), we simply remove \(a_i\) from the alphabet: the formula above holds with \(M\) replaced by \(\tilde{M} := |\{a\in\Xcal :\ \hat{\P}(a) &gt; 0\}|\), the effective size of the alphabet for the type \(\hat{\P}\).</p>
 <h4 class="cn-h cn-l2" id="cn-2-2-3"><span class="cn-num">2.2.3</span> Probability of type classes</h4>
 <p>Let \(\Q\in\Pcal(\Xcal)\) be a probability measure with pmf \(q\), and let \(\Q^n\) be the i.i.d. distribution on \(\Xcal^n\), that is, the product measure with pmf \(q^n(x^n) := \prod_{i=1}^n q(x_i)\). Since the alphabet is finite, a measure is determined by its pmf, and we use the same letter for both: \(\Q(a) := \Q(\{a\}) = q(a)\), \(\Q^n(x^n) := \Q^n(\{x^n\}) = q^n(x^n)\), and \(\Q^n(\mathcal{A}) = \sum_{x^n\in\mathcal{A}} \Q^n(x^n)\) for every \(\mathcal{A}\subseteq\Xcal^n\). The same shorthand is used for \(\P\) and for types.</p>
 <ul class="tex-list"><li><p><strong class="newword">Probability of a sequence under \(\Q^n\).</strong></p>
@@ -127,9 +129,13 @@
 <div class="math-display">\[\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) \ge \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr),\]</div>
 <p>from \(\circnum{\star}\), since \(H(\hat{\P}\|\Q) \ge H(\hat{\P})\).</p></li><li><p><strong class="newword">Most likely type class under a source.</strong> For every \(\hat{\P},\hat{\Q}\in\Pcal_n\),</p>
 <div class="math-display">\[\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) \ge \hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\Q})\bigr),\]</div>
-<p>that is, the type class of \(\hat{\P}\) is the most likely one under \(\hat{\P}^n\). Indeed, using \(s!/t! \ge t^{s-t}\), we have</p>
-<div class="math-display">\[\frac{|\Tcal^{(n)}(\hat{\P})|}{|\Tcal^{(n)}(\hat{\Q})|}
-    \ge 2^{n(H(\hat{\P}) - H(\hat{\Q}\|\hat{\P}))},\]</div>
+<p>that is, the type class of \(\hat{\P}\) is the most likely one under \(\hat{\P}^n\). Indeed, using \(s!/t! \ge t^{s-t}\) with \(s = n\hat{\Q}(a)\) and \(t = n\hat{\P}(a)\), we have</p>
+<div class="math-display">\[\begin{aligned}
+    \frac{|\Tcal^{(n)}(\hat{\P})|}{|\Tcal^{(n)}(\hat{\Q})|}
+    = \prod_{a\in\Xcal}\frac{(n\hat{\Q}(a))!}{(n\hat{\P}(a))!}
+    &amp;\ge \prod_{a\in\Xcal}\bigl(n\hat{\P}(a)\bigr)^{n(\hat{\Q}(a)-\hat{\P}(a))}
+     = 2^{n(H(\hat{\P}) - H(\hat{\Q}\|\hat{\P}))},
+  \end{aligned}\]</div>
 <p>so, by \(\circnum{\star}\),</p>
 <div class="math-display">\[\begin{aligned}
     \frac{\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)}{\hat{\P}^n\bigl(\Tcal^{(n)}(\hat{\Q})\bigr)}
@@ -146,7 +152,7 @@
 <p>Since the \(K_{n,M}\) type classes partition \(\Xcal^n\) and \(\Tcal^{(n)}(\hat{\P})\) is the most likely one under \(\hat{\P}^n\), we have \(1 \ge \gamma_n(\hat{\P}) \ge K_{n,M}^{-1}\). Hence, with \(\eta_n := \frac{1}{n}\log \gamma_n(\hat{\P})\),</p>
 <div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{n(H(\hat{\P})+\eta_n)},
     \qquad -\frac{\log K_{n,M}}{n} \le \eta_n \le 0,\]</div>
-<p>so that \(\eta_n\to 0\) as \(n\to\infty\), uniformly over \(\hat{\P}\in\Pcal_n\). Moreover, Stirling’s approximation in Section 2.2.2 gives (exercise)</p>
+<p>so that \(\eta_n\to 0\) as \(n\to\infty\), uniformly over \(\hat{\P}\in\Pcal_n\). Moreover, Stirling’s approximation in Section 2.2.2 gives (Problem 4 of the exercises)</p>
 <div class="math-display">\[\gamma_n(\hat{\P}) \simeq (2\pi n)^{-\frac{\tilde{M}-1}{2}}\,
       \tilde{M}^{\frac{\tilde{M}}{2}}\, 2^{\frac{\tilde{M}}{2} D(\mathrm{U}\|\hat{\P})},\]</div>
 <p>where \(\mathrm{U}\) is the uniform distribution on \(\mathrm{supp}(\hat{\P})\), \(\tilde{M}\) is the effective alphabet size defined in Section 2.2.2, and \(\simeq\) means that the ratio of both sides tends to \(1\) as \(n\to\infty\). So \(\gamma_n(\hat{\P})\) is polynomial in \(n\), and goes to \(0\) polynomially fast if \(\tilde{M} \ge 2\)! Among types with the same support size \(\tilde{M}\), the uniform type has the smallest maximum-likelihood probability, although its type class is the largest.</p></li><li><p>For \(\hat{\P}\in\Pcal_n\) and \(\Q\in\Pcal(\Xcal)\),</p>
@@ -215,8 +221,8 @@
   \ge K_{n,M}^{-1}\, 2^{nH(\hat{\P})}.\]</div>
 <p>Such a type exists for \(n\) large enough. Rounding each \(n\P(a)\) up or down gives \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| &lt; \frac{1}{n}\) for all \(a\), and \(\hat{\P}(a) = 0\) if \(\P(a) = 0\). With \(\P_{\min} := \min_{a:\,\P(a)&gt;0}\P(a)\) and \(\tau_n := \frac{1}{n\P_{\min}}\), we get \(|\hat{\P}(a)-\P(a)| \le \tau_n\P(a)\) for all \(a\), so item 1, applied with \(\tau_n\) to any \(x^n\in\Tcal^{(n)}(\hat{\P})\), gives</p>
 <div class="math-display">\[H(\hat{\P}) \ge (1-\tau_n)H(\P) - \log(1+\tau_n)
-  \ge H(\P) - \frac{H(\P)+\log e}{n\P_{\min}}.\]</div>
-<p>Hence, for \(n \ge \frac{1}{\epsilon\P_{\min}}\) (so that \(\tau_n \le \epsilon\)),</p>
+  \ge H(\P) - \frac{H(\P)+\log e}{n\P_{\min}},\]</div>
+<p>since \(\log(1+\tau_n) \le \tau_n\log e\). Hence, for \(n \ge \frac{1}{\epsilon\P_{\min}}\) (so that \(\tau_n \le \epsilon\)),</p>
 <div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P)| \ge K_{n,M}^{-1}\, 2^{nH(\P) - \frac{H(\P)+\log e}{\P_{\min}}},\]</div>
 <p>that is, \(\frac{1}{n}\log|\Tcal_\epsilon^{(n)}(\P)| \ge H(\P) - O\bigl(\frac{\log n}{n}\bigr)\), much better than \((1-\epsilon)H(\P)\).</p>
 <h3 class="cn-h cn-l1" id="cn-2-4"><span class="cn-num">2.4</span> Jointly and conditionally typical sequences</h3>
