@@ -1,0 +1,56 @@
+/* Shared by the Lecture 3 widgets (copied into each l3-*.css; colours are the theme tokens). */
+.l3w { margin: 1.2rem 0; padding: 0.9rem 1rem 0.8rem; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--band); font-family: var(--serif); color: var(--ink); }
+.l3w-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: center; margin-bottom: 0.6rem; }
+.l3w-ctl { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.l3w-ctl input[type="range"] { flex: 0 1 8.5rem; width: 8.5rem; min-width: 4.5rem; accent-color: var(--signal); }
+.l3w-ctl-val { min-width: 2.6rem; color: var(--ink); }
+.l3w-ctl-name { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; }
+.l3w-hint { font-size: 0.88rem; color: var(--ink-2); }
+.l3w-btn { font: inherit; font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--rule-strong); background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.l3w-btn:hover { border-color: var(--signal); color: var(--ink); }
+.l3w-btn[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--on-accent); }
+.l3w-btn:disabled { opacity: 0.45; cursor: default; }
+.l3w-btn:focus-visible, .l3w-field input:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.l3w-field { display: inline-flex; align-items: center; gap: 0.45rem; flex: 1 1 14rem; max-width: 26rem; }
+.l3w-field input { flex: 1; min-width: 0; font-family: var(--mono); font-size: 0.8rem; padding: 0.3rem 0.5rem;
+  border: 1px solid var(--rule-strong); border-radius: 6px; background: var(--sheet); color: var(--ink); }
+.l3w-figure svg { display: block; width: 100%; height: auto; max-width: 38rem; margin: 0 auto; }
+.l3w-readout { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.45; }
+.l3w-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.l3w-table { border-collapse: collapse; margin: 0.6rem auto 0; font-size: 0.82rem; }
+.l3w-table th, .l3w-table td { padding: 0.18rem 0.6rem; text-align: center; white-space: nowrap; }
+.l3w-table th { font-family: var(--mono); font-size: 0.72rem; font-weight: normal; color: var(--ink-3); border-bottom: 1px solid var(--rule-strong); }
+.l3w-table td { border-bottom: 1px solid var(--rule); color: var(--ink); }
+.l3w-bin { font-family: var(--mono); letter-spacing: 0.03em; }
+.l3w-bin strong { color: var(--signal); }
+.l3w svg text { font-family: var(--mono); }
+.l3w .l3w-tick { font-size: 11px; fill: var(--ink-3); }
+.l3w .l3w-lbl { font-size: 11px; fill: var(--ink-2); paint-order: stroke; stroke: var(--band); stroke-width: 4px; stroke-linejoin: round; }
+.l3w .l3w-axis { stroke: var(--rule-strong); stroke-width: 1; }
+/* l3-parse */
+.l3w-pa .l3w-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule-strong); border-radius: 14px; overflow: hidden; }
+.l3w-pa .l3w-seg .l3w-btn { border: 0; border-radius: 0; background: transparent; }
+.l3w-pa .l3w-seg .l3w-btn[aria-pressed="true"] { background: var(--signal); color: var(--on-accent); }
+.l3w-pa .l3w-field { flex: 0 1 12rem; }
+.l3w-pa .l3w-pa-book { margin: 0.3rem auto 0; }
+.l3w-pa .l3w-pa-book th { text-align: right; padding-right: 0.8rem; }
+.l3w-pa-book td.l3w-pa-let { font-family: var(--mono); font-weight: bold; color: var(--ink); }
+.l3w-pa-kind { margin: 0.3rem 0 0.2rem; text-align: center; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
+.l3w-pa-head { margin: 0.8rem 0 0.35rem; font-size: 0.9rem; color: var(--ink-2); }
+.l3w-pa-list { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0.45rem 1.1rem; }
+.l3w-pa-list .l3w-pa-head { flex-basis: 100%; margin-bottom: 0; }
+.l3w-pa-row { display: inline-flex; flex-wrap: wrap; gap: 2px; margin: 0; }
+.l3w-pa-enc .l3w-pa-row { display: flex; }
+.l3w-pa-seg { display: inline-flex; flex-direction: column; align-items: center; min-width: 1.6rem; padding: 0.12rem 0.35rem 0.08rem;
+  border-radius: 4px; background: var(--sheet); border: 1px solid var(--rule); }
+.l3w-pa-seg.is-odd { background: var(--signal-soft); }
+.l3w-pa-row.is-true .l3w-pa-seg { border-color: var(--signal); }
+.l3w-pa-bits { font-family: var(--mono); font-size: 0.85rem; letter-spacing: 0.04em; color: var(--ink); }
+.l3w-pa-let { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
+@media (max-width: 30rem) {
+  .l3w-pa .l3w-seg .l3w-btn { font-size: 0.7rem; padding: 0.25rem 0.5rem; }
+  .l3w-pa .l3w-pa-book th, .l3w-pa .l3w-pa-book td { padding: 0.18rem 0.45rem; }
+  .l3w-pa .l3w-pa-book th { padding-right: 0.5rem; }
+}

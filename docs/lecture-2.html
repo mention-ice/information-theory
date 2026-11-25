@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
 <link rel="stylesheet" href="assets/style.css">
-<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"EE": "\\mathbb{E}", "P": "\\mathrm{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Tcal": "\\mathcal{T}", "Xcal": "\\mathcal{X}", "Ycal": "\\mathcal{Y}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "epsilon": "\\varepsilon", "ind": ["\\pmb{1}{\\left\\{#1\\right\\}}", 1], "qedhere": "", "rv": ["\\mathrm{#1}", 1]}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
+<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"EE": "\\mathbb{E}", "P": "\\mathrm{P}", "PP": "\\mathbb{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Tcal": "\\mathcal{T}", "Xcal": "\\mathcal{X}", "Ycal": "\\mathcal{Y}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "epsilon": "\\varepsilon", "ind": ["\\pmb{1}{\\left\\{#1\\right\\}}", 1], "qedhere": "", "rv": ["\\mathrm{#1}", 1]}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
 <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 <script defer src="assets/site.js"></script>
 <script defer src="https://bit2noisy-telemetry.sheng-yang-e9e.workers.dev/v.js" data-site="it"></script>
@@ -37,14 +37,14 @@
   <p class="huff-bits" aria-hidden="true"><span class="cw cw0" title="M &rarr; 1010">1010</span><span class="cw cw1" title="e &rarr; 010">010</span><span class="cw cw0" title="t &rarr; 100">100</span><span class="cw cw1" title="h &rarr; 1101">1101</span><span class="cw cw0" title="o &rarr; 011">011</span><span class="cw cw1" title="d &rarr; 1011">1011</span><span class="cw cw0" title="space &rarr; 001">001</span><span class="cw cw1" title="o &rarr; 011">011</span><span class="cw cw0" title="f &rarr; 1100">1100</span><span class="cw cw1" title="space &rarr; 001">001</span><span class="cw cw0" title="t &rarr; 100">100</span><span class="cw cw1" title="y &rarr; 000">000</span><span class="cw cw0" title="p &rarr; 1110">1110</span><span class="cw cw1" title="e &rarr; 010">010</span><span class="cw cw0" title="s &rarr; 1111">1111</span></p>
   <p class="huff-cap">The title above, Huffman-coded from its own letter frequencies: 51 bits, 3.40 bits per character (entropy 3.37). Alternate shading separates the codewords.</p>
 </div>
-    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">8</span></a></nav>
+    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">9</span></a></nav>
   </div>
 </header>
 <div class="sheet-wrap wrap"><main class="sheet">
 <section class="block" id="notes" aria-labelledby="notes-h">
   <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
-  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>The type \(\hat{\P}_{x^n}\) of a sequence is its empirical distribution. There are only \(K_{n,M} \le (n+1)^{M-1}\) types, polynomially many, for \(M^n\) sequences.</li><li>All sequences of a type class have the same probability under an i.i.d. source: \(\Q^n(x^n) = 2^{-nH(\hat{\P}\|\Q)}\) for \(x^n\in\Tcal^{(n)}(\hat{\P})\). The most likely source for \(x^n\) is its type.</li><li>A type class has \(|\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\,2^{nH(\hat{\P})}\) sequences and probability \(\Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) = \gamma_n(\hat{\P})\,2^{-nD(\hat{\P}\|\Q)}\), where \(\gamma_n(\hat{\P})\in\bigl[K_{n,M}^{-1},1\bigr]\) is polynomial in \(n\). On the exponential scale, the size is \(2^{nH}\) and the probability is \(2^{-nD}\).</li><li>The typical set \(\Tcal_\epsilon^{(n)}(\P)\) is the union of the type classes close to \(\P\). It has probability at least \(1-\delta_T(\epsilon,n,\P)\to 1\) and about \(2^{nH(\P)}\) sequences, each of probability about \(2^{-nH(\P)}\) (AEP).</li><li>An \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of a typical \(y^n\) is jointly typical with it with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</li></ul></div>
-  <div class="files"><a class="file-btn" href="notes/lecture-2-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">279 KB</span></a></div>
+  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>The type \(\hat{\P}_{x^n}\) of a sequence is its empirical distribution. There are only \(K_{n,M} \le (n+1)^{M-1}\) types, polynomially many, for \(M^n\) sequences.</li><li>All sequences of a type class have the same probability under an i.i.d. source: \(\Q^n(x^n) = 2^{-nH(\hat{\P}\|\Q)}\) for \(x^n\in\Tcal^{(n)}(\hat{\P})\). The most likely source for \(x^n\) is its type.</li><li>A type class has \(|\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\,2^{nH(\hat{\P})}\) sequences and probability \(\Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) = \gamma_n(\hat{\P})\,2^{-nD(\hat{\P}\|\Q)}\), where \(\gamma_n(\hat{\P})\in\bigl[K_{n,M}^{-1},1\bigr]\) is not exponentially small. On the exponential scale, the size is \(2^{nH}\) and the probability is \(2^{-nD}\).</li><li>The typical set \(\Tcal_\epsilon^{(n)}(\P)\) is the union of the type classes close to \(\P\). It has probability at least \(1-\delta_T(\epsilon,n,\P)\to 1\) and about \(2^{nH(\P)}\) sequences, each of probability about \(2^{-nH(\P)}\) (AEP).</li><li>An \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of a typical \(y^n\) is jointly typical with it with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</li></ul></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-2-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">282 KB</span></a></div>
   <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">2.1</span> <a href="#cn-2-1">Types, type classes</a></li><li class="o-l1"><span class="o-num">2.2</span> <a href="#cn-2-2">Size and probability of type classes</a></li><li class="o-l2"><span class="o-num">2.2.1</span> <a href="#cn-2-2-1">Number of type classes</a></li><li class="o-l2"><span class="o-num">2.2.2</span> <a href="#cn-2-2-2">Size of each type class</a></li><li class="o-l2"><span class="o-num">2.2.3</span> <a href="#cn-2-2-3">Probability of type classes</a></li><li class="o-l1"><span class="o-num">2.3</span> <a href="#cn-2-3">Typical sequences</a></li><li class="o-l1"><span class="o-num">2.4</span> <a href="#cn-2-4">Jointly and conditionally typical sequences</a></li></ol>
   <div class="cnotes"><h3 class="cn-h cn-l1" id="cn-2-1"><span class="cn-num">2.1</span> Types, type classes</h3>
 <p>Let \(\Xcal = \{a_1,\ldots,a_M\}\) be a finite alphabet, \(M = |\Xcal|\). The <strong class="newword">type</strong> of a sequence \(x^n\in\Xcal^n\) is its empirical distribution:</p>
@@ -72,7 +72,7 @@
     = \{0011,\ 0101,\ 0110,\ 1001,\ 1010,\ 1100\}.\]</div>
 <p>The five type classes, of sizes \(1, 4, 6, 4, 1\), partition the \(2^4 = 16\) sequences of \(\Xcal^4\).</p>
 <div class="widget" data-widget="l2-type-classes" data-args="n=4 q=0.25"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
-<p>In this lecture, we answer three questions:</p>
+<p>We first answer three questions:</p>
 <ul class="tex-list"><li>the number of types,</li><li>the size of each type class,</li><li>the probability of each type class.</li></ul>
 <h3 class="cn-h cn-l1" id="cn-2-2"><span class="cn-num">2.2</span> Size and probability of type classes</h3>
 
@@ -83,7 +83,7 @@
     &amp;\le (n+1)^{M-1} \\
     &amp;\le n^M \qquad \text{if } n\ge M \text{ and } n\ge 3.
 \end{aligned}\]</div>
-<div class="tex-proof"><em>Proof.</em> <p>For the last bound, \((n+1)^{M-1} = n^{M-1}\bigl(1+\frac1n\bigr)^{M-1} \le n^{M-1}\bigl(1+\frac1n\bigr)^n &lt; e\,n^{M-1} \le n^M\) when \(M-1\le n\) and \(n\ge 3\).</p></div>
+<div class="tex-proof"><em>Proof.</em> <p>For the last bound, since \(M-1 &lt; n\) and \(n\ge 3 &gt; e\), \((n+1)^{M-1} = n^{M-1}\bigl(1+\frac1n\bigr)^{M-1} \le n^{M-1}\bigl(1+\frac1n\bigr)^n &lt; e\,n^{M-1} \le n^M\).</p></div>
 <div class="widget" data-widget="l2-simplex" data-args="n=6"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
 <h4 class="cn-h cn-l2" id="cn-2-2-2"><span class="cn-num">2.2.2</span> Size of each type class</h4>
 <p>For a type \(\hat{\P}\in\Pcal_n\) (Problem 3 of the exercises),</p>
@@ -110,7 +110,7 @@
 <div class="math-display">\[|\Tcal^{(n)}(\hat{\P})| = 2^{nH(\hat{\P})}\,
     \sqrt{\frac{n}{n_1\cdots n_M}\,(2\pi)^{-(M-1)}}\;
     e^{\frac{1}{12n+\theta_n} - \sum_{i=1}^{M}\frac{1}{12n_i+\theta_{n_i}}}.\]</div>
-<p>Indeed, since \(n = \sum_i n_i\), the factors \(e^{-n}\) and \(\prod_i e^{-n_i}\) cancel, and \(n^n/\prod_i n_i^{n_i} = 2^{nH(\hat{\P})}\) since \(n_i/n = \hat{\P}(a_i)\). The factor after \(2^{nH(\hat{\P})}\) is polynomial in \(n\); we come back to it in Section 2.2.3. If \(n_i = 0\) for some \(i\), we simply remove \(a_i\) from the alphabet: the formula above holds with \(M\) replaced by \(\tilde{M} := |\{a\in\Xcal :\ \hat{\P}(a) &gt; 0\}|\), the effective size of the alphabet for the type \(\hat{\P}\).</p>
+<p>Indeed, since \(n = \sum_i n_i\), the factors \(e^{-n}\) and \(\prod_i e^{-n_i}\) cancel, and \(n^n/\prod_i n_i^{n_i} = 2^{nH(\hat{\P})}\) since \(n_i/n = \hat{\P}(a_i)\). For a fixed \(\hat{\P}\), the factor after \(2^{nH(\hat{\P})}\) decays only polynomially in \(n\), like \(n^{-(M-1)/2}\); we come back to it in Section 2.2.3. If \(n_i = 0\) for some \(i\), we simply remove \(a_i\) from the alphabet: the formula above holds with \(M\) replaced by \(\tilde{M} := |\{a\in\Xcal :\ \hat{\P}(a) &gt; 0\}|\), the effective size of the alphabet for the type \(\hat{\P}\).</p>
 <h4 class="cn-h cn-l2" id="cn-2-2-3"><span class="cn-num">2.2.3</span> Probability of type classes</h4>
 <p>Let \(\Q\in\Pcal(\Xcal)\) be a probability measure with pmf \(q\), and let \(\Q^n\) be the i.i.d. distribution on \(\Xcal^n\), that is, the product measure with pmf \(q^n(x^n) := \prod_{i=1}^n q(x_i)\). Since the alphabet is finite, a measure is determined by its pmf, and we use the same letter for both: \(\Q(a) := \Q(\{a\}) = q(a)\), \(\Q^n(x^n) := \Q^n(\{x^n\}) = q^n(x^n)\), and \(\Q^n(\mathcal{A}) = \sum_{x^n\in\mathcal{A}} \Q^n(x^n)\) for every \(\mathcal{A}\subseteq\Xcal^n\). The same shorthand is used for \(\P\) and for types.</p>
 <ul class="tex-list"><li><p><strong class="newword">Probability of a sequence under \(\Q^n\).</strong></p>
@@ -156,13 +156,13 @@
 <p>so that \(\eta_n\to 0\) as \(n\to\infty\), uniformly over \(\hat{\P}\in\Pcal_n\). Moreover, Stirling’s approximation in Section 2.2.2 gives (Problem 4 of the exercises)</p>
 <div class="math-display">\[\gamma_n(\hat{\P}) \simeq (2\pi n)^{-\frac{\tilde{M}-1}{2}}\,
       \tilde{M}^{\frac{\tilde{M}}{2}}\, 2^{\frac{\tilde{M}}{2} D(\mathrm{U}\|\hat{\P})},\]</div>
-<p>where \(\mathrm{U}\) is the uniform distribution on \(\mathrm{supp}(\hat{\P})\), \(\tilde{M}\) is the effective alphabet size defined in Section 2.2.2, and \(\simeq\) means that the ratio of both sides tends to \(1\) as \(n\to\infty\). So \(\gamma_n(\hat{\P})\) is polynomial in \(n\), and goes to \(0\) polynomially fast if \(\tilde{M} \ge 2\)! Among types with the same support size \(\tilde{M}\), the uniform type has the smallest maximum-likelihood probability, although its type class is the largest.</p></li><li><p>For \(\hat{\P}\in\Pcal_n\) and \(\Q\in\Pcal(\Xcal)\),</p>
+<p>where \(\mathrm{U}\) is the uniform distribution on \(\mathrm{supp}(\hat{\P})\), \(\tilde{M}\) is the effective alphabet size defined in Section 2.2.2, and \(\simeq\) means that, for a fixed \(\hat{\P}\), the ratio of both sides tends to \(1\) as \(n\to\infty\) over the \(n\) for which \(\hat{\P}\in\Pcal_n\). So \(\gamma_n(\hat{\P})\) decays like \(n^{-(\tilde{M}-1)/2}\): it tends to \(0\), but only polynomially fast, if \(\tilde{M}\ge 2\), and it equals \(1\) if \(\tilde{M} = 1\). For large \(n\), among the types with the same support size \(\tilde{M}\), the uniform one (\(D(\mathrm{U}\|\hat{\P}) = 0\)) has the smallest maximum-likelihood probability, although its type class is the largest.</p></li><li><p>For \(\hat{\P}\in\Pcal_n\) and \(\Q\in\Pcal(\Xcal)\),</p>
 <div class="math-display">\[\begin{aligned}
     \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr) &amp;= |\Tcal^{(n)}(\hat{\P})|\, 2^{-nH(\hat{\P}\|\Q)} \\
       &amp;= \gamma_n(\hat{\P})\, 2^{nH(\hat{\P})-nH(\hat{\P}\|\Q)} \\
       &amp;= \gamma_n(\hat{\P})\, 2^{-nD(\hat{\P}\|\Q)}.
   \end{aligned}\]</div>
-<p>If \(\hat{\P}\ne\Q\), then \(D(\hat{\P}\|\Q) &gt; 0\), and the type class of \(\hat{\P}\) has an exponentially low probability under \(\Q^n\).</p></li></ul>
+<p>If \(\hat{\P}\ne\Q\), then \(D(\hat{\P}\|\Q) &gt; 0\), and, for a fixed \(\hat{\P}\), the type class of \(\hat{\P}\) has an exponentially low probability under \(\Q^n\).</p></li></ul>
 <div class="widget" data-widget="l2-concentration" data-args="q=0.3 n=50 scale=log"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
 <div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Summary.</strong> For \(\hat{\P}\in\Pcal_n\), \(x^n\in\Tcal^{(n)}(\hat{\P})\), and \(\Q\in\Pcal(\Xcal)\),</p>
 <div class="math-display">\[\begin{aligned}
@@ -203,37 +203,38 @@
 <p>so \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \to 1\) if \(n\epsilon^2\to\infty\).</p></li><li><p><strong class="newword">Size of the set.</strong></p>
 <div class="math-display">\[\bigl(1-\delta_T(\epsilon,n,\P)\bigr)\, 2^{n(1-\epsilon)H(\P)}
         \le |\Tcal_\epsilon^{(n)}(\P)| \le 2^{n(1+\epsilon)H(\P)}.\]</div></li></ol></div></div></div>
-<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li><p>Apply the lemma to \(g := \log\P\): we have \(\frac{1}{n}\log\P^n(x^n) = \frac{1}{n}\sum_{i=1}^n \log\P(x_i)\) and \(\EE_\P\bigl[|\log\P(\rv{X})|\bigr] = H(\P)\). Next, \(\log\frac{\hat{\P}_{x^n}(a)}{\P(a)} \le \log(1+\epsilon)\) whenever \(\hat{\P}_{x^n}(a) &gt; 0\), and averaging under \(\hat{\P}_{x^n}\) bounds the divergence. Finally, \(H(\hat{\P}_{x^n}) = H(\hat{\P}_{x^n}\|\P) - D(\hat{\P}_{x^n}\|\P)\), and the lemma with \(g = \log\P\) also gives \(|H(\hat{\P}_{x^n}\|\P) - H(\P)| \le \epsilon H(\P)\).</p>
+<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li><p>Apply the lemma to \(g := \log\P\) on the support of \(\P\) (the other letters neither occur in \(x^n\) nor count in \(\EE_\P\)): we have \(\frac{1}{n}\log\P^n(x^n) = \frac{1}{n}\sum_{i=1}^n \log\P(x_i)\) and \(\EE_\P\bigl[|\log\P(\rv{X})|\bigr] = H(\P)\). Next, \(\log\frac{\hat{\P}_{x^n}(a)}{\P(a)} \le \log(1+\epsilon)\) whenever \(\hat{\P}_{x^n}(a) &gt; 0\), and averaging under \(\hat{\P}_{x^n}\) bounds the divergence. Finally, \(H(\hat{\P}_{x^n}) = H(\hat{\P}_{x^n}\|\P) - D(\hat{\P}_{x^n}\|\P)\), and the lemma with \(g = \log\P\) also gives \(|H(\hat{\P}_{x^n}\|\P) - H(\P)| \le \epsilon H(\P)\).</p>
 <p>We write the bounds on \(\P^n(x^n)\) as \(\P^n(x^n)\approx 2^{-nH(\P)}\). Sequences satisfying them are called <strong class="newword">weakly typical</strong>, so strong typicality implies weak typicality. The converse fails: if \(\P\) is uniform and \(M\ge 2\), every \(x^n\) is weakly typical, including \(x^n = a_1 a_1\cdots a_1\), which is not strongly typical for \(\epsilon &lt; 1\).</p></li><li><p>For each \(a\in\Xcal\), the random variables \(\ind{\rv{X}_1 = a},\ldots,\ind{\rv{X}_n = a}\) are i.i.d., with values in \([0,1]\) and mean \(\P(a)\), and their arithmetic mean is \(\hat{\P}_{\rv{X}^n}(a)\). If \(\P(a) = 0\), then \(\hat{\P}_{\rv{X}^n}(a) = 0\) with probability \(1\). By the union bound and <strong class="newword">Hoeffding’s inequality</strong> (the mean of \(n\) independent random variables with values in \([0,1]\) deviates from its expectation by more than \(t\) with probability at most \(2e^{-2nt^2}\)),</p>
 <div class="math-display">\[\begin{aligned}
         \P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr)
           &amp;\le \sum_{a:\,\P(a)&gt;0} \P^n\Bigl(\Bigl|\frac{1}{n}\sum_{i=1}^n \ind{\rv{X}_i = a} - \P(a)\Bigr| &gt; \epsilon\P(a)\Bigr) \\
           &amp;\le \sum_{a:\,\P(a)&gt;0} 2e^{-2n\epsilon^2\P(a)^2}
            \le 2M^* e^{-2n\epsilon^2 c_\P}.
-      \end{aligned}\]</div></li><li>By item 1, \(|\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1+\epsilon)H(\P)} \le \P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le |\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1-\epsilon)H(\P)}\). Use \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le 1\) on the left and \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \ge 1-\delta_T(\epsilon,n,\P)\) (item 2) on the right.</li></ol></div>
+      \end{aligned}\]</div>
+<p>Problem 9 of the exercises replaces Hoeffding’s inequality by the Chernoff bound, whose exponent has \(\P(a)\) in place of \(\P(a)^2\).</p></li><li>By item 1, \(|\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1+\epsilon)H(\P)} \le \P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le |\Tcal_\epsilon^{(n)}(\P)|\, 2^{-n(1-\epsilon)H(\P)}\). Use \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \le 1\) on the left and \(\P^n\bigl(\Tcal_\epsilon^{(n)}(\P)\bigr) \ge 1-\delta_T(\epsilon,n,\P)\) (item 2) on the right.</li></ol></div>
 <p>So the probability of an i.i.d. source \(\P^n\) concentrates on \(\Tcal_\epsilon^{(n)}(\P)\), a set of about \(2^{nH(\P)}\) sequences out of all \(M^n = 2^{n\log M}\), and every sequence in it has probability about \(2^{-nH(\P)}\). This is the <strong class="newword">asymptotic equipartition property</strong> (AEP).</p>
-<div class="widget" data-widget="l2-concentration" data-args="q=0.2 n=1000 eps=0.2"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<div class="widget" data-widget="l2-concentration" data-args="q=0.2 n=1000 eps=0.2 src=P"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
 <h4 class="tex-h">Comparison with type classes.</h4>
 <p>The properties above parallel those of a type class (Section 2.2.3), with probabilities under \(\hat{\P}^n\) for the type class \(\Tcal^{(n)}(\hat{\P})\) and under \(\P^n\) for the typical set \(\Tcal_\epsilon^{(n)}(\P)\):</p>
 <div class="tex-center"><div class="table-wrap"><table class="tex-table"><tbody><tr><td class="al-left br"></td><td class="al-center br">type class \(\Tcal^{(n)}(\hat{\P})\)</td><td class="al-center">typical set \(\Tcal_\epsilon^{(n)}(\P)\)</td></tr><tr class="ht"><td class="al-left br">probability of a sequence</td><td class="al-center br">\(2^{-nH(\hat{\P})}\)</td><td class="al-center">\(2^{-n(1\pm\epsilon)H(\P)}\)</td></tr><tr><td class="al-left br">size of the set</td><td class="al-center br">\(\gamma_n(\hat{\P})\, 2^{nH(\hat{\P})}\)</td><td class="al-center">\(2^{n(1\pm\epsilon)H(\P)}\)</td></tr><tr><td class="al-left br">probability of the set</td><td class="al-center br">\(\gamma_n(\hat{\P})\to 0\) polynomially</td><td class="al-center">\(\ge 1-\delta_T(\epsilon,n,\P)\to 1\)</td></tr></tbody></table></div></div>
-<p>where the exponents \((1\pm\epsilon)H(\P)\) stand for the bounds of items 1 and 3. A single type class has a vanishing probability, but only polynomially fast: \(\gamma_n(\hat{\P}) \ge K_{n,M}^{-1} \ge (n+1)^{-(M-1)}\), so the loss is invisible on the exponential scale. In contrast, \(\Tcal_\epsilon^{(n)}(\P)\), a union of the type classes close to \(\P\), carries almost all the probability; the price is the slack \(\pm\epsilon\) in the exponents.</p>
+<p>where the exponents \((1\pm\epsilon)H(\P)\) stand for the bounds of items 1 and 3. A single type class with \(\tilde{M}\ge 2\) has a vanishing probability, but only polynomially fast: \(\gamma_n(\hat{\P}) \ge K_{n,M}^{-1} \ge (n+1)^{-(M-1)}\), so the loss is invisible on the exponential scale. In contrast, \(\Tcal_\epsilon^{(n)}(\P)\), a union of the type classes close to \(\P\), carries almost all the probability; the price is the slack \(\pm\epsilon\) in the exponents.</p>
 <p>Conversely, type classes give a tighter lower bound on the size, without any concentration argument. For every type \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| \le \epsilon\P(a)\) for all \(a\),</p>
 <div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P)| \ge |\Tcal^{(n)}(\hat{\P})| = \gamma_n(\hat{\P})\, 2^{nH(\hat{\P})}
   \ge K_{n,M}^{-1}\, 2^{nH(\hat{\P})}.\]</div>
-<p>Such a type exists for \(n\) large enough. Rounding each \(n\P(a)\) up or down gives \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| &lt; \frac{1}{n}\) for all \(a\), and \(\hat{\P}(a) = 0\) if \(\P(a) = 0\). With \(\P_{\min} := \min_{a:\,\P(a)&gt;0}\P(a)\) and \(\tau_n := \frac{1}{n\P_{\min}}\), we get \(|\hat{\P}(a)-\P(a)| \le \tau_n\P(a)\) for all \(a\), so item 1, applied with \(\tau_n\) to any \(x^n\in\Tcal^{(n)}(\hat{\P})\), gives</p>
+<p>Such a type exists for \(n\) large enough. Rounding each \(n\P(a)\) up or down gives \(\hat{\P}\in\Pcal_n\) with \(|\hat{\P}(a)-\P(a)| &lt; \frac{1}{n}\) for all \(a\), and \(\hat{\P}(a) = 0\) if \(\P(a) = 0\). With \(\P_{\min} := \min_{a:\,\P(a)&gt;0}\P(a)\) and \(\tau_n := \frac{1}{n\P_{\min}}\), we get \(|\hat{\P}(a)-\P(a)| \le \tau_n\P(a)\) for all \(a\). For \(n\ge\frac{1}{\P_{\min}}\), we have \(\tau_n\le 1\), and item 1, applied with \(\tau_n\) in place of \(\epsilon\) to any \(x^n\in\Tcal^{(n)}(\hat{\P})\), gives</p>
 <div class="math-display">\[H(\hat{\P}) \ge (1-\tau_n)H(\P) - \log(1+\tau_n)
   \ge H(\P) - \frac{H(\P)+\log e}{n\P_{\min}},\]</div>
-<p>since \(\log(1+\tau_n) \le \tau_n\log e\). Hence, for \(n \ge \frac{1}{\epsilon\P_{\min}}\) (so that \(\tau_n \le \epsilon\)),</p>
+<p>since \(\log(1+\tau_n) \le \tau_n\log e\). Hence, for \(n \ge \frac{1}{\epsilon\P_{\min}}\) (so that \(\tau_n \le \epsilon\) and \(\hat{\P}\) satisfies the constraint),</p>
 <div class="math-display">\[|\Tcal_\epsilon^{(n)}(\P)| \ge K_{n,M}^{-1}\, 2^{nH(\P) - \frac{H(\P)+\log e}{\P_{\min}}},\]</div>
 <p>that is, \(\frac{1}{n}\log|\Tcal_\epsilon^{(n)}(\P)| \ge H(\P) - O\bigl(\frac{\log n}{n}\bigr)\), much better than \((1-\epsilon)H(\P)\).</p>
 <h3 class="cn-h cn-l1" id="cn-2-4"><span class="cn-num">2.4</span> Jointly and conditionally typical sequences</h3>
-<p>Let \(\P_{\rv{X}\rv{Y}}\in\Pcal(\Xcal\times\Ycal)\) be a joint distribution with marginals \(\P_{\rv{X}}\) and \(\P_{\rv{Y}}\). In the same way, the <strong class="newword">jointly typical set</strong> is</p>
+<p>Let \(\Ycal\) be another finite alphabet, and let \(\P_{\rv{X}\rv{Y}}\in\Pcal(\Xcal\times\Ycal)\) be a joint distribution with marginals \(\P_{\rv{X}}\) and \(\P_{\rv{Y}}\). The <strong class="newword">joint type</strong> \(\hat{\P}_{x^n,y^n}\) of \((x^n,y^n)\) is the type of the sequence of pairs \((x_1,y_1),\ldots,(x_n,y_n)\) in \(\Xcal\times\Ycal\). In the same way as in Section 2.3, the <strong class="newword">jointly typical set</strong> is</p>
 <div class="math-display">\[\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}) := \Bigl\{(x^n,y^n) :\
     \bigl|\hat{\P}_{x^n,y^n}(a,b) - \P_{\rv{X}\rv{Y}}(a,b)\bigr|
      \le \epsilon\,\P_{\rv{X}\rv{Y}}(a,b),\ \forall\,(a,b)\in\Xcal\times\Ycal\Bigr\},\]</div>
 <p>and, for \(y^n\in\Ycal^n\), the <strong class="newword">conditionally typical set</strong> is</p>
-<div class="math-display">\[\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n) := \bigl\{x^n :\ (x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\bigr\}.\]</div>
-<p>By definition,</p>
+<div class="math-display">\[\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n) := \bigl\{x^n :\ (x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\bigr\},\]</div>
+<p>and similarly \(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond x^n)\) for \(x^n\in\Xcal^n\). By definition,</p>
 <div class="math-display">\[(x^n,y^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})
   \iff x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)
   \iff y^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond x^n).\]</div>
@@ -246,7 +247,7 @@
         \P_{\rv{X}\rv{Y}}^n(x^n,y^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X},\rv{Y})}, \\
         \P_{\rv{Y}|\rv{X}}^n(y^n\cond x^n)\approx 2^{-n(1\pm\epsilon)H(\rv{Y}\cond\rv{X})},\quad
         \P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n)\approx 2^{-n(1\pm\epsilon)H(\rv{X}\cond\rv{Y})}.
-      \end{gathered}\]</div></li><li>\(\bigl(1-\delta_T(\epsilon,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{n(1-\epsilon)H(\rv{X},\rv{Y})} \le |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})| \le 2^{n(1+\epsilon)H(\rv{X},\rv{Y})}\).</li><li>For every \(y^n\in\Ycal^n\), \(|\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)| \le 2^{n(1+\epsilon)H(\rv{X}\cond\rv{Y})}\).</li><li><p><strong class="newword">Conditional typicality lemma.</strong> Let \(\P_{\rv{X}^n|\rv{Y}^n} = \P_{\rv{X}|\rv{Y}}^n\). For every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
+      \end{gathered}\]</div></li><li>\(\bigl(1-\delta_T(\epsilon,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{n(1-\epsilon)H(\rv{X},\rv{Y})} \le |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})| \le 2^{n(1+\epsilon)H(\rv{X},\rv{Y})}\).</li><li>For every \(y^n\in\Ycal^n\), \(|\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)| \le 2^{n(1+\epsilon)H(\rv{X}\cond\rv{Y})}\).</li><li><p><strong class="newword">Conditional typicality lemma.</strong> Let \(\P_{\rv{X}^n|\rv{Y}^n} = \P_{\rv{X}|\rv{Y}}^n\), i.e., \(\P_{\rv{X}^n|\rv{Y}^n=y^n} = \prod_{i=1}^n \P_{\rv{X}|\rv{Y}=y_i}\). For every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
 <div class="math-display">\[\P_{\rv{X}^n|\rv{Y}^n=y^n}\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
         \le \delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}}),\]</div>
 <p>which tends to \(0\) if \(n\epsilon^2\to\infty\).</p></li><li><p>For every \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\),</p>
@@ -258,7 +259,7 @@
 <div class="math-display">\[\P_{\rv{X}}^n\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
         \ge \bigl(1-\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})\bigr)\, 2^{-n(I(\rv{X};\rv{Y}) + 2\epsilon H(\rv{X}))}.\]</div>
 <p>So an \(\rv{X}^n\sim\P_{\rv{X}}^n\) drawn independently of \(y^n\) is jointly typical with \(y^n\) with probability about \(2^{-nI(\rv{X};\rv{Y})}\).</p></li></ol></div></div></div>
-<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li>Summing over \(b\), \(\hat{\P}_{x^n}(a) = \sum_b \hat{\P}_{x^n,y^n}(a,b)\) is within \(\epsilon\P_{\rv{X}}(a)\) of \(\P_{\rv{X}}(a)\), and similarly for \(y^n\). The bounds follow from the typical average lemma for \(\P_{\rv{X}\rv{Y}}\) with \(g(a,b) = \log\P_{\rv{X}}(a)\), \(\log\P_{\rv{Y}}(b)\), \(\log\P_{\rv{X}\rv{Y}}(a,b)\), \(\log\P_{\rv{Y}|\rv{X}}(b\cond a)\) and \(\log\P_{\rv{X}|\rv{Y}}(a\cond b)\). For example, \(\log\P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n) = \sum_{i=1}^n \log\P_{\rv{X}|\rv{Y}}(x_i\cond y_i)\) and \(\EE\bigl[|\log\P_{\rv{X}|\rv{Y}}(\rv{X}\cond\rv{Y})|\bigr] = H(\rv{X}\cond\rv{Y})\).</li><li>This is property 3 of Section 2.3 applied to \(\P_{\rv{X}\rv{Y}}\).</li><li><p>By item 1,</p>
+<div class="tex-proof"><em>Proof.</em> <ol class="tex-list enum-decimal enum-dot"><li>Summing over \(b\), \(\hat{\P}_{x^n}(a) = \sum_b \hat{\P}_{x^n,y^n}(a,b)\) is within \(\epsilon\P_{\rv{X}}(a)\) of \(\P_{\rv{X}}(a)\), and similarly for \(y^n\). The bounds follow from the typical average lemma for \(\P_{\rv{X}\rv{Y}}\) with \(g(a,b) = \log\P_{\rv{X}}(a)\), \(\log\P_{\rv{Y}}(b)\), \(\log\P_{\rv{X}\rv{Y}}(a,b)\), \(\log\P_{\rv{Y}|\rv{X}}(b\cond a)\) and \(\log\P_{\rv{X}|\rv{Y}}(a\cond b)\), on the support of \(\P_{\rv{X}\rv{Y}}\) as in Section 2.3. For example, \(\log\P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n) = \sum_{i=1}^n \log\P_{\rv{X}|\rv{Y}}(x_i\cond y_i)\) and \(\EE\bigl[|\log\P_{\rv{X}|\rv{Y}}(\rv{X}\cond\rv{Y})|\bigr] = H(\rv{X}\cond\rv{Y})\).</li><li>This is property 3 of Section 2.3 applied to \(\P_{\rv{X}\rv{Y}}\).</li><li><p>By item 1,</p>
 <div class="math-display">\[1 \ge \sum_{x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)} \P_{\rv{X}|\rv{Y}}^n(x^n\cond y^n)
           \ge |\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)|\, 2^{-n(1+\epsilon)H(\rv{X}\cond\rv{Y})}.\]</div></li><li>Given \(\rv{Y}^n = y^n\), the \(\rv{X}_i\) are independent with \(\rv{X}_i\sim\P_{\rv{X}|\rv{Y}=y_i}\). If \(\P_{\rv{X}\rv{Y}}(a,b) = 0\), then \(\hat{\P}_{\rv{X}^n,y^n}(a,b) = 0\) with probability \(1\). Otherwise, \(\hat{\P}_{\rv{X}^n,y^n}(a,b)\) is the mean of the \(n\) independent random variables \(\ind{(\rv{X}_i,y_i) = (a,b)}\), with values in \([0,1]\), and its expectation is \(\hat{\P}_{y^n}(b)\P_{\rv{X}|\rv{Y}}(a\cond b)\). Since \(y^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{Y}})\), this expectation is within \(\frac{\epsilon}{2}\P_{\rv{X}\rv{Y}}(a,b)\) of \(\P_{\rv{X}\rv{Y}}(a,b)\). A deviation from \(\P_{\rv{X}\rv{Y}}(a,b)\) by more than \(\epsilon\P_{\rv{X}\rv{Y}}(a,b)\) therefore needs a deviation from the expectation by more than \(\frac{\epsilon}{2}\P_{\rv{X}\rv{Y}}(a,b)\), which has probability at most \(2e^{-n\epsilon^2\P_{\rv{X}\rv{Y}}(a,b)^2/2}\) by Hoeffding’s inequality. The union bound over the pairs with \(\P_{\rv{X}\rv{Y}}(a,b) &gt; 0\) gives \(\delta_T(\epsilon/2,n,\P_{\rv{X}\rv{Y}})\). (With \(y^n\) only in \(\Tcal_\epsilon^{(n)}(\P_{\rv{Y}})\), the expectation can lie on the boundary, and the probability need not tend to \(1\).)</li><li><p>By item 4 and item 1,</p>
 <div class="math-display">\[\begin{aligned}
@@ -393,11 +394,11 @@
     <p class="q-feedback" aria-live="polite"></p>
   </div>
 </li>
-<li class="q" id="q15" data-key="1c3773e3" data-check="1cb2b7fb">
+<li class="q" id="q15" data-key="246488dc" data-check="df70ae82">
   <div class="q-num" aria-hidden="true">Q15</div>
   <div class="q-body">
     <div class="q-stem"><p>Let \(\Xcal = \{0,1\}\), \(\Q = \bigl[\tfrac12, \tfrac12\bigr]\), and \(\hat{\P} = \bigl[\tfrac14, \tfrac34\bigr]\). As \(n\to\infty\) over the multiples of \(4\), \(-\frac{1}{n}\log \Q^n\bigl(\Tcal^{(n)}(\hat{\P})\bigr)\) tends to</p></div>
-    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\hat{\P}) = h(\tfrac14) \approx 0.81\) bit</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H(\hat{\P}\|\Q) = 1\) bit</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\hat{\P}\|\Q) = 1 - h(\tfrac14) \approx 0.19\) bit</span></button></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\hat{\P}) \approx 0.81\) bit</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H(\hat{\P}\|\Q) = 1\) bit</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(D(\hat{\P}\|\Q) = 1 - H(\hat{\P}) \approx 0.19\) bit</span></button></div>
     <p class="q-feedback" aria-live="polite"></p>
   </div>
 </li>
@@ -460,7 +461,7 @@
   </ol>
 </section>
 <section class="block" id="exercises" aria-labelledby="exo-h">
-  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">8 problems</p></div>
+  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">9 problems</p></div>
   
   <ol class="problems">
 <li class="problem" id="p1">
@@ -516,9 +517,20 @@
         \qquad a\in\Xcal,\]</div>
 <p>where \(c\) is chosen such that \(\sum_a\Q^*(a) = 1\): it flattens \(\P\) toward the uniform distribution as much as the constraint allows. <em>Hint: \(H\) is concave; write the KKT conditions.</em></p></li><li>Compute \(H_\epsilon(\P)\) for the binary source of the previous problem. Compare it with \((1-\epsilon)H(\P)\), \(H(\P)\) and \((1+\epsilon)H(\P)\), and with the value of \(\frac1n\log|\Tcal_\epsilon^{(n)}(\P)|\) computed in the previous problem.</li></ul></div>
 </li>
+<li class="problem" id="p9">
+  <h3 class="p-head"><span class="p-num">Problem 9</span> <span class="p-title">Chernoff bound</span></h3>
+  <div class="p-body"><p>Let \(\rv{Z}_1,\ldots,\rv{Z}_n\) be independent random variables with values in \([0,1]\), so that \(\P_{\rv{Z}^n} = \P_{\rv{Z}_1}\cdots\P_{\rv{Z}_n}\), let \(\mu := \frac1n\sum_{i=1}^n\EE[\rv{Z}_i]\), and let \(d(q\|p) := D([q,1-q]\,\|\,[p,1-p])\) be the binary divergence. For \(q\ge\mu\), let \(\mathcal{A} := \bigl\{z^n :\ \frac1n\sum_{i=1}^n z_i \ge q\bigr\}\), assume \(\P_{\rv{Z}^n}(\mathcal{A}) &gt; 0\), and let \(\Q := \P_{\rv{Z}^n}(\,\cdot\,|\,\mathcal{A})\).</p>
+<ul class="tex-list"><li>Show that \(D(\Q\|\P_{\rv{Z}^n}) = \log\frac{1}{\P_{\rv{Z}^n}(\mathcal{A})}\).</li><li>Show that \(D(\Q\|\P_{\rv{Z}^n}) \ge \sum_{i=1}^n D(\Q_{\rv{Z}_i}\|\P_{\rv{Z}_i}) \ge \sum_{i=1}^n d(q_i\|\mu_i)\), where \(q_i := \EE_\Q[\rv{Z}_i]\) and \(\mu_i := \EE[\rv{Z}_i]\). <em>Hint: chain rule, then the data processing inequality with the channel that outputs \(1\) with probability \(z\) on input \(z\), and \(0\) otherwise.</em></li><li>Deduce the <em>Chernoff bound</em> \(\P_{\rv{Z}^n}(\mathcal{A}) \le 2^{-n d(q\|\mu)}\). <em>Hint: convexity of \(D\), and \(d(\cdot\|\mu)\) increases on \([\mu,1]\).</em> Applied to \(1-\rv{Z}_i\), it shows that the mean is at most \(q\le\mu\) with probability at most \(2^{-n d(q\|\mu)}\).</li><li><p>Let \(\rv{X}^n\sim\P^n\). Show that</p>
+<div class="math-display">\[\P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr)
+        \le \sum_{a:\,\P(a)&gt;0}\ \sum_{s=\pm1} 2^{-n d((1+s\epsilon)\P(a)\|\P(a))},\]</div>
+<p>where a term with \((1+\epsilon)\P(a) &gt; 1\) is \(0\).</p></li><li><p>Show that \(d\bigl((1\pm\epsilon)p\,\|\,p\bigr) \ge \frac{\epsilon^2 p}{4}\log e\) for \(\epsilon\in[0,1]\), and deduce</p>
+<div class="math-display">\[\P^n\bigl(\rv{X}^n\notin\Tcal_\epsilon^{(n)}(\P)\bigr) \le 2M^* e^{-n\epsilon^2\P_{\min}/4},
+        \qquad \P_{\min} := \min_{a:\,\P(a)&gt;0}\P(a).\]</div>
+<p>When is it better than \(\delta_T(\epsilon,n,\P)\)? <em>Hint: apply \(\ln x\le x-1\) to the second term of \(d\), then use \(\varphi(x) := (1+x)\ln(1+x) - x \ge \frac{x^2}{4}\) for \(|x|\le 1\).</em></p></li><li>Evaluate both bounds for the binary source of Problem 7, and compare them with \(\delta_T(\epsilon,n,\P)\) and the exact value.</li></ul></div>
+</li>
   </ol>
 </section>
-<nav class="pager" aria-label="Other lectures"><a class="prev" href="lecture-1.html"><span class="dir">&larr; Lecture 1</span><span class="ttl">Information Measures</span></a></nav>
+<nav class="pager" aria-label="Other lectures"><a class="prev" href="lecture-1.html"><span class="dir">&larr; Lecture 1</span><span class="ttl">Information Measures</span></a><a class="next" href="lecture-3.html"><span class="dir">Lecture 3 &rarr;</span><span class="ttl">Lossless data compression</span></a></nav>
 </main></div>
 <footer class="site-footer" data-quiet>
   <div class="wrap footer-grid">
