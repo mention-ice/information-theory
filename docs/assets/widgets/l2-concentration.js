@@ -1,7 +1,8 @@
 /* Lecture 2 widget: probabilities of the binary type classes under Q^n,
    on a linear scale (concentration) or a log scale (exponent -D(P^||Q)),
    with the typical set when eps is given.
-   Usage in the class notes:  %web: l2-concentration q=0.3 n=50 [eps=0.2] [scale=log]
+   Usage in the class notes:  %web: l2-concentration q=0.3 n=50 [eps=0.2] [scale=log] [src=P]
+   (src names the source in the labels: Q by default, as in Section 2.2.3; P in Section 2.3).
    Draws into every [data-widget="l2-concentration"] element. No libraries. */
 (function () {
   "use strict";
@@ -65,12 +66,13 @@
       eps: args.eps != null ? Math.max(0.02, Math.min(0.9, parseFloat(args.eps) || 0.2)) : null,
       log: args.scale === "log"
     };
+    var SRC = args.src === "P" ? "P" : "Q", src = SRC.toLowerCase();
     root.classList.add("l2w");
     root.innerHTML = "";
     var controls = el("div", "l2w-controls");
     controls.appendChild(slider("n", 0, NS.length - 1, 1, state.ni, function (v) { state.ni = v; draw(); },
       function (v) { return String(NS[v]); }));
-    controls.appendChild(slider("Q(1) = q", 0.05, 0.95, 0.05, state.q, function (v) { state.q = Math.round(v * 100) / 100; draw(); },
+    controls.appendChild(slider(SRC + "(1) = " + src, 0.05, 0.95, 0.05, state.q, function (v) { state.q = Math.round(v * 100) / 100; draw(); },
       function (v) { return v.toFixed(2); }));
     if (state.eps != null) {
       controls.appendChild(slider("ε", 0.05, 0.5, 0.05, state.eps, function (v) { state.eps = v; draw(); },
@@ -161,7 +163,7 @@
       // q marker
       s.appendChild(svg("line", { x1: X(q), y1: T, x2: X(q), y2: Hh - Bm, "class": "l2w-qline" }));
       var qt = svg("text", { x: X(q) + 4, y: T + 10, "class": "l2w-tick" });
-      qt.textContent = "q";
+      qt.textContent = src;
       s.appendChild(qt);
       if (log) {
         // -D(P^||Q) curve
@@ -187,7 +189,7 @@
       // numbers
       var rows = [["most likely class", "k/n = " + kTop + "/" + n + ", probability " + fmtP(Math.pow(2, maxlp))]];
       if (log) {
-        rows.push(["curve", "−D(P̂‖Q); dots: (1/n) log Qⁿ(T(P̂)) = −D + (1/n) log γₙ"]);
+        rows.push(["curve", "−D(P̂‖" + SRC + "); dots: (1/n) log " + SRC + "ⁿ(T(P̂)) = −D + (1/n) log γₙ"]);
       }
       if (state.eps != null) {
         var pt = 0, lsize = -Infinity;
@@ -202,7 +204,7 @@
         var H = h2(q);
         rows.push(["typical set", lsize === -Infinity ? "empty for this n" :
           "probability " + fmtP(pt) + "; (1/n) log|Tε| = " + (lsize / n).toFixed(3) + " bit"]);
-        rows.push(["compare", "H(Q) = " + H.toFixed(3) + ", (1±ε)H(Q) = " + ((1 - state.eps) * H).toFixed(3) + " … " + ((1 + state.eps) * H).toFixed(3)]);
+        rows.push(["compare", "H(" + SRC + ") = " + H.toFixed(3) + ", (1±ε)H(" + SRC + ") = " + ((1 - state.eps) * H).toFixed(3) + " … " + ((1 + state.eps) * H).toFixed(3)]);
       }
       stats.innerHTML = "";
       rows.forEach(function (row) {
