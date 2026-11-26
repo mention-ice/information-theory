@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 5: Channel coding · Elements of Information Theory</title>
+<meta name="description" content="Lecture 5 of Elements of Information Theory: notes, quiz and exercises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"Bern": "\\mathrm{Bern}", "Ccal": "\\mathcal{C}", "EE": "\\mathbb{E}", "Ecal": "\\mathcal{E}", "Ncal": "\\mathcal{N}", "P": "\\mathrm{P}", "PP": "\\mathbb{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Tcal": "\\mathcal{T}", "Vcal": "\\mathcal{V}", "Wcal": "\\mathcal{W}", "Xcal": "\\mathcal{X}", "Ycal": "\\mathcal{Y}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "epsilon": "\\varepsilon", "ind": ["\\pmb{1}{\\left\\{#1\\right\\}}", 1], "rv": ["\\mathrm{#1}", 1], "setminus": "\\backslash"}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
+<script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script defer src="assets/site.js"></script>
+<script defer src="https://bit2noisy-telemetry.sheng-yang-e9e.workers.dev/v.js" data-site="it"></script>
+<link rel="stylesheet" href="assets/widgets/l5-repetition.css">
+<script defer src="assets/widgets/l5-repetition.js"></script>
+<link rel="stylesheet" href="assets/widgets/l5-capacity.css">
+<script defer src="assets/widgets/l5-capacity.js"></script>
+<link rel="stylesheet" href="assets/widgets/l5-random-code.css">
+<script defer src="assets/widgets/l5-random-code.js"></script>
+<link rel="stylesheet" href="assets/widgets/l5-gaussian.css">
+<script defer src="assets/widgets/l5-gaussian.js"></script>
+<link rel="stylesheet" href="assets/widgets/l5-applications.css">
+<script defer src="assets/widgets/l5-applications.js"></script>
+</head>
+<body>
+<canvas id="bitfield" aria-hidden="true"></canvas>
+<div class="page page-lecture">
+
+<header class="lec-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">&larr; Elements of Information Theory</a></nav>
+    <div class="lecture-box">
+      <div class="lb-top"><span>Elements of Information Theory</span><span>2026–2027</span></div>
+      <h1><span class="lb-n">Lecture 5:</span> Channel coding</h1>
+      <div class="lb-bottom"><span class="lb-lect">Lecturer: <a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a></span><span>Thu 26 Nov 2026</span></div>
+    </div>
+    <div class="huff" data-quiet>
+  <p class="huff-bits" aria-hidden="true"><span class="cw cw0" title="C &rarr; 0111">0111</span><span class="cw cw1" title="h &rarr; 1101">1101</span><span class="cw cw0" title="a &rarr; 1000">1000</span><span class="cw cw1" title="n &rarr; 00">00</span><span class="cw cw0" title="n &rarr; 00">00</span><span class="cw cw1" title="e &rarr; 1011">1011</span><span class="cw cw0" title="l &rarr; 1111">1111</span><span class="cw cw1" title="space &rarr; 0110">0110</span><span class="cw cw0" title="c &rarr; 1001">1001</span><span class="cw cw1" title="o &rarr; 010">010</span><span class="cw cw0" title="d &rarr; 1010">1010</span><span class="cw cw1" title="i &rarr; 1110">1110</span><span class="cw cw0" title="n &rarr; 00">00</span><span class="cw cw1" title="g &rarr; 1100">1100</span></p>
+  <p class="huff-cap">The title above, Huffman-coded from its own letter frequencies: 49 bits, 3.50 bits per character (entropy 3.47). Alternate shading separates the codewords.</p>
+</div>
+    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">10</span></a></nav>
+  </div>
+</header>
+<div class="sheet-wrap wrap"><main class="sheet">
+<section class="block" id="notes" aria-labelledby="notes-h">
+  <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
+  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>A scheme sends a uniform message \(\rv{W}\in\Wcal\) in \(n\) channel uses: the encoder computes \(x_i = f_i(w,y^{i-1})\) (with feedback; a codeword \(x^n(w)\) without), and the decoder returns \(\hat{\rv{W}} = g_n(\rv{Y}^n)\). Its rate is \(R_n = \frac{\log|\Wcal|}{n}\) bits per channel use, and its error probability \(\PP(\rv{W}\ne\hat{\rv{W}})\). A rate \(R\) is achievable if some schemes have \(\liminf_nR_n\ge R\) and \(P_{e,n}\to0\); the capacity \(C\) is the supremum of the achievable rates.</li><li>A memoryless stationary channel satisfies \(\P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}} = \P_{\rv{Y}_i|\rv{X}_i} = \P_{\rv{Y}|\rv{X}}\), and is identified with \(\P_{\rv{Y}|\rv{X}}\). Then \(\rv{W}\to\rv{Y}^n\to\hat{\rv{W}}\) and \((\rv{W},\rv{X}^{i-1},\rv{Y}^{i-1})\to\rv{X}_i\to\rv{Y}_i\).</li><li>Shannon’s channel coding theorem: \(C = C_I := \max_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\). Converse: by Fano’s inequality \(H(\rv{W}\cond\hat{\rv{W}})\le H_2(P_e)+P_e\log(|\Wcal|-1)\), the chain rule, the memoryless channel and the concavity of \(I\) in \(\P_{\rv{X}}\), every scheme has \((1-P_e)\log|\Wcal|\le nC_I+H_2(P_e)\), even with feedback. Achievability: about \(2^{nI(\rv{X};\rv{Y})}\) random codewords drawn i.i.d. from \(\P_{\rv{X}}^n\) with a joint-typicality decoder have an average error probability tending to \(0\) (packing lemma), so some codebook does.</li><li>The theorem extends to continuous alphabets (by discretization) and to input cost constraints \(\frac1n\sum_is(x_i)\le S\), with \(C(S) = \max_{\P_{\rv{X}}:\ \EE[s(\rv{X})]\le S}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</li><li>Capacities: \(C_{\mathrm{BSC}}(p) = 1-H_2(p)\), about \(0.531\) for \(p = 0.1\), against the rate \(\frac13\) and \(P_e = 0.028\) of the repetition code. The Gaussian channel has \(C(S) = \frac12\log(1+\frac{S}{\sigma^2})\), with Gaussian inputs, and the Gaussian MIMO channel \(\frac12\log\det(I+H\Sigma H^T)\), maximized over the matrices \(\Sigma\succeq0\) with \(\mathrm{tr}(\Sigma)\le S\).</li><li>Source–channel separation: a source with the entropy \(H(\rv{V})\) per symbol can be sent reliably, with one channel use per symbol, if \(H(\rv{V}) &lt; C\), and not if \(H(\rv{V}) &gt; C\). Compressing first, then protecting the bits, is optimal.</li></ul></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-5-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">365 KB</span></a></div>
+  <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">5.1</span> <a href="#cn-5-1">The communication problem</a></li><li class="o-l1"><span class="o-num">5.2</span> <a href="#cn-5-2">Memoryless stationary channels</a></li><li class="o-l1"><span class="o-num">5.3</span> <a href="#cn-5-3">Shannon’s channel coding theorem</a></li><li class="o-l1"><span class="o-num">5.4</span> <a href="#cn-5-4">Converse</a></li><li class="o-l1"><span class="o-num">5.5</span> <a href="#cn-5-5">Achievability</a></li><li class="o-l1"><span class="o-num">5.6</span> <a href="#cn-5-6">Extensions</a></li><li class="o-l2"><span class="o-num">5.6.1</span> <a href="#cn-5-6-1">Continuous alphabets</a></li><li class="o-l2"><span class="o-num">5.6.2</span> <a href="#cn-5-6-2">Input cost constraints</a></li><li class="o-l1"><span class="o-num">5.7</span> <a href="#cn-5-7">Gaussian channels</a></li><li class="o-l1"><span class="o-num">5.8</span> <a href="#cn-5-8">Source–channel separation</a></li></ol>
+  <div class="cnotes"><h3 class="cn-h cn-l1" id="cn-5-1"><span class="cn-num">5.1</span> The communication problem</h3>
+<p>In Lectures 3 and 4, a source was compressed into bits, and the bits reached the decoder without errors. In practice, bits are sent over a noisy medium (a cable, a radio link, an optical fiber, a hard disk), the <strong class="newword">channel</strong>, which corrupts some of them. <strong class="newword">Channel coding</strong> adds redundancy to the message, so that the receiver can recover it despite the noise:</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-5-50851d9d681a84e23bae.svg" alt="Figure 1 of the notes" style="width:539px"></figure></div>
+<h4 class="tex-h">Message.</h4>
+<p>The <strong class="newword">message</strong> \(\rv{W}\) is uniformly distributed on a <strong class="newword">message set</strong> \(\Wcal := \{1,\ldots,|\Wcal|\}\). For example, \(k\) bits from a compressed source form a message with \(|\Wcal| = 2^k\) values.</p>
+<h4 class="tex-h">Encoder and decoder.</h4>
+<p>The channel is used \(n\) times, with the <strong class="newword">input sequence</strong> \(x^n\in\Xcal^n\) and the <strong class="newword">output sequence</strong> \(y^n\in\Ycal^n\), where the <strong class="newword">input alphabet</strong> \(\Xcal\) and the <strong class="newword">output alphabet</strong> \(\Ycal\) are finite until Section 5.6. The <strong class="newword">encoder</strong> computes the input at time \(i\) from the message, the past inputs and, if a <strong class="newword">feedback</strong> link returns the past outputs to the encoder, the past outputs. For a deterministic encoder, the past inputs add nothing: \(x_1\) depends on \(w\) only, and, by induction on \(i\), if \(x^{i-1}\) is a function of \((w,y^{i-2})\), then \(x_i\), a function of \((w,x^{i-1},y^{i-1})\), is a function of \((w,y^{i-1})\). So a deterministic encoder is a sequence of functions \(f_1,\ldots,f_n\) with</p>
+<div class="math-display">\[x_i = f_i(w,y^{i-1}),\qquad i = 1,\ldots,n.\]</div>
+<p>Without feedback, \(x_i = f_i(w)\), so the whole input sequence is a function of the message, \(x^n = x^n(w)\), the <strong class="newword">codeword</strong> of \(w\), and the encoder is the <strong class="newword">codebook</strong> \(\Ccal_n := \{x^n(1),\ldots,x^n(|\Wcal|)\}\). The <strong class="newword">decoder</strong> \(g_n:\Ycal^n\to\Wcal\) returns the estimate \(\hat{\rv{W}} := g_n(\rv{Y}^n)\) of the message.</p>
+<h4 class="tex-h">Rate and error probability.</h4>
+<p>The pair \((\{f_i\}_{i=1}^n,g_n)\) is an <strong class="newword">\((n,R_n,P_{e,n})\) scheme</strong> if its <strong class="newword">rate</strong>, in bits per channel use, and its <strong class="newword">error probability</strong>, averaged over the uniform message, are</p>
+<div class="math-display">\[R_n = \frac{\log|\Wcal|}{n}
+  \qquad\text{and}\qquad
+  P_{e,n} = \PP(\rv{W}\ne\hat{\rv{W}}).\]</div>
+<p>The rate is the number of message bits that each channel use carries: \(|\Wcal| = 2^{nR_n}\). With the <strong class="newword">error indicator</strong> \(\rv{E} := \ind{\rv{W}\ne\hat{\rv{W}}}\) and the <strong class="newword">error event</strong> \(\Ecal_n := \{\rv{W}\ne\hat{\rv{W}}\}\), the error probability is \(P_{e,n} = \EE[\rv{E}] = \PP(\Ecal_n)\). A <strong class="newword">randomized encoder</strong> also uses a private random seed \(\rv{U}\), independent of \(\rv{W}\) and of the channel. Its past inputs then matter, as they depend on \(\rv{U}\), but, by the same induction, it is the deterministic encoder \(x_i = f_i(w,u,y^{i-1})\) for each value \(u\) of the seed, and its error probability is the average over \(u\) of theirs: some \(u\) does at least as well. So randomization brings nothing, at the decoder too, and encoders and decoders are deterministic from now on.</p>
+<h4 class="tex-h">Capacity.</h4>
+<p>A rate \(R\) is <strong class="newword">achievable</strong> if there exists a sequence of \((n,R_n,P_{e,n})\) schemes, \(n = 1,2,\ldots\), such that</p>
+<div class="math-display">\[\liminf_{n\to\infty}R_n\ge R
+  \qquad\text{and}\qquad
+  \lim_{n\to\infty}P_{e,n} = 0.\]</div>
+<p>In words, for every \(\delta &gt; 0\) and every large enough \(n\), a scheme of length \(n\) carries at least \(R-\delta\) bits per channel use, with an error probability at most \(\delta\). The <strong class="newword">(operational) capacity</strong> of the channel is</p>
+<div class="math-display">\[\boxed{\ C := \sup\{R :\ R\text{ is achievable}\},\ }\]</div>
+<p>the largest rate of reliable communication.</p>
+<p><em>Example (repetition code).</em> Let the channel be the <strong class="newword">binary symmetric channel</strong> \(\mathrm{BSC}(p)\): \(\Xcal = \Ycal = \{0,1\}\), and each input bit is flipped with probability \(p\), independently of everything else (Section 5.2). To send one bit (\(|\Wcal| = 2\)) in \(n = 3\) channel uses, repeat it: the codewords are \(000\) and \(111\), and the decoder takes a majority vote. It errs if and only if at least two of the three bits are flipped:</p>
+<div class="math-display">\[\PP(\rv{W}\ne\hat{\rv{W}}) = 3p^2(1-p)+p^3 = 0.028\quad\text{for }p = 0.1,
+  \qquad\text{at the rate } R_3 = \tfrac13.\]</div>
+<p>Repeating the bit \(2m+1\) times, the majority vote errs if more than \(m\) bits are flipped, which has a probability tending to \(0\) as \(m\to\infty\) if \(p &lt; \frac12\) (law of large numbers), but the rate \(\frac{1}{2m+1}\) also tends to \(0\) (Problem 1). Can the error probability tend to \(0\) at a positive rate? Shannon’s answer, in Section 5.3: yes, at every rate below \(C = 1-H_2(0.1)\approx0.531\) bits per channel use, and at no rate above.</p>
+<div class="widget" data-widget="l5-repetition" data-args="p=0.1"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h3 class="cn-h cn-l1" id="cn-5-2"><span class="cn-num">5.2</span> Memoryless stationary channels</h3>
+<p>The whole communication is described by the joint distribution of \((\rv{W},\rv{X}^n,\rv{Y}^n,\hat{\rv{W}})\). By the chain rule, in the time order \(\rv{W},\rv{X}_1,\rv{Y}_1,\ldots,\rv{X}_n,\rv{Y}_n,\hat{\rv{W}}\),</p>
+<div class="math-display">\[\P_{\rv{W}\rv{X}^n\rv{Y}^n\hat{\rv{W}}}
+  = \P_{\rv{W}}\prod_{i=1}^n\Bigl(\P_{\rv{X}_i|\rv{W}\rv{X}^{i-1}\rv{Y}^{i-1}}\,
+    \P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}}\Bigr)\,
+    \P_{\hat{\rv{W}}|\rv{W}\rv{X}^n\rv{Y}^n},\]</div>
+<p>where \(\P_{\rv{W}}\) is uniform on \(\Wcal\), the encoder gives the factors \(\P_{\rv{X}_i|\rv{W}\rv{X}^{i-1}\rv{Y}^{i-1}} = \P_{\rv{X}_i|\rv{W}\rv{Y}^{i-1}}\), the point masses at the inputs \(f_i(w,y^{i-1})\), and the decoder gives \(\P_{\hat{\rv{W}}|\rv{W}\rv{X}^n\rv{Y}^n} = \P_{\hat{\rv{W}}|\rv{Y}^n}\), the point mass at \(g_n(y^n)\). The remaining factors, \(\P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}}\), \(i = 1,\ldots,n\), describe the channel: how nature chooses the output at time \(i\) given the whole past. A <strong class="newword">general channel</strong> can depend on all of it, e.g., through echoes of past inputs. A channel is <strong class="newword">memoryless stationary</strong> if</p>
+<div class="math-display">\[\boxed{\ \P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}} = \P_{\rv{Y}_i|\rv{X}_i} = \P_{\rv{Y}|\rv{X}},
+  \qquad i = 1,\ldots,n,\ }\]</div>
+<p>for a channel \(\P_{\rv{Y}|\rv{X}}\in\Pcal(\Ycal|\Xcal)\) (Lecture 1). The first equality (<strong class="newword">memoryless</strong>) says that the output at time \(i\) depends on the past only through the current input; the second (<strong class="newword">stationary</strong>) that the same \(\P_{\rv{Y}|\rv{X}}\) acts at all times. Such a channel is identified with \(\P_{\rv{Y}|\rv{X}}\). Examples:</p>
+<ul class="tex-list"><li>the binary symmetric channel \(\mathrm{BSC}(p)\), \(p\in[0,1]\): \(\rv{Y} = \rv{X}\oplus\rv{Z}\), where \(\oplus\) is the addition modulo \(2\) and \(\rv{Z}\sim\Bern(p)\) is independent of \(\rv{X}\), i.e., \(\P_{\rv{Y}|\rv{X}=x}(y) = (1-p)\ind{y = x}+p\ind{y\ne x}\);</li><li>the <strong class="newword">binary erasure channel</strong> \(\mathrm{BEC}(\delta)\), \(\delta\in[0,1]\): \(\Ycal = \{0,1,?\}\) and \(\P_{\rv{Y}|\rv{X}=x}(y) = (1-\delta)\ind{y = x}+\delta\ind{y = ?}\): each bit is erased with probability \(\delta\), and the receiver knows where;</li><li>the <strong class="newword">Gaussian channel</strong>: \(\rv{Y} = \rv{X}+\rv{Z}\) with \(\rv{Z}\sim\Ncal(0,\sigma^2)\) independent of \(\rv{X}\), with real inputs and outputs (Sections 5.6 and 5.7).</li></ul>
+<h4 class="tex-h">Two Markov chains.</h4>
+<p>The converse only uses the following properties:</p>
+<ul class="tex-list"><li><span class="item-label">\(\circnum{a}\)</span> \(\rv{W}\to\rv{Y}^n\to\hat{\rv{W}}\), since \(\hat{\rv{W}} = g_n(\rv{Y}^n)\), for every channel;</li><li><span class="item-label">\(\circnum{b}\)</span> \((\rv{W},\rv{X}^{i-1},\rv{Y}^{i-1})\to\rv{X}_i\to\rv{Y}_i\), \(i = 1,\ldots,n\), for every memoryless channel: this is the first equality above.</li></ul>
+<p>Both hold with or without feedback.</p>
+<h4 class="tex-h">Without feedback.</h4>
+<p>The input sequence is the codeword \(\rv{X}^n = x^n(\rv{W})\), and, given the message, the outputs are independent, each produced by \(\P_{\rv{Y}|\rv{X}}\) from the corresponding input:</p>
+<div class="math-display">\[\P_{\rv{Y}^n|\rv{W}=w}(y^n) = \prod_{i=1}^n\P_{\rv{Y}|\rv{X}}(y_i\cond x_i(w)).\]</div>
+<p>Indeed, given \(\rv{W} = w\), the inputs are \(x^i(w)\) whatever the outputs, so the chain rule gives \(\P_{\rv{Y}^n|\rv{W}=w}(y^n) = \prod_{i=1}^n \P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}}(y_i\cond w,x^i(w),y^{i-1})\), and each factor is \(\P_{\rv{Y}|\rv{X}}(y_i\cond x_i(w))\). The \(n\) channel uses act as \(n\) independent copies of the channel. With feedback, the inputs depend on the past outputs, and \(\P_{\rv{Y}^n|\rv{X}^n}\) need not be the product of the \(\P_{\rv{Y}|\rv{X}}(y_i\cond x_i)\) (Problem 3): this is why memorylessness is defined by the distribution of each output given the past.</p>
+<h3 class="cn-h cn-l1" id="cn-5-3"><span class="cn-num">5.3</span> Shannon’s channel coding theorem</h3>
+<p>The <strong class="newword">information capacity</strong> of the channel \(\P_{\rv{Y}|\rv{X}}\) is</p>
+<div class="math-display">\[\boxed{\ C_I\equiv C_I(\P_{\rv{Y}|\rv{X}}) := \max_{\P_{\rv{X}}\in\Pcal(\Xcal)}
+  I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}),\ }\]</div>
+<p>the largest mutual information \(I(\rv{X};\rv{Y})\) between the input and the output of one channel use, over the input distributions. The maximum exists: \(\Pcal(\Xcal)\) is compact, and \(\P_{\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is continuous (finite alphabets). This function is also concave (Lecture 1), so every local maximum is global. Since \(I(\rv{X};\rv{Y})\le\min\{H(\rv{X}),H(\rv{Y})\}\), \(0\le C_I\le\min\{\log|\Xcal|,\log|\Ycal|\}\).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Shannon’s channel coding theorem.</strong> For every memoryless stationary channel \(\P_{\rv{Y}|\rv{X}}\),</p>
+<div class="math-display">\[C = C_I.\]</div>
+<ul class="tex-list"><li><em>Converse</em> (necessity): every achievable rate \(R\) satisfies \(R\le C_I\), even with feedback, i.e., \(C\le C_I\).</li><li><em>Achievability</em> (sufficiency): for every \(\P_{\rv{X}}\in\Pcal(\Xcal)\), the rate \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is achievable without feedback, i.e., \(C\ge C_I\).</li></ul></div></div></div>
+<p>The operational capacity \(C\) is an optimization over all schemes of all lengths; the information capacity \(C_I\) is an optimization over a single input distribution, which can be computed (the example below, and Section 5.7). Below \(C\), the error probability can be made as small as desired; above \(C\), it cannot (Section 5.4). The rate \(C\) itself is achievable (with \(\P_{\rv{X}}\) a maximizer), and, since the achievability needs no feedback while the converse holds with feedback, <strong class="newword">feedback does not increase the capacity</strong> of a memoryless channel, although it can simplify the coding (Problem 4).</p>
+<h4 class="tex-h">First example: the binary symmetric channel.</h4>
+<p>The information capacity of the \(\mathrm{BSC}(p)\) answers the question of Section 5.1.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Capacity of the binary symmetric channel.</strong> For \(p\in[0,1]\),</p>
+<div class="math-display">\[C_{\mathrm{BSC}}(p) = 1-H_2(p)\quad\text{bits per channel use,}\]</div>
+<p>attained by the uniform input distribution \(\P_{\rv{X}} = \Bern(\frac12)\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>Let \(\rv{Y} = \rv{X}\oplus\rv{Z}\), with \(\rv{Z}\sim\Bern(p)\) independent of \(\rv{X}\). Given \(\rv{X} = x\), the map \(z\mapsto x\oplus z\) is one-to-one, so \(H(\rv{Y}\cond\rv{X}) = H(\rv{Z}\cond\rv{X}) = H(\rv{Z}) = H_2(p)\). With \(\Q := \Bern(\frac12)\) and \(H(\P)\le H(\P\|\Q)\) (Lecture 1), for every \(\P_{\rv{X}}\),</p>
+<div class="math-display">\[I(\rv{X};\rv{Y}) = H(\rv{Y})-H(\rv{Y}\cond\rv{X}) = H(\P_{\rv{Y}})-H_2(p)
+  \le H(\P_{\rv{Y}}\|\Q)-H_2(p) = 1-H_2(p),\]</div>
+<p>since \(H(\P_{\rv{Y}}\|\Q) = \EE[\log2] = 1\). The inequality is an equality if and only if \(\P_{\rv{Y}} = \Q\), which holds for \(\P_{\rv{X}} = \Bern(\frac12)\): \(\P_{\rv{Y}} = \Bern(\frac12\star p) = \Bern(\frac12)\). So \(C_I = 1-H_2(p)\), and \(C = C_I\) by the theorem.</p></div>
+<p>The capacity is \(1\) for \(p\in\{0,1\}\) (for \(p = 1\), the decoder flips the bits back), and \(0\) for \(p = \frac12\), where the output is independent of the input.</p>
+<p><em>Back to the example of Section 5.1.</em> For \(p = 0.1\), \(C = 1-H_2(0.1)\approx0.531\): long blocks carry up to about \(0.53\) bits per channel use with an error probability as small as desired, while the repetition code of length \(3\) carries \(\frac13\) bit per channel use with \(P_e = 0.028\), and longer repetition codes have rates tending to \(0\). By the converse, no scheme with a rate above \(0.531\) has an error probability tending to \(0\), even with feedback. Other channels: the BEC has the capacity \(1-\delta\) (Problem 4), the Z-channel is solved in Problem 6, and channels with additive noise in Problem 5.</p>
+<div class="widget" data-widget="l5-capacity" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<p>Shannon stated the theorem in 1948 and sketched its achievability with random codes and typical sequences; Feinstein gave the first rigorous proof in 1954, and Fano proved the converse in his 1952 lecture notes, with the inequality of Section 5.4. Shannon showed in 1956 that feedback does not increase the capacity, and Wolfowitz proved the strong converse in 1957. For decades, practical codes stayed far from capacity. Turbo codes (Berrou, Glavieux and Thitimajshima, 1993) and the rediscovered low-density parity-check (LDPC) codes of Gallager (1962) came within a fraction of a decibel of it, and polar codes (Arıkan, 2009) provably achieve the capacity of binary-input symmetric channels. 5G uses LDPC codes for its data and polar codes for its control information.</p>
+<h3 class="cn-h cn-l1" id="cn-5-4"><span class="cn-num">5.4</span> Converse</h3>
+<p>We show that every scheme, with or without feedback, with \(|\Wcal|\ge2\) messages and the error probability \(P_e := \PP(\rv{W}\ne\hat{\rv{W}})\) satisfies</p>
+<div class="math-display">\[(1-P_e)\log|\Wcal| \le nC_I + H_2(P_e). \qquad \circnum{*}\]</div>
+<p>Then, for \((n,R_n,P_{e,n})\) schemes with \(P_{e,n}\to0\), since \(nR_n = \log|\Wcal|\), \(P_e = P_{e,n}\) and \(H_2\le1\),</p>
+<div class="math-display">\[R_n\le\frac{1}{1-P_{e,n}}\Bigl(C_I+\frac1n\Bigr)\qquad\text{when } P_{e,n} &lt; 1,
+  \qquad\text{so}\qquad \limsup_{n\to\infty}R_n\le C_I,\]</div>
+<p>and every achievable rate satisfies \(R\le\liminf_nR_n\le C_I\). Hence \(C\le C_I\). The proof of \(\circnum{*}\) uses the two Markov chains of Section 5.2 and Fano’s inequality.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Fano’s inequality.</strong> Let \(\rv{W}\) and \(\hat{\rv{W}}\) be random variables with values in a finite set \(\Wcal\), \(|\Wcal|\ge2\), and let \(P_e := \PP(\rv{W}\ne\hat{\rv{W}})\). Then</p>
+<div class="math-display">\[H(\rv{W}\cond\hat{\rv{W}})\le H_2(P_e)+P_e\log(|\Wcal|-1).\]</div></div></div></div>
+<p>The joint distribution of \((\rv{W},\hat{\rv{W}})\) is arbitrary: \(\rv{W}\) need not be uniform. A small error probability leaves little uncertainty about \(\rv{W}\) given \(\hat{\rv{W}}\): at most \(H_2(P_e)+P_e\log|\Wcal|\) bits.</p>
+<div class="tex-proof"><em>Proof.</em> <p>[First proof (chain rule)] The error indicator \(\rv{E} := \ind{\rv{W}\ne\hat{\rv{W}}}\) is a function of \((\rv{W},\hat{\rv{W}})\), so that \(H(\rv{E}\cond\rv{W},\hat{\rv{W}}) = 0\). By the chain rule, applied twice,</p>
+<div class="math-display">\[H(\rv{W}\cond\hat{\rv{W}}) = H(\rv{W},\rv{E}\cond\hat{\rv{W}})
+  = H(\rv{E}\cond\hat{\rv{W}})+H(\rv{W}\cond\hat{\rv{W}},\rv{E}).\]</div>
+<p>First, \(H(\rv{E}\cond\hat{\rv{W}})\le H(\rv{E}) = H_2(P_e)\), since conditioning reduces entropy. Second,</p>
+<div class="math-display">\[H(\rv{W}\cond\hat{\rv{W}},\rv{E}) = (1-P_e)\,H(\rv{W}\cond\hat{\rv{W}},\rv{E} = 0)
+  + P_e\,H(\rv{W}\cond\hat{\rv{W}},\rv{E} = 1)\le 0+P_e\log(|\Wcal|-1),\]</div>
+<p>since \(\rv{W} = \hat{\rv{W}}\) when \(\rv{E} = 0\), and, when \(\rv{E} = 1\) and \(\hat{\rv{W}} = \hat{w}\), \(\rv{W}\) takes values in \(\Wcal\setminus\{\hat{w}\}\), whose \(|\Wcal|-1\) elements carry an entropy at most \(\log(|\Wcal|-1)\) (maximum entropy, Lecture 1).</p></div>
+<div class="tex-proof"><em>Proof.</em> <p>[Second proof (cross-entropy)] For each \(\hat{w}\in\Wcal\), let \(\Q_{\rv{W}|\hat{\rv{W}}=\hat{w}}\) be the pmf on \(\Wcal\)</p>
+<div class="math-display">\[q(w\cond\hat{w}) := (1-P_e)\ind{w = \hat{w}}+\frac{P_e}{|\Wcal|-1}\ind{w\ne\hat{w}},\]</div>
+<p>which puts the mass \(1-P_e\) on the guess and spreads \(P_e\) evenly on the other messages. Since \(H(\P)\le H(\P\|\Q)\) for every \(\Q\) (Lecture 1), applied to each \(\P_{\rv{W}|\hat{\rv{W}}=\hat{w}}\) and averaged over \(\hat{\rv{W}}\),</p>
+<div class="math-display">\[\begin{aligned}
+  H(\rv{W}\cond\hat{\rv{W}})
+  &amp;\le H(\P_{\rv{W}|\hat{\rv{W}}}\|\Q_{\rv{W}|\hat{\rv{W}}}\mid\P_{\hat{\rv{W}}})
+   = \EE\Bigl[\log\frac{1}{q(\rv{W}\cond\hat{\rv{W}})}\Bigr]\\
+  &amp;= \PP(\rv{W} = \hat{\rv{W}})\log\frac{1}{1-P_e}
+     + \PP(\rv{W}\ne\hat{\rv{W}})\log\frac{|\Wcal|-1}{P_e}
+   = H_2(P_e)+P_e\log(|\Wcal|-1),
+\end{aligned}\]</div>
+<p>with the convention \(0\log\frac10 = 0\) if \(P_e\in\{0,1\}\).</p></div>
+<p>The second proof shows when Fano’s inequality is an equality: \(\P_{\rv{W}|\hat{\rv{W}}} = \Q_{\rv{W}|\hat{\rv{W}}}\), i.e., given the guess, the error has probability \(P_e\) and the wrong messages are equally likely (Problem 2).</p>
+<h4 class="tex-h">Proof of \(\circnum{*}\).</h4>
+<p>Since \(\rv{W}\) is uniform, by the data processing inequality for \(\rv{W}\to\rv{Y}^n\to\hat{\rv{W}}\) (chain \(\circnum{a}\)) and Fano’s inequality,</p>
+<div class="math-display">\[\begin{aligned}
+  \log|\Wcal| = H(\rv{W})
+  &amp;= I(\rv{W};\hat{\rv{W}})+H(\rv{W}\cond\hat{\rv{W}})\\
+  &amp;\le I(\rv{W};\rv{Y}^n)+H_2(P_e)+P_e\log(|\Wcal|-1)\\
+  &amp;\le I(\rv{W};\rv{Y}^n)+H_2(P_e)+P_e\log|\Wcal|.
+\end{aligned}\]</div>
+<p>It remains to show that \(I(\rv{W};\rv{Y}^n)\le nC_I\):</p>
+<div class="math-display">\[\begin{aligned}
+  I(\rv{W};\rv{Y}^n)
+  &amp;= \sum_{i=1}^nI(\rv{W};\rv{Y}_i\cond\rv{Y}^{i-1})
+     &amp;&amp;\text{(chain rule)}\\
+  &amp;\le \sum_{i=1}^nI(\rv{W},\rv{Y}^{i-1};\rv{Y}_i)
+     &amp;&amp;\text{(chain rule: adds } I(\rv{Y}^{i-1};\rv{Y}_i)\ge0\text{)}\\
+  &amp;= \sum_{i=1}^nI(\rv{W},\rv{Y}^{i-1},\rv{X}^i;\rv{Y}_i)
+     &amp;&amp;\text{(}\rv{X}^i\text{ is a function of } (\rv{W},\rv{Y}^{i-1})\text{)}\\
+  &amp;= \sum_{i=1}^n\Bigl(I(\rv{X}_i;\rv{Y}_i)
+     +I(\rv{W},\rv{Y}^{i-1},\rv{X}^{i-1};\rv{Y}_i\cond\rv{X}_i)\Bigr)
+     &amp;&amp;\text{(chain rule)}\\
+  &amp;= \sum_{i=1}^nI(\rv{X}_i;\rv{Y}_i)
+     &amp;&amp;\text{(chain }\circnum{b}\text{: the second term is } 0\text{)}\\
+  &amp;= \sum_{i=1}^nI(\P_{\rv{X}_i},\P_{\rv{Y}|\rv{X}})
+     &amp;&amp;\text{(stationary: } \P_{\rv{Y}_i|\rv{X}_i} = \P_{\rv{Y}|\rv{X}}\text{)}\\
+  &amp;\le nI(\tilde{\P}_{\rv{X}},\P_{\rv{Y}|\rv{X}})
+     &amp;&amp;\text{(concavity in } \P_{\rv{X}}\text{, Lecture~1)}\\
+  &amp;\le nC_I,
+\end{aligned}\]</div>
+<p>where \(\tilde{\P}_{\rv{X}} := \frac1n\sum_{i=1}^n\P_{\rv{X}_i}\). Moving \(P_e\log|\Wcal|\) to the left gives \(\circnum{*}\). \(\square\)</p>
+<h4 class="tex-h">Remarks.</h4>
+<ul class="tex-list"><li><em>Even with feedback.</em> No step uses the absence of feedback. The chain bounds \(I(\rv{W};\rv{Y}^n)\), not \(I(\rv{X}^n;\rv{Y}^n)\), which can exceed \(nC_I\) with feedback (Problem 3).</li><li>As in Lecture 4, the averaged distribution \(\tilde{\P}_{\rv{X}}\) is the distribution of the input \(\rv{X}_\rv{J}\) at a time \(\rv{J}\) drawn uniformly from \(\{1,\ldots,n\}\), independently of everything else.</li><li><em>Above capacity.</em> By \(\circnum{*}\), a scheme with \(\frac1n\log|\Wcal|\ge R &gt; C_I\) has \(P_e\ge1-\frac{C_I}{R}-\frac{1}{nR}\), which does not tend to \(0\) (Problem 2). In fact, \(P_e\to1\) exponentially fast (strong converse): above capacity, almost every message is decoded wrongly.</li></ul>
+<h3 class="cn-h cn-l1" id="cn-5-5"><span class="cn-num">5.5</span> Achievability</h3>
+<p>Fix \(\P_{\rv{X}}\in\Pcal(\Xcal)\), and let \(\P_{\rv{X}\rv{Y}} := \P_{\rv{X}}\P_{\rv{Y}|\rv{X}}\), with the marginal \(\P_{\rv{Y}} := \P_{\rv{Y}|\rv{X}}\circ\P_{\rv{X}}\) and \(I(\rv{X};\rv{Y}) = I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\). We show that the rate \(I(\rv{X};\rv{Y})\) is achievable without feedback. With \(\P_{\rv{X}}\) a maximizer in \(C_I\), this gives \(C\ge C_I\), and completes the proof of the theorem.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Random coding argument.</strong> Draw the codebook at random, and compute the error probability averaged over the codebooks and the message. At least one codebook has an error probability at most this average: there exist deterministic schemes as good as the random ones.</p></div></div></div>
+<p>The average over random codebooks is much easier to compute than the error probability of any particular code.</p>
+<h4 class="tex-h">i.i.d. inputs.</h4>
+<p>If an input sequence \(\rv{X}^n\sim\P_{\rv{X}}^n\) is sent without feedback, then \((\rv{X}^n,\rv{Y}^n)\sim\P_{\rv{X}\rv{Y}}^n\): the pairs \((\rv{X}_i,\rv{Y}_i)\) are i.i.d. with the distribution \(\P_{\rv{X}\rv{Y}}\), and \(\rv{Y}^n\sim\P_{\rv{Y}}^n\). Indeed, by Section 5.2, \(\P_{\rv{X}^n\rv{Y}^n}(x^n,y^n) = \P_{\rv{X}}^n(x^n)\prod_{i=1}^n\P_{\rv{Y}|\rv{X}}(y_i\cond x_i) = \prod_{i=1}^n\P_{\rv{X}\rv{Y}}(x_i,y_i)\).</p>
+<h4 class="tex-h">The random code.</h4>
+<p>For each \(n\), let \(\epsilon := n^{-1/3}\), so that \(\epsilon\to0\) and \(n\epsilon^2 = n^{1/3}\to\infty\), and let</p>
+<div class="math-display">\[|\Wcal| := \Bigl\lceil2^{n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X})-\epsilon)}\Bigr\rceil.\]</div>
+<ol class="tex-list enum-decimal enum-dot"><li><span class="item-label">\(\circnum{1}\)</span> <em>Codebook:</em> draw the codewords \(\rv{X}^n(1),\ldots,\rv{X}^n(|\Wcal|)\) i.i.d. \(\sim\P_{\rv{X}}^n\), independently of the message and of the channel. They are revealed to the encoder and the decoder.</li><li><span class="item-label">\(\circnum{2}\)</span> <em>Encoder:</em> send the codeword \(\rv{X}^n(w)\) of the message \(w\).</li><li><span class="item-label">\(\circnum{3}\)</span> <em>Decoder:</em> return the smallest \(\hat{w}\) such that \((\rv{X}^n(\hat{w}),\rv{Y}^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\) (jointly typical, Lecture 2), and \(\hat{w} := 1\) if there is none.</li></ol>
+<p>This decoder is not optimal (Problem 7), but it is enough to reach capacity.</p>
+<h4 class="tex-h">Rate.</h4>
+<p>\(R_n = \frac{\log|\Wcal|}{n}\ge I(\rv{X};\rv{Y})-2\epsilon H(\rv{X})-\epsilon \to I(\rv{X};\rv{Y})\).</p>
+<h4 class="tex-h">Error probability.</h4>
+<p>Let \(P_e(\Ccal_n)\) be the error probability of the scheme with the codebook \(\Ccal_n\). Averaged over the random codebook, \(\EE[P_e(\Ccal_n)]\) is the probability of \(\Ecal_n = \{\rv{W}\ne\hat{\rv{W}}\}\) under the joint distribution of the codebook, the message and the channel. The decoder returns \(\rv{W}\) if the codeword sent is jointly typical with the output and no other codeword is, so \(\Ecal_n\subseteq\Ecal^{(1)}\cup\Ecal^{(2)}\), where</p>
+<div class="math-display">\[\begin{aligned}
+  \Ecal^{(1)} &amp;:= \bigl\{(\rv{X}^n(\rv{W}),\rv{Y}^n)\notin\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\bigr\},\\
+  \Ecal^{(2)} &amp;:= \bigl\{(\rv{X}^n(\hat{w}),\rv{Y}^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})
+  \text{ for some }\hat{w}\ne\rv{W}\bigr\}.
+\end{aligned}\]</div>
+<ul class="tex-list"><li><em>The codeword sent.</em> Given \(\rv{W} = w\), the codeword \(\rv{X}^n(w)\sim\P_{\rv{X}}^n\) is sent over the channel, so \((\rv{X}^n(w),\rv{Y}^n)\sim\P_{\rv{X}\rv{Y}}^n\), and \(\PP(\Ecal^{(1)})\le\delta_T(\epsilon,n,\P_{\rv{X}\rv{Y}})\) (Lecture 2, Section 2.3).</li><li><em>The other codewords.</em> Given \(\rv{W} = w\), the output \(\rv{Y}^n\) depends only on \(\rv{X}^n(w)\) and on the channel, so each other codeword \(\rv{X}^n(\hat{w})\), \(\hat{w}\ne w\), has the distribution \(\P_{\rv{X}}^n\) and is independent of \(\rv{Y}^n\): \((\rv{X}^n(\hat{w}),\rv{Y}^n)\sim\P_{\rv{X}}^n\P_{\rv{Y}}^n\). Such a pair looks jointly typical with a probability of only about \(2^{-nI(\rv{X};\rv{Y})}\).</li></ul>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Packing lemma.</strong> Let \(\epsilon\in(0,1]\), \(K\ge1\), let \(\rv{Y}^n\) be a random sequence in \(\Ycal^n\) with any distribution, and let \(\tilde{\rv{X}}^n(1),\ldots,\tilde{\rv{X}}^n(K)\) be random sequences, each with the distribution \(\P_{\rv{X}}^n\) and independent of \(\rv{Y}^n\). Then</p>
+<div class="math-display">\[\PP\Bigl(\bigl(\tilde{\rv{X}}^n(k),\rv{Y}^n\bigr)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})
+    \text{ for some }k\Bigr)
+    \le K\,2^{-n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X}))},\]</div>
+<p>which tends to \(0\) if \(K2^{-n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X}))}\to0\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>By the union bound over \(k\), it suffices to bound the probability of each event by \(2^{-n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X}))}\). Since \(\tilde{\rv{X}}^n(k)\) is independent of \(\rv{Y}^n\),</p>
+<div class="math-display">\[\PP\Bigl(\bigl(\tilde{\rv{X}}^n(k),\rv{Y}^n\bigr)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}})\Bigr)
+  = \sum_{y^n}\P_{\rv{Y}^n}(y^n)\,
+    \P_{\rv{X}}^n\bigl(\Tcal_\epsilon^{(n)}(\P_{\rv{X}\rv{Y}}\cond y^n)\bigr)
+  \le 2^{-n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X}))},\]</div>
+<p>by the joint typicality lemma (Lecture 2, Section 2.4), whose upper bound holds for every \(y^n\).</p></div>
+<p>The codewords need not be independent of each other. Why \(I(\rv{X};\rv{Y})\)? There are about \(2^{nH(\rv{Y})}\) typical output sequences, and the output of a codeword is, with high probability, one of the about \(2^{nH(\rv{Y}\cond\rv{X})}\) sequences jointly typical with it (Lecture 2). The decoder can tell the codewords apart if these sets barely overlap, so at most about \(2^{n(H(\rv{Y})-H(\rv{Y}\cond\rv{X}))} = 2^{nI(\rv{X};\rv{Y})}\) codewords fit, and random codewords nearly achieve this packing:</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-5-c42419b360c2cecf3785.svg" alt="Figure 2 of the notes" style="width:576px"></figure></div>
+<h4 class="tex-h">End of the proof.</h4>
+<p>Apply the packing lemma given \(\rv{W} = w\), with the \(K := |\Wcal|-1\) other codewords. Since \(|\Wcal|-1 &lt; 2^{n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X})-\epsilon)}\),</p>
+<div class="math-display">\[\PP(\Ecal^{(2)})\le(|\Wcal|-1)\,2^{-n(I(\rv{X};\rv{Y})-2\epsilon H(\rv{X}))} &lt; 2^{-n\epsilon}
+  = 2^{-n^{2/3}}.\]</div>
+<p>Therefore,</p>
+<div class="math-display">\[\EE[P_e(\Ccal_n)]\le\PP(\Ecal^{(1)})+\PP(\Ecal^{(2)})
+  \le\delta_T(n^{-1/3},n,\P_{\rv{X}\rv{Y}})+2^{-n^{2/3}},\]</div>
+<p>which tends to \(0\), since \(n\epsilon^2 = n^{1/3}\to\infty\). By the random coding argument, for each \(n\), some codebook \(\Ccal_n^*\) has an error probability \(P_{e,n} := P_e(\Ccal_n^*)\) at most this bound. These \((n,R_n,P_{e,n})\) schemes have \(R_n\to I(\rv{X};\rv{Y})\) and \(P_{e,n}\to0\), so the rate \(I(\rv{X};\rv{Y})\) is achievable. The proof of the theorem is complete.</p>
+<div class="widget" data-widget="l5-random-code" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h4 class="tex-h">Remarks.</h4>
+<ul class="tex-list"><li>For a uniform message, the decoder with the least error probability returns the message whose codeword makes \(y^n\) most likely (maximum likelihood); for the BSC with \(p &lt; \frac12\), this is the codeword closest to \(y^n\) in Hamming distance (Problem 7).</li><li>The error probability is averaged over the messages. Removing the worse half of the codewords of a good codebook gives a code whose <em>maximal</em> error probability over the messages tends to \(0\), at a rate smaller by only \(\frac1n\) (Problem 8).</li><li>A random codebook has no structure: it holds \(2^{nR_n}\) codewords, and the decoder searches all of them. Practical codes add structure (linear codes, LDPC and polar codes) to make encoding and decoding fast.</li></ul>
+<h3 class="cn-h cn-l1" id="cn-5-6"><span class="cn-num">5.6</span> Extensions</h3>
+
+<h4 class="cn-h cn-l2" id="cn-5-6-1"><span class="cn-num">5.6.1</span> Continuous alphabets</h4>
+<p>For channels with real inputs and outputs, such as the Gaussian channel, the definitions of Sections 5.1 and 5.2 are unchanged, with a channel \(\P_{\rv{Y}|\rv{X}}\) with densities, and \(C_I := \sup_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\); the supremum need not be attained, and is often infinite without a cost constraint (Section 5.6.2).</p>
+<p><em>Converse.</em> The proof of Section 5.4 still holds: Fano’s inequality only involves the finite \(\rv{W}\) and \(\hat{\rv{W}}\), and the chain rule, the data processing inequality and the concavity of the mutual information hold for general alphabets (Lecture 1).</p>
+<p><em>Achievability, by discretization.</em> Let \(\P_{\rv{X}}\) be an input distribution. Quantize the input with \([x]_N := \mathrm{sign}(x)\min\{\lfloor N|x|\rfloor/N,\,N\}\), which takes finitely many values, satisfies \(|[x]_N|\le|x|\), and tends to \(x\) as \(N\to\infty\). Let \(\rv{Y}_N\) be the output of the channel for the input \([\rv{X}]_N\), and \([\rv{Y}_N]_N\) its quantization. The channel from \([\rv{X}]_N\) to \([\rv{Y}_N]_N\) is a memoryless stationary channel with finite alphabets: the encoder only uses the finitely many values of \([\rv{X}]_N\), and the decoder quantizes each output first. By Section 5.5, the rate \(I([\rv{X}]_N;[\rv{Y}_N]_N)\) is achievable over it, hence over the original channel. As \(N\to\infty\), \(([\rv{X}]_N,[\rv{Y}_N]_N)\to(\rv{X},\rv{Y})\) in distribution for the usual channels (e.g., for \(\rv{Y} = \rv{X}+\rv{Z}\), \(\rv{Y}_N = [\rv{X}]_N+\rv{Z}\to\rv{Y}\)), and the mutual information is lower semicontinuous under convergence in distribution (admitted here):</p>
+<div class="math-display">\[\liminf_{N\to\infty}I([\rv{X}]_N;[\rv{Y}_N]_N)\ge I(\rv{X};\rv{Y}).\]</div>
+<p>So every rate below \(I(\rv{X};\rv{Y})\) is achievable, and \(C\ge C_I\).</p>
+<h4 class="cn-h cn-l2" id="cn-5-6-2"><span class="cn-num">5.6.2</span> Input cost constraints</h4>
+<p>A transmitter has limited power. Let \(s:\Xcal\to[0,\infty)\) be a <strong class="newword">cost function</strong> and \(S\ge s_{\min} := \min_xs(x)\). Every input sequence must satisfy the <strong class="newword">input constraint</strong></p>
+<div class="math-display">\[\frac1n\sum_{i=1}^ns(x_i)\le S,\]</div>
+<p>for every message (and every output sequence, with feedback). For example, \(s(x) = x^2\) is the power, and \(s(x) = \ind{x\ne0}\) the Hamming weight (sending a \(1\) costs energy, a \(0\) does not). The capacity \(C(S)\) is the supremum of the rates achievable under the constraint, and the information capacity is</p>
+<div class="math-display">\[C_I(S) := \max_{\P_{\rv{X}}:\ \EE[s(\rv{X})]\le S}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}),\]</div>
+<p>where the maximum exists, since the constraint set is closed in the compact set \(\Pcal(\Xcal)\) (a supremum for continuous alphabets).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Capacity with an input constraint.</strong> For every memoryless stationary channel \(\P_{\rv{Y}|\rv{X}}\) and every \(S\ge s_{\min}\),</p>
+<div class="math-display">\[C(S) = C_I(S) = \max_{\P_{\rv{X}}:\ \EE[s(\rv{X})]\le S}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}}).\]</div></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p><em>Converse.</em> The proof of Section 5.4 holds until \(I(\rv{W};\rv{Y}^n)\le nI(\tilde{\P}_{\rv{X}},\P_{\rv{Y}|\rv{X}})\), and the averaged distribution satisfies the constraint in expectation:</p>
+<div class="math-display">\[\EE_{\tilde{\P}_{\rv{X}}}[s(\rv{X})] = \frac1n\sum_{i=1}^n\EE[s(\rv{X}_i)]
+  = \EE\Bigl[\frac1n\sum_{i=1}^ns(\rv{X}_i)\Bigr]\le S,\]</div>
+<p>since every input sequence satisfies the constraint. So \(I(\tilde{\P}_{\rv{X}},\P_{\rv{Y}|\rv{X}})\le C_I(S)\), and every achievable rate is at most \(C_I(S)\), as in Section 5.4.</p>
+<p><em>Achievability.</em> Let \(\P_{\rv{X}}\) satisfy \(\EE[s(\rv{X})] &lt; S\), and let \(x_0\) satisfy \(s(x_0) = s_{\min}\). Use the random codebook and the decoder of Section 5.5, but let the encoder send \(\rv{X}^n(w)\) only if it satisfies the constraint, and the sequence \(x_0^n := (x_0,\ldots,x_0)\) otherwise. Let \(\Ecal'\) be the event that \(\rv{X}^n(\rv{W})\) violates the constraint; it depends only on the codebook and the message. Outside \(\Ecal'\), the new scheme sends the same sequence as the scheme of Section 5.5, so the codebook, the message and the output have the same joint distribution on \(\Ecal'^c\) in both schemes, and the new average error probability is at most \(\PP(\Ecal')\) plus the old one. For \(n\) large enough, \((1+\epsilon)\EE[s(\rv{X})]\le S\), and every \(x^n\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}})\) satisfies \(\frac1n\sum_is(x_i)\le(1+\epsilon)\EE[s(\rv{X})]\le S\), by the typical average lemma (Lecture 2), since \(s\ge0\). Hence \(\PP(\Ecal')\le\PP\bigl(\rv{X}^n(\rv{W})\notin\Tcal_\epsilon^{(n)}(\P_{\rv{X}})\bigr) \le\delta_T(\epsilon,n,\P_{\rv{X}})\to0\), and the rate \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) is achievable under the constraint.</p>
+<p><em>From \(&lt;S\) to \(\le S\).</em> If \(S = s_{\min}\), the constraint forces every input symbol to lie in \(\Xcal_0 := \{x :\ s(x) = s_{\min}\}\), and both sides are the capacities of the channel restricted to the inputs \(\Xcal_0\), without constraint, which are equal by the theorem. If \(S &gt; s_{\min}\) and \(\EE[s(\rv{X})]\le S\), the mixture \(\P_\lambda := (1-\lambda)\P_{\rv{X}}+\lambda\Q_0\), with \(\Q_0\) the point mass at \(x_0\) and \(\lambda\in(0,1]\), has \(\EE_{\P_\lambda}[s(\rv{X})]\le(1-\lambda)S+\lambda s_{\min} &lt; S\), and, by concavity, \(I(\P_\lambda,\P_{\rv{Y}|\rv{X}})\ge(1-\lambda)I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})+\lambda\cdot0\), which tends to \(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) as \(\lambda\to0\). So \(C(S)\ge C_I(S)\).</p></div>
+<p>The same concavity argument shows that \(S\mapsto C_I(S)\) is concave and increasing. For real alphabets, the quantizer of Section 5.6.1 keeps the constraint when \(s(x)\) increases with \(|x|\), e.g., for the power \(s(x) = x^2\), since \(|[x]_N|\le|x|\): the extension combines with the discretization. For example, with the Hamming constraint \(\frac1n\sum_ix_i\le S\), the BSC has the capacity \(H_2(\min\{S,\frac12\}\star p)-H_2(p)\) (Problem 9).</p>
+<h3 class="cn-h cn-l1" id="cn-5-7"><span class="cn-num">5.7</span> Gaussian channels</h3>
+<p>For the Gaussian channel \(\rv{Y} = \rv{X}+\rv{Z}\), with \(\rv{Z}\sim\Ncal(0,\sigma^2)\) independent of the input \(\rv{X}\), the cost is the power, \(s(x) = x^2\): every input sequence satisfies \(\frac1n\sum_{i=1}^nx_i^2\le S\). Without this constraint, the capacity is infinite.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Capacity of the Gaussian channel.</strong></p>
+<div class="math-display">\[C(S) = \frac12\log\Bigl(1+\frac{S}{\sigma^2}\Bigr)\quad\text{bits per channel use,}\]</div>
+<p>attained by the Gaussian input distribution \(\P_{\rv{X}} = \Ncal(0,S)\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>The density \(q\) of \(\Ncal(0,v)\), \(v &gt; 0\), satisfies \(\log\frac{1}{q(y)} = \frac12\log(2\pi v)+\frac{\log e}{2}\frac{y^2}{v}\). So every distribution \(\P_{\rv{Y}}\) with \(\EE[\rv{Y}^2] = v\) has the cross-entropy</p>
+<div class="math-display">\[h(\P_{\rv{Y}}\|\Ncal(0,v)) = \EE\Bigl[\log\frac{1}{q(\rv{Y})}\Bigr]
+  = \frac12\log(2\pi v)+\frac12\log e = \frac12\log(2\pi ev),\]</div>
+<p>and, in particular, \(h(\Ncal(0,v)) = \frac12\log(2\pi ev)\).</p>
+<p>Let \(\P_{\rv{X}}\) satisfy \(\EE[\rv{X}^2]\le S\). Since \(\rv{X}\) and \(\rv{Z}\) are independent and \(\EE[\rv{Z}] = 0\), \(v := \EE[\rv{Y}^2] = \EE[\rv{X}^2]+\sigma^2\). Given \(\rv{X} = x\), \(\rv{Y}-x = \rv{Z}\), and a translation does not change the differential entropy, so \(h(\rv{Y}\cond\rv{X}) = h(\rv{Z}\cond\rv{X}) = h(\rv{Z}) = \frac12\log(2\pi e\sigma^2)\). By \(h(\P)\le h(\P\|\Q)\) (Lecture 1) with \(\Q := \Ncal(0,v)\),</p>
+<div class="math-display">\[\begin{aligned}
+  I(\rv{X};\rv{Y}) = h(\rv{Y})-h(\rv{Y}\cond\rv{X}) = h(\P_{\rv{Y}})-h(\rv{Z})
+  &amp;\le \frac12\log(2\pi ev)-\frac12\log(2\pi e\sigma^2)\\
+  &amp;= \frac12\log\Bigl(1+\frac{\EE[\rv{X}^2]}{\sigma^2}\Bigr)
+  \le \frac12\log\Bigl(1+\frac{S}{\sigma^2}\Bigr).
+\end{aligned}\]</div>
+<p>The first inequality is an equality if and only if \(\P_{\rv{Y}} = \Ncal(0,v)\), which holds if \(\rv{X}\sim\Ncal(0,\EE[\rv{X}^2])\) (a sum of independent Gaussian variables is Gaussian), and the second if and only if \(\EE[\rv{X}^2] = S\). So \(C_I(S) = \frac12\log(1+\frac{S}{\sigma^2})\), attained by \(\Ncal(0,S)\), and \(C(S) = C_I(S)\) by Section 5.6.</p></div>
+<p>The ratio \(\frac{S}{\sigma^2}\) is the <strong class="newword">signal-to-noise ratio</strong> (SNR). At high SNR, \(C\approx\frac12\log\mathrm{SNR}\): doubling the power adds only half a bit per channel use. A channel of bandwidth \(B\) hertz carries about \(2B\) real samples per second (sampling theorem), which gives Shannon’s formula \(B\log(1+\mathrm{SNR})\) bits per second.</p>
+<h4 class="tex-h">Several antennas.</h4>
+<p>The <strong class="newword">multiple-input multiple-output (MIMO)</strong> Gaussian channel models a wireless link with \(n_t\) transmit and \(n_r\) receive antennas:</p>
+<div class="math-display">\[\rv{Y} = H\rv{X}+\rv{Z},\qquad \rv{X}\in\mathbb{R}^{n_t},\quad\rv{Y}\in\mathbb{R}^{n_r},
+  \quad\rv{Z}\sim\Ncal(0,I_{n_r}),\]</div>
+<p>where the matrix \(H\in\mathbb{R}^{n_r\times n_t}\) is fixed and known, and the noise \(\rv{Z}\) is independent of the input \(\rv{X}\). The power constraint is \(\frac1n\sum_{i=1}^n\|x_i\|^2\le S\), i.e., \(s(x) = \|x\|^2\).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Capacity of the Gaussian MIMO channel.</strong></p>
+<div class="math-display">\[C_{\mathrm{MIMO}}(S) = \max_{\Sigma\succeq0:\ \mathrm{tr}(\Sigma)\le S}
+    \frac12\log\det\bigl(I_{n_r}+H\Sigma H^T\bigr),\]</div>
+<p>attained by the input \(\rv{X}\sim\Ncal(0,\Sigma^*)\), with \(\Sigma^*\) a maximizer.</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>The proof is the same, with matrices. The density \(q\) of \(\Ncal(0,K)\) on \(\mathbb{R}^m\), \(K\succ0\), satisfies \(\log\frac{1}{q(y)} = \frac12\log\det(2\pi K)+\frac{\log e}{2}\,y^TK^{-1}y\), and \(\EE[\rv{Y}^TK^{-1}\rv{Y}] = \mathrm{tr}(K^{-1}\EE[\rv{Y}\rv{Y}^T]) = m\) if \(\EE[\rv{Y}\rv{Y}^T] = K\). So every such \(\P_{\rv{Y}}\) has \(h(\P_{\rv{Y}}\|\Ncal(0,K)) = \frac12\log\det(2\pi eK)\), and \(h(\Ncal(0,K)) = \frac12\log\det(2\pi eK)\).</p>
+<p>Let \(\P_{\rv{X}}\) satisfy \(\EE[\|\rv{X}\|^2]\le S\), and let \(\Sigma_{\rv{X}} := \EE[\rv{X}\rv{X}^T]\), so that \(\mathrm{tr}(\Sigma_{\rv{X}}) = \EE[\|\rv{X}\|^2]\le S\). Then \(K := \EE[\rv{Y}\rv{Y}^T] = I_{n_r}+H\Sigma_{\rv{X}}H^T\), \(h(\rv{Y}\cond\rv{X}) = h(\rv{Z}) = \frac12\log\det(2\pi eI_{n_r})\), and</p>
+<div class="math-display">\[I(\rv{X};\rv{Y}) = h(\P_{\rv{Y}})-h(\rv{Z})
+  \le \frac12\log\det(2\pi eK)-\frac12\log\det(2\pi eI_{n_r})
+  = \frac12\log\det\bigl(I_{n_r}+H\Sigma_{\rv{X}}H^T\bigr),\]</div>
+<p>with equality if \(\rv{X}\sim\Ncal(0,\Sigma_{\rv{X}})\). So \(C_I(S)\) is the maximum over the matrices \(\Sigma_{\rv{X}}\succeq0\) with \(\mathrm{tr}(\Sigma_{\rv{X}})\le S\), which exists since this set is compact, and \(C(S) = C_I(S)\) by Section 5.6.</p></div>
+<p>For \(n_t = n_r = 1\) and \(H = \frac1\sigma\) (divide the output by \(\sigma\)), this is the capacity of the scalar channel.</p>
+<h4 class="tex-h">Parallel channels.</h4>
+<p>If \(H\) is diagonal, the MIMO channel is a set of parallel scalar channels, and the best power allocation “fills water” over the noise levels (Problem 10). Every \(H\) reduces to this case by its singular value decomposition \(H = U\Lambda V^T\), since the rotations \(U\) and \(V\) change neither the power nor the noise. With \(n_t = n_r\) antennas and an invertible \(H\), the capacity grows like \(\frac{n_t}{2}\log S\) at high SNR: multiple antennas multiply the capacity (Foschini and Gans, 1998; Telatar, 1999), the basis of MIMO in Wi-Fi, 4G and 5G.</p>
+<div class="widget" data-widget="l5-gaussian" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<div class="widget" data-widget="l5-applications" data-args="place=end"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h3 class="cn-h cn-l1" id="cn-5-8"><span class="cn-num">5.8</span> Source–channel separation</h3>
+<p>Lectures 3 and 4 turn a source into bits, and this lecture sends bits over a channel. Is it optimal to design the two codes separately? Let \(\rv{V}^n\) be \(n\) i.i.d. source symbols with the distribution \(\P_{\rv{V}}\) on a finite alphabet \(\Vcal\), \(|\Vcal|\ge2\). A scheme sends them in \(n\) uses of a memoryless stationary channel of capacity \(C\), with any encoder \(x_i = f_i(v^n,y^{i-1})\) and any decoder \(\hat{v}^n = g_n(y^n)\), and has the error probability \(P_e := \PP(\rv{V}^n\ne\hat{\rv{V}}^n)\).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Source–channel separation theorem.</strong> If \(H(\rv{V}) &lt; C\), a source code followed by a channel code has \(P_e\to0\). If \(H(\rv{V}) &gt; C\), every scheme, even with feedback, has</p>
+<div class="math-display">\[P_e\ge\frac{H(\rv{V})-C-\frac1n}{\log|\Vcal|},\]</div>
+<p>which does not tend to \(0\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p><em>Achievability.</em> Let \(\epsilon &gt; 0\) be such that \(R := (1+\epsilon)H(\rv{V}) &lt; C\). <em>Source code:</em> the typical set \(\Tcal_\epsilon^{(n)}(\P_{\rv{V}})\) has at most \(2^{nR}\) sequences, and \(\rv{V}^n\) falls outside it with a probability at most \(\delta_T(\epsilon,n,\P_{\rv{V}})\to0\) (Lecture 2). Number its sequences, and let the message \(\rv{W}\) be the number of \(\rv{V}^n\) (\(\rv{W} := 1\) if \(\rv{V}^n\) is not typical). <em>Channel code:</em> this message is not uniform, so take schemes with at least \(2^{nR}\) messages whose <em>maximal</em> error probability over the messages, \(\lambda_n\), tends to \(0\); they exist for \(n\) large enough, since \(R &lt; C\) (Problem 8). The decoder returns the sequence numbered \(\hat{\rv{W}}\), and \(P_e\le\delta_T(\epsilon,n,\P_{\rv{V}})+\lambda_n\to0\).</p>
+<p><em>Converse.</em> The chain of Section 5.4 does not use the distribution of the message: with \(\rv{V}^n\) in the place of \(\rv{W}\), it gives \(I(\rv{V}^n;\rv{Y}^n)\le nC\). By the data processing inequality for \(\rv{V}^n\to\rv{Y}^n\to\hat{\rv{V}}^n\) and Fano’s inequality on the set \(\Vcal^n\),</p>
+<div class="math-display">\[nH(\rv{V}) = H(\rv{V}^n) = I(\rv{V}^n;\hat{\rv{V}}^n)+H(\rv{V}^n\cond\hat{\rv{V}}^n)
+  \le nC+1+P_e\,n\log|\Vcal|,\]</div>
+<p>and dividing by \(n\log|\Vcal|\) gives the bound.</p></div>
+<p>So nothing is lost by compressing first and protecting the bits afterwards: bits are a universal interface between sources and channels. With \(\kappa\) channel uses per source symbol, \(C\) becomes \(\kappa C\). The same holds with a distortion (Lecture 4): the distortion \(D\) can be reached if \(R(D) &lt; C\), and not if \(R(D) &gt; C\) (admitted here). Separation is an asymptotic statement: at short lengths, and in networks with several users, joint designs can do better.</p></div>
+</section>
+<section class="block" id="quiz" aria-labelledby="quiz-h">
+  <div class="block-head"><h2 id="quiz-h">Quiz</h2><p class="block-sub">22 questions &middot; one correct answer each</p></div>
+  <p class="hint">Pick an answer to check it. Your answers are kept in this browser only.</p>
+  <noscript><p class="hint">Turn on JavaScript to check your answers.</p></noscript>
+  <div class="scoreboard" data-board>
+    <div class="score-bits" data-score-bits></div>
+    <p class="score-text" data-score-text>0 of 22 answered</p>
+    <button type="button" class="btn-quiet" data-reset>Start again</button>
+  </div>
+  <ol class="quiz" data-quiz="lecture-5">
+<li class="q" id="q1" data-key="bec8b2fd" data-check="5fde2d66">
+  <div class="q-num" aria-hidden="true">Q1</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A scheme sends a uniform message \(\rv{W}\) with \(|\Wcal| = 2^{12}\) in \(n = 24\) channel uses. What is its rate \(R_n\), in bits per channel use?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 1"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(12\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(24\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac12\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(2\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q2" data-key="78202457" data-check="b8430da4">
+  <div class="q-num" aria-hidden="true">Q2</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Without feedback, the encoder of a scheme amounts to</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 2"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">a decoder \(g_n:\Ycal^n\to\Wcal\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">a channel \(\P_{\rv{Y}|\rv{X}}\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">a sequence of functions of the past outputs only.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">a codebook, with one codeword \(x^n(w)\in\Xcal^n\) for each message \(w\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q3" data-key="3fd73714" data-check="ba1f3f4b">
+  <div class="q-num" aria-hidden="true">Q3</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A rate \(R\) is achievable if there exist \((n,R_n,P_{e,n})\) schemes, \(n = 1,2,\ldots\), such that</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 3"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\liminf_{n\to\infty}R_n\ge R\) and \(\lim_{n\to\infty}P_{e,n} = 0\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(R_n\ge R\) and \(P_{e,n} = 0\) for every \(n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\limsup_{n\to\infty}R_n\le R\) and \(\lim_{n\to\infty}P_{e,n} = 0\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\liminf_{n\to\infty}R_n\ge R\) and \(P_{e,n}\le\frac12\) for every \(n\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q4" data-key="874e603e" data-check="4d958a1b">
+  <div class="q-num" aria-hidden="true">Q4</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Over the \(\mathrm{BSC}(0.1)\), one bit is sent as \(000\) or \(111\) and decoded by a majority vote. What is the error probability?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 4"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0.001\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(0.01\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(0.027\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(0.028\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q5" data-key="58001d3e" data-check="7d1f3e52">
+  <div class="q-num" aria-hidden="true">Q5</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Over the \(\mathrm{BSC}(p)\) with \(p&lt;\frac12\), one bit is repeated \(2m+1\) times and decoded by a majority vote. As \(m\to\infty\),</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 5"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the error probability tends to \(0\) at the rate \(1-H_2(p)\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the error probability tends to \(\frac12\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the error probability tends to \(0\), but the rate \(\frac{1}{2m+1}\) also tends to \(0\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">the rate stays \(\frac12\) and the error probability stays \(p\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q6" data-key="e26baf6e" data-check="4135e8b6">
+  <div class="q-num" aria-hidden="true">Q6</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A channel is memoryless stationary if, for \(i = 1,\ldots,n\),</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 6"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the outputs \(\rv{Y}_1,\ldots,\rv{Y}_n\) are independent.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the inputs \(\rv{X}_1,\ldots,\rv{X}_n\) are i.i.d.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\P_{\rv{Y}_i|\rv{Y}^{i-1}} = \P_{\rv{Y}_i}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\P_{\rv{Y}_i|\rv{W}\rv{X}^i\rv{Y}^{i-1}} = \P_{\rv{Y}_i|\rv{X}_i} = \P_{\rv{Y}|\rv{X}}\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q7" data-key="2bf9629a" data-check="0cff507a">
+  <div class="q-num" aria-hidden="true">Q7</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which Markov chain holds for every scheme over a memoryless channel, with or without feedback?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 7"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\rv{W}\to\hat{\rv{W}}\to\rv{Y}^n\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\((\rv{W},\rv{X}^{i-1},\rv{Y}^{i-1})\to\rv{X}_i\to\rv{Y}_i\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\rv{Y}_i\to\rv{Y}^{i-1}\to\rv{X}_i\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\rv{X}_i\to\rv{Y}_i\to\rv{W}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q8" data-key="8583d3e7" data-check="57c0946d">
+  <div class="q-num" aria-hidden="true">Q8</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Without feedback, given \(\rv{W} = w\), the outputs \(\rv{Y}_1,\ldots,\rv{Y}_n\) of a memoryless stationary channel</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 8"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">are i.i.d. with the distribution \(\P_{\rv{Y}}\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">are equal to the codeword \(x^n(w)\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">are independent, and \(\rv{Y}_i\) has the distribution \(\P_{\rv{Y}|\rv{X}=x_i(w)}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">depend on the past outputs through the encoder.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q9" data-key="5ff001a3" data-check="7181dabe">
+  <div class="q-num" aria-hidden="true">Q9</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The information capacity \(C_I\) of the channel \(\P_{\rv{Y}|\rv{X}}\) is</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 9"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\max_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\min_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\) for the uniform input distribution.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\max_{\P_{\rv{X}}}H(\rv{Y})\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q10" data-key="9339f391" data-check="8945b207">
+  <div class="q-num" aria-hidden="true">Q10</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Shannon’s channel coding theorem says that, for a memoryless stationary channel,</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 10"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">every rate \(R&gt;C_I\) is achievable.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">every scheme has an error probability at least \(2^{-nC_I}\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the operational capacity \(C\) equals \(C_I\), with or without feedback.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">feedback doubles the capacity.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q11" data-key="34b1f157" data-check="63cc599a">
+  <div class="q-num" aria-hidden="true">Q11</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Let \(\rv{W}\) and \(\hat{\rv{W}}\) take values in \(\Wcal\), \(|\Wcal|\ge2\), and \(P_e := \PP(\rv{W}\ne\hat{\rv{W}})\). Fano’s inequality states that</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 11"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(H(\rv{W}\cond\hat{\rv{W}})\ge H_2(P_e)+P_e\log(|\Wcal|-1)\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(H(\rv{W}\cond\hat{\rv{W}})\le H_2(P_e)+P_e\log(|\Wcal|-1)\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(P_e\le\frac{H(\rv{W}\cond\hat{\rv{W}})}{\log|\Wcal|}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(H(\rv{W})\le H_2(P_e)\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q12" data-key="b61509b0" data-check="34815f90">
+  <div class="q-num" aria-hidden="true">Q12</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The converse uses the data processing inequality for the Markov chain</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 12"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\hat{\rv{W}}\to\rv{W}\to\rv{Y}^n\), to get \(I(\rv{W};\rv{Y}^n)\le I(\rv{W};\hat{\rv{W}})\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\rv{Y}^n\to\hat{\rv{W}}\to\rv{W}\), to get \(I(\rv{W};\rv{Y}^n)\le I(\rv{W};\hat{\rv{W}})\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\rv{X}^n\to\rv{Y}^n\to\rv{W}\), to get \(I(\rv{X}^n;\rv{W})\le I(\rv{X}^n;\rv{Y}^n)\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\rv{W}\to\rv{Y}^n\to\hat{\rv{W}}\), to get \(I(\rv{W};\hat{\rv{W}})\le I(\rv{W};\rv{Y}^n)\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q13" data-key="872bc6a8" data-check="7356a61f">
+  <div class="q-num" aria-hidden="true">Q13</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the converse, the step \(\sum_{i=1}^nI(\P_{\rv{X}_i},\P_{\rv{Y}|\rv{X}})\le nI(\tilde{\P}_{\rv{X}},\P_{\rv{Y}|\rv{X}})\), with \(\tilde{\P}_{\rv{X}} := \frac1n\sum_{i=1}^n\P_{\rv{X}_i}\), uses</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 13"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the chain rule.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">Fano’s inequality.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the concavity of \(\P_{\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">the data processing inequality.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q14" data-key="bed6af25" data-check="b5b2b7f8">
+  <div class="q-num" aria-hidden="true">Q14</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A scheme sends \(750\) bits in \(1000\) uses of the \(\mathrm{BSC}(0.1)\), whose capacity is about \(0.531\) bit per channel use. By the converse, its error probability</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 14"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">can be made as small as desired with feedback.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">is at least about \(0.29\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">is exactly \(0.1\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">is at most \(0.29\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q15" data-key="8ee6266d" data-check="3b20c5bd">
+  <div class="q-num" aria-hidden="true">Q15</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Why does the converse bound \(I(\rv{W};\rv{Y}^n)\) rather than \(I(\rv{X}^n;\rv{Y}^n)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">Because \(I(\rv{X}^n;\rv{Y}^n) = 0\) for every scheme.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">Because \(\rv{W}\) is not uniform.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">Because \(I(\rv{W};\rv{Y}^n)\ge I(\rv{X}^n;\rv{Y}^n)\) for every scheme.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">Because, with feedback, \(I(\rv{X}^n;\rv{Y}^n)\) can exceed \(nC_I\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q16" data-key="fbf93223" data-check="82f84891">
+  <div class="q-num" aria-hidden="true">Q16</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the random coding argument, the codewords \(\rv{X}^n(1),\ldots,\rv{X}^n(|\Wcal|)\) are drawn</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 16"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">uniformly among the typical sequences, without repetition.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">so that any two of them are at Hamming distance at least \(3\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">i.i.d. \(\sim\P_{\rv{X}}^n\), independently of the message and of the channel.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">from the output distribution \(\P_{\rv{Y}}^n\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q17" data-key="b872a7af" data-check="0eb4fc38">
+  <div class="q-num" aria-hidden="true">Q17</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The decoder used in the achievability proof returns</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 17"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the smallest \(\hat{w}\) such that \((\rv{X}^n(\hat{w}),y^n)\) is jointly typical, and \(1\) if there is none.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the codeword closest to \(y^n\) in Hamming distance.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the message with the largest prior probability.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">a uniformly random message.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q18" data-key="fe5d6608" data-check="f52e6625">
+  <div class="q-num" aria-hidden="true">Q18</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A wrong codeword \(\rv{X}^n(\hat{w})\), \(\hat{w}\ne\rv{W}\), is jointly typical with the output \(\rv{Y}^n\) with a probability of about</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 18"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(2^{-nH(\rv{X})}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(2^{-nI(\rv{X};\rv{Y})}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(2^{-nH(\rv{Y}\cond\rv{X})}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1-2^{-nI(\rv{X};\rv{Y})}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q19" data-key="495b8dc4" data-check="cd6605e4">
+  <div class="q-num" aria-hidden="true">Q19</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The packing lemma requires each wrong codeword \(\tilde{\rv{X}}^n(k)\) to be</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 19"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">independent of all the other codewords.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">jointly typical with the transmitted codeword.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">at Hamming distance at least \(3\) from the other codewords.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">independent of the output \(\rv{Y}^n\), with the distribution \(\P_{\rv{X}}^n\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q20" data-key="5db98b0b" data-check="f19fa329">
+  <div class="q-num" aria-hidden="true">Q20</div>
+  <div class="q-body">
+    <div class="q-stem"><p>With the input constraint \(\frac1n\sum_{i=1}^ns(x_i)\le S\) on every codeword, the capacity of a memoryless stationary channel (finite alphabets, \(S\ge\min_xs(x)\)) is</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 20"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\max_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\), whatever \(S\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\max_{\P_{\rv{X}}:\ \EE[s(\rv{X})]\le S}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\max_{\P_{\rv{X}}:\ \EE[s(\rv{X})] = 0}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(S\max_{\P_{\rv{X}}}I(\P_{\rv{X}},\P_{\rv{Y}|\rv{X}})\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q21" data-key="0aa6cdff" data-check="d0f83c37">
+  <div class="q-num" aria-hidden="true">Q21</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The capacity of the \(\mathrm{BSC}(0.1)\) is \(1-H_2(0.1)\approx0.531\) bit per channel use. Which statement is true?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 21"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">For long enough blocks, schemes of rate \(0.5\) have an error probability as small as desired.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">No scheme of rate \(0.3\) has an error probability below \(0.1\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">The rate \(0.6\) is achievable with feedback.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">Repetition codes achieve every rate below \(0.531\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q22" data-key="8298a6f9" data-check="41b1e0a1">
+  <div class="q-num" aria-hidden="true">Q22</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For the Gaussian channel \(\rv{Y} = \rv{X}+\rv{Z}\), \(\rv{Z}\sim\Ncal(0,\sigma^2)\) independent of \(\rv{X}\), with the power constraint \(\frac1n\sum_ix_i^2\le S\), the capacity is</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 22"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\frac12\log(1+\frac{S}{\sigma^2})\), attained by \(\rv{X}\sim\Ncal(0,S)\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\log(1+\frac{S}{\sigma^2})\), attained by \(\rv{X}\) uniform on \([-\sqrt{S},\sqrt{S}]\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac12\log\frac{S}{\sigma^2}\), attained by \(\rv{X}\sim\Ncal(0,S)\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\frac12\log(1+\frac{\sigma^2}{S})\), attained by \(\rv{X}\sim\Ncal(0,\sigma^2)\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+  </ol>
+</section>
+<section class="block" id="exercises" aria-labelledby="exo-h">
+  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">10 problems</p></div>
+  
+  <ol class="problems">
+<li class="problem" id="p1">
+  <h3 class="p-head"><span class="p-num">Problem 1</span> <span class="p-title">Repetition codes over a binary symmetric channel</span></h3>
+  <div class="p-body"><p>Over the \(\mathrm{BSC}(p)\) with \(p&lt;\frac12\), the repetition code of length \(n = 2m+1\) sends one bit \(w\in\{0,1\}\) as \(n\) copies of \(w\), and the decoder takes a majority vote (Section 5.1).</p>
+<ul class="tex-list"><li>Show that its error probability is \(P_e(n) = \sum_{k=m+1}^{n}\binom{n}{k}p^k(1-p)^{n-k}\), and check that \(P_e(3) = 0.028\) for \(p = 0.1\).</li><li>Show that \(P_e(n)\le2e^{-2n(\frac12-p)^2}\), with Hoeffding’s inequality (Lecture 2, Section 2.3). What happens to the rate as \(n\to\infty\)?</li><li>For \(p = 0.1\), a numerical computation shows that the smallest odd \(n\) with \(P_e(n)\le10^{-6}\) is \(n = 23\). Compare its rate with the capacity \(C = 1-H_2(0.1)\approx0.531\).</li><li>The encoder, the channel and the decoder of the code of length \(3\) form a new binary symmetric channel from \(\rv{W}\) to \(\hat{\rv{W}}\) (CT 7.16). What is its crossover probability? Compute its capacity in bits per use of the original channel, and compare with \(C\). Why can it not exceed \(C\)?</li></ul></div>
+</li>
+<li class="problem" id="p2">
+  <h3 class="p-head"><span class="p-num">Problem 2</span> <span class="p-title">Fano’s inequality and rates above capacity</span></h3>
+  <div class="p-body"><p>Let \(\rv{W}\) and \(\hat{\rv{W}}\) take values in \(\Wcal\), with \(|\Wcal| = M\ge2\), and let \(P_e := \PP(\rv{W}\ne\hat{\rv{W}})\).</p>
+<ul class="tex-list"><li>Let \(\rv{W}\) be uniform, and let the decoder ignore the channel and return \(\hat{\rv{W}} = 1\). Compute \(P_e\) and \(H(\rv{W}\cond\hat{\rv{W}})\), and check that Fano’s inequality is an equality.</li><li>Show that Fano’s inequality is an equality if and only if, for every \(\hat{w}\) with \(\PP(\hat{\rv{W}} = \hat{w}) &gt; 0\), \(\PP(\rv{W} = \hat{w}\cond\hat{\rv{W}} = \hat{w}) = 1-P_e\) and \(\PP(\rv{W} = w\cond\hat{\rv{W}} = \hat{w}) = \frac{P_e}{M-1}\) for every \(w\ne\hat{w}\). <em>Hint: second proof in Section 5.4.</em></li><li>A scheme sends \(750\) bits in \(n = 1000\) uses of the \(\mathrm{BSC}(0.1)\), possibly with feedback. Show that its error probability is at least \(0.29\).</li></ul></div>
+</li>
+<li class="problem" id="p3">
+  <h3 class="p-head"><span class="p-num">Problem 3</span> <span class="p-title">Feedback and the memoryless property</span></h3>
+  <div class="p-body"><p>Over the \(\mathrm{BSC}(p)\), \(0&lt;p&lt;\frac12\), let \(\rv{Y}_i = \rv{X}_i\oplus\rv{Z}_i\), \(i = 1,2\), with \(\rv{Z}_1,\rv{Z}_2\) i.i.d. \(\sim\mathrm{Bern}(p)\), independent of the message \(\rv{W}\sim\mathrm{Bern}(\frac12)\) (one bit). With feedback, the encoder sends \(\rv{X}_1 = \rv{W}\), then repeats the bit received: \(\rv{X}_2 = \rv{Y}_1\).</p>
+<ul class="tex-list"><li>Check that the channel is memoryless stationary (Section 5.2).</li><li>Show that \(\P_{\rv{Y}^2|\rv{X}^2}(y^2\cond x^2)\ne \P_{\rv{Y}|\rv{X}}(y_1\cond x_1)\P_{\rv{Y}|\rv{X}}(y_2\cond x_2)\) for some \((x^2,y^2)\) with \(\P_{\rv{X}^2}(x^2) &gt; 0\).</li><li>Show that \(I(\rv{X}^2;\rv{Y}^2) = 1\), and that \(I(\rv{X}^2;\rv{Y}^2) &gt; 2C\) if \(H_2(p) &gt; \frac12\), i.e., \(p &gt; 0.110\). Which step fails in the bound \(I(\rv{X}^n;\rv{Y}^n)\le\sum_iI(\rv{X}_i;\rv{Y}_i)\), true without feedback?</li><li>Compute \(I(\rv{W};\rv{Y}^2)\), and check that it is at most \(2C\), as the converse of Section 5.4 says.</li></ul></div>
+</li>
+<li class="problem" id="p4">
+  <h3 class="p-head"><span class="p-num">Problem 4</span> <span class="p-title">Binary erasure channel with and without feedback</span></h3>
+  <div class="p-body"><p>Let \(0\le\delta&lt;1\), and let \(\mathrm{BEC}(\delta)\) be the binary erasure channel of Section 5.2.</p>
+<ul class="tex-list"><li>Show that \(I(\rv{X};\rv{Y}) = (1-\delta)H(\rv{X})\) for every input distribution, and deduce that \(C = 1-\delta\).</li><li>With feedback, the encoder knows which channel uses were erased. It sends the message bits one by one, and repeats each bit until it is not erased. Show that the number \(\rv{N}_n\) of bits delivered in \(n\) channel uses satisfies \(\frac{\rv{N}_n}{n}\to1-\delta\) in probability. Deduce that this scheme, with \(\lceil nR\rceil\) message bits, achieves every rate \(R&lt;1-\delta\).</li><li>Which channel has the larger capacity, the \(\mathrm{BEC}(0.2)\) or the \(\mathrm{BSC}(0.1)\)? <em>Hint: the \(\mathrm{BSC}(p)\) replaces each bit, with probability \(2p\), by a fair random bit.</em></li></ul></div>
+</li>
+<li class="problem" id="p5">
+  <h3 class="p-head"><span class="p-num">Problem 5</span> <span class="p-title">Additive noise channels</span> <span class="p-ref">CT 7.2</span></h3>
+  <div class="p-body"><p>Let \(\rv{Y} = \rv{X}+\rv{Z}\) (real addition), with the input \(\rv{X}\in\{0,1\}\) and the noise \(\rv{Z}\) independent of \(\rv{X}\), with \(\PP(\rv{Z} = 0) = \PP(\rv{Z} = a) = \frac12\), for some \(a\in\mathbb{R}\).</p>
+<ul class="tex-list"><li>Find the capacity as a function of \(a\). <em>Hint: when do the outputs of the two inputs overlap? Compare with Problem 4.</em></li><li>(CT 7.4.) Let \(\rv{Y} = \rv{X}+\rv{Z}\bmod11\), with \(\rv{X}\in\{0,1,\ldots,10\}\) and \(\rv{Z}\) uniform on \(\{1,2,3\}\), independent of \(\rv{X}\). Find the capacity and an optimal input distribution.</li><li>More generally, let \(\rv{Y} = \rv{X}+\rv{Z}\bmod m\) on \(\{0,1,\ldots,m-1\}\), with \(\rv{Z}\) independent of \(\rv{X}\). Show that \(C = \log m-H(\rv{Z})\).</li></ul></div>
+</li>
+<li class="problem" id="p6">
+  <h3 class="p-head"><span class="p-num">Problem 6</span> <span class="p-title">Z-channel</span> <span class="p-ref">CT 7.8</span></h3>
+  <div class="p-body"><p>The Z-channel has \(\Xcal = \Ycal = \{0,1\}\), \(\P_{\rv{Y}|\rv{X}=0}(0) = 1\) and \(\P_{\rv{Y}|\rv{X}=1}(0) = \P_{\rv{Y}|\rv{X}=1}(1) = \frac12\): a \(0\) is always received correctly, and a \(1\) is received as a \(0\) half of the time.</p>
+<ul class="tex-list"><li>For \(\rv{X}\sim\mathrm{Bern}(\lambda)\), show that \(I(\rv{X};\rv{Y}) = H_2(\frac{\lambda}{2})-\lambda\).</li><li>Find the capacity and the optimal input distribution. Why is the optimal \(\lambda\) smaller than \(\frac12\)?</li></ul></div>
+</li>
+<li class="problem" id="p7">
+  <h3 class="p-head"><span class="p-num">Problem 7</span> <span class="p-title">Maximum-likelihood decoding and the Hamming code</span></h3>
+  <div class="p-body"><p>Consider a scheme without feedback, with a uniform message, the codewords \(x^n(w)\), \(w\in\Wcal\), and a memoryless stationary channel \(\P_{\rv{Y}|\rv{X}}\) with finite alphabets.</p>
+<ul class="tex-list"><li>Show that a decoder has the least error probability if and only if, for every \(y^n\), \(g_n(y^n)\) maximizes \(w\mapsto\prod_{i=1}^n\P_{\rv{Y}|\rv{X}}(y_i\cond x_i(w))\) (a <em>maximum-likelihood</em> decoder). <em>Hint: write \(\PP(\rv{W} = \hat{\rv{W}})\) as a sum over \(y^n\).</em></li><li>For the \(\mathrm{BSC}(p)\) with \(p&lt;\frac12\), show that the maximum-likelihood decoders return a codeword closest to \(y^n\) in Hamming distance.</li><li>Let \(\Ccal_{\mathrm{H}}\) be the Hamming code of length \(7\) of Lecture 4, Problem 3: the \(16\) words \(c\in\{0,1\}^7\) with \(Ac = 0\) (modulo \(2\)), where the columns of the \(3\times7\) matrix \(A\) are the binary representations of \(1,\ldots,7\). Every word of \(\{0,1\}^7\) is at distance at most \(1\) from exactly one codeword, and two codewords are at distance at least \(3\). Over the \(\mathrm{BSC}(p)\), show that the minimum-distance decoder errs if and only if at least two bits are flipped, and compute \(P_e\) for \(p = 0.1\) and \(p = 0.01\).</li><li>Compare the rate \(\frac47\) of this code with the capacity for these two values of \(p\). What does the converse say about long codes of rate \(\frac47\) over the \(\mathrm{BSC}(0.1)\)?</li></ul></div>
+</li>
+<li class="problem" id="p8">
+  <h3 class="p-head"><span class="p-num">Problem 8</span> <span class="p-title">From average to maximal error probability</span></h3>
+  <div class="p-body"><p>For a scheme without feedback, let \(\lambda_w := \PP(\hat{\rv{W}}\ne w\cond\rv{W} = w)\) be the error probability of the message \(w\), so that the error probability is \(P_e = \frac{1}{|\Wcal|}\sum_w\lambda_w\), and let \(\lambda_{\max} := \max_w\lambda_w\) be the <em>maximal</em> error probability.</p>
+<ul class="tex-list"><li>Show that the error probability is at most \(\lambda_{\max}\) for every distribution of the message, not only the uniform one.</li><li>Show that at least half of the messages have \(\lambda_w\le2P_e\). <em>Hint: Markov’s inequality.</em></li><li>Keep the \(\lceil|\Wcal|/2\rceil\) messages with the smallest \(\lambda_w\), with their codewords and the same decoder, except that a decoded message outside the kept set is replaced by a fixed kept message. Show that the new scheme has \(\lambda_{\max}\le2P_e\) and a rate at least \(R_n-\frac1n\).</li><li>Deduce that the capacity does not change if \(\lambda_{\max}\) replaces the error probability in the definition of achievable rates.</li></ul></div>
+</li>
+<li class="problem" id="p9">
+  <h3 class="p-head"><span class="p-num">Problem 9</span> <span class="p-title">Binary symmetric channel with a Hamming cost</span></h3>
+  <div class="p-body"><p>Over the \(\mathrm{BSC}(p)\), \(p\in[0,\frac12]\), every codeword must have at most a fraction \(S\in[0,1]\) of ones: the cost is \(s(x) = \ind{x\ne0} = x\) (Section 5.6.2). Let \(a\star p := a(1-p)+(1-a)p\).</p>
+<ul class="tex-list"><li>For \(\rv{X}\sim\mathrm{Bern}(\lambda)\), show that \(I(\rv{X};\rv{Y}) = H_2(\lambda\star p)-H_2(p)\).</li><li>Deduce that \(C(S) = H_2(\min\{S,\frac12\}\star p)-H_2(p)\).</li><li>Compute \(C(S)\) for \(p = 0.1\) and \(S = 0.1\), \(0.25\) and \(\frac12\). Comment.</li><li>Show that the formula also holds for \(p\in(\frac12,1]\), and that it equals the chapter’s form \(H_2(\min\{S\star\tilde{p},\frac12\})-H_2(p)\), with \(\tilde{p} := \min\{p,1-p\}\).</li></ul></div>
+</li>
+<li class="problem" id="p10">
+  <h3 class="p-head"><span class="p-num">Problem 10</span> <span class="p-title">Parallel Gaussian channels and water-filling</span></h3>
+  <div class="p-body"><p>Let \(\rv{Y}_j = \rv{X}_j+\rv{Z}_j\), \(j = 1,\ldots,k\), with independent noises \(\rv{Z}_j\sim\Ncal(0,N_j)\), \(N_j&gt;0\), independent of the input \(\rv{X} = (\rv{X}_1,\ldots,\rv{X}_k)\), and the power constraint \(\frac1n\sum_{i=1}^n\|x_i\|^2\le S\) on the input vectors \(x_i\in\mathbb{R}^k\) (Section 5.7).</p>
+<ul class="tex-list"><li><p>Let \(S_j := \EE[\rv{X}_j^2]\). Show that \(I(\rv{X};\rv{Y})\le\sum_{j=1}^k\frac12\log(1+\frac{S_j}{N_j})\), with equality for independent inputs \(\rv{X}_j\sim\Ncal(0,S_j)\), and deduce that</p>
+<div class="math-display">\[C(S) = \max\Bigl\{\sum_{j=1}^k\frac12\log\Bigl(1+\frac{S_j}{N_j}\Bigr) :\
+        S_j\ge0,\ \sum_{j=1}^kS_j\le S\Bigr\}.\]</div></li><li>Show that the optimal powers are \(S_j = (\nu-N_j)^+\), where the water level \(\nu\) satisfies \(\sum_j(\nu-N_j)^+ = S\) (<em>water-filling</em>). <em>Hint: if \(S_j&gt;0\) and \(N_l+S_l&lt;N_j+S_j\), move a little power from channel \(j\) to channel \(l\).</em></li><li>Compute the optimal powers and \(C(S)\) for \((N_1,N_2,N_3) = (1,2,4)\) and \(S = 3\), then \(S = 10\), and compare with equal powers \(S_j = \frac S3\).</li><li>For the MIMO channel \(\rv{Y} = H\rv{X}+\rv{Z}\) of Section 5.7, use the singular value decomposition \(H = U\Lambda V^T\) to show that \(C_{\mathrm{MIMO}}(S)\) is the capacity of parallel channels with the noise levels \(\frac{1}{\lambda_j^2}\), where the \(\lambda_j&gt;0\) are the nonzero singular values of \(H\).</li></ul></div>
+</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Other lectures"><a class="prev" href="lecture-4.html"><span class="dir">&larr; Lecture 4</span><span class="ttl">Lossy data compression</span></a></nav>
+</main></div>
+<footer class="site-footer" data-quiet>
+  <div class="wrap footer-grid">
+    <p class="footer-who">Elements of Information Theory &middot; 2026–2027<br><a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a> &middot; CentraleSupélec &middot; <a href="mailto:sheng.yang@centralesupelec.fr">sheng.yang@centralesupelec.fr</a><br>Visits are counted anonymously, without cookies.</p>
+  </div>
+</footer>
+</div>
+</body>
+</html>

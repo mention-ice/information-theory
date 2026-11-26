@@ -1,0 +1,94 @@
+/* Shared by the Lecture 5 widgets (copied into each l5-*.css; colours are the theme tokens). */
+.l5w { margin: 1.2rem 0; padding: 0.9rem 1rem 0.8rem; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--band); font-family: var(--serif); color: var(--ink);
+  --s-a: #2346b5; --s-b: #cf531b; --s-c: #0e8a6a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .l5w { --s-a: #3987e5; --s-b: #d95926; --s-c: #199e70; }
+}
+:root[data-theme="dark"] .l5w { --s-a: #3987e5; --s-b: #d95926; --s-c: #199e70; }
+.l5w-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: center; margin-bottom: 0.6rem; }
+.l5w-ctl { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.l5w-ctl input[type="range"] { flex: 0 1 8.5rem; width: 8.5rem; min-width: 4.5rem; accent-color: var(--signal); }
+.l5w-ctl-val { min-width: 2.8rem; color: var(--ink); }
+.l5w-ctl-name { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; }
+.l5w-hint { margin: 0.2rem 0 0.5rem; font-size: 0.88rem; color: var(--ink-2); }
+.l5w-btn { font: inherit; font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--rule-strong); background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.l5w-btn:hover { border-color: var(--signal); color: var(--ink); }
+.l5w-btn[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--on-accent); }
+.l5w-btn:disabled { opacity: 0.45; cursor: default; }
+.l5w-btn:focus-visible, .l5w-ctl input:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.l5w-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule-strong); border-radius: 14px; overflow: hidden; }
+.l5w-seg .l5w-btn { border: 0; border-radius: 0; background: transparent; }
+.l5w-seg .l5w-btn[aria-pressed="true"] { background: var(--signal); color: var(--on-accent); }
+@media (max-width: 30rem) { .l5w-seg .l5w-btn { font-size: 0.7rem; padding: 0.25rem 0.5rem; } }
+.l5w-figure svg { display: block; width: 100%; height: auto; max-width: 38rem; margin: 0 auto; }
+.l5w-readout { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.45; }
+.l5w-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.l5w-table { border-collapse: collapse; margin: 0.6rem auto 0; font-size: 0.82rem; }
+.l5w-table th, .l5w-table td { padding: 0.18rem 0.6rem; text-align: center; white-space: nowrap; }
+.l5w-table th { font-family: var(--mono); font-size: 0.72rem; font-weight: normal; color: var(--ink-3); border-bottom: 1px solid var(--rule-strong); }
+.l5w-table td { border-bottom: 1px solid var(--rule); color: var(--ink); }
+.l5w-bin { font-family: var(--mono); letter-spacing: 0.04em; }
+.l5w-bin .l5w-err { color: var(--bad); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.l5w svg text { font-family: var(--mono); }
+.l5w .l5w-tick { font-size: 11px; fill: var(--ink-3); }
+.l5w .l5w-lbl { font-size: 11px; fill: var(--ink-2); paint-order: stroke; stroke: var(--band); stroke-width: 4px; stroke-linejoin: round; }
+.l5w .l5w-axis { stroke: var(--rule-strong); stroke-width: 1; }
+.l5w .l5w-grid { stroke: var(--rule); stroke-width: 1; }
+.l5w .l5w-cursor { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.l5w .l5w-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.l5w .l5w-line.s-limit { stroke: var(--ink); stroke-width: 2; }
+.l5w .l5w-line.s-a { stroke: var(--s-a); }
+.l5w .l5w-line.s-b { stroke: var(--s-b); }
+.l5w .l5w-line.s-c { stroke: var(--s-c); }
+.l5w .l5w-line.s-dash { stroke-dasharray: 5 4; stroke-width: 1.6; }
+.l5w .l5w-mark { stroke: var(--band); stroke-width: 2; }
+.l5w .l5w-mark.s-limit { fill: var(--ink); }
+.l5w .l5w-mark.s-a { fill: var(--s-a); }
+.l5w .l5w-mark.s-b { fill: var(--s-b); }
+.l5w .l5w-mark.s-c { fill: var(--s-c); }
+.l5w .l5w-mark.s-hollow { fill: var(--band); stroke-width: 2; }
+.l5w .l5w-mark.s-hollow.s-limit { stroke: var(--ink); }
+.l5w-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; margin: 0.5rem 0 0; padding: 0;
+  font-size: 0.82rem; color: var(--ink-2); }
+.l5w-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.l5w-legend .l5w-sw { width: 26px; height: 10px; flex: none; }
+.l5w .l5w-ylbl { stroke: none; }
+.l5w-bars { display: grid; grid-template-columns: minmax(8rem, 15rem) 1fr 3.4rem; align-items: center; gap: 0.45rem 0.7rem; margin-top: 0.7rem; }
+.l5w-bar-name { font-size: 0.86rem; color: var(--ink-2); }
+.l5w-bar-track { position: relative; height: 14px; border-left: 1px solid var(--rule-strong); }
+.l5w-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; transition: width 0.25s ease; }
+.l5w-bar-fill.s-a { background: var(--s-a); }
+.l5w-bar-fill.s-b { background: var(--s-b); }
+.l5w-bar-fill.s-c { background: var(--s-c); }
+.l5w-bar-fill.s-ink { background: var(--ink-3); }
+.l5w-bar-val { font-family: var(--mono); font-size: 0.8rem; color: var(--ink); text-align: right; }
+.l5w-bar-axis { position: relative; height: 1.2rem; border-top: 1px solid var(--rule-strong); }
+.l5w-bar-axis span { position: absolute; top: 0.1rem; transform: translateX(-50%); font-family: var(--mono); font-size: 0.68rem; color: var(--ink-3); }
+@media (max-width: 34rem) {
+  .l5w-bars { grid-template-columns: 1fr 3.4rem; gap: 0.15rem 0.6rem; }
+  .l5w-bar-name { grid-column: 1 / -1; margin-top: 0.35rem; }
+}
+
+.l5w svg { touch-action: pan-y; }
+.l5w .l5w-zone { fill: var(--s-a); fill-opacity: 0.08; stroke: none; }
+.l5w .l5w-mark.l5w-dot { stroke-width: 1; }
+.l5w .l5w-faint { fill: none; stroke: var(--ink-3); stroke-width: 1; opacity: 0.55; }
+.l5w-demo { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid var(--rule); }
+.l5w-demo .l5w-controls { margin-bottom: 0.4rem; }
+.l5w-dtitle { font-family: var(--serif); font-size: 0.98rem; font-weight: 600; color: var(--ink); margin-right: 0.3rem; }
+.l5w-off .l5w-hide-off { display: none; }
+
+/* l5-capacity */
+.l5w-cap-row { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: center; }
+.l5w-cap-chan { flex: 0 1 15rem; min-width: 12rem; }
+.l5w-cap-chan svg { display: block; width: 100%; height: auto; }
+.l5w-cap-plot { flex: 1 1 18rem; min-width: 0; }
+.l5w .l5w-cap-edge { stroke: var(--ink-2); stroke-linecap: round; opacity: 0.8; }
+.l5w .l5w-cap-node { fill: var(--sheet); stroke: var(--rule-strong); stroke-width: 1.4; }
+.l5w .l5w-cap-ntext { font-size: 12px; fill: var(--ink); }
+.l5w .l5w-cap-head { font-size: 11px; fill: var(--ink-3); }
+.l5w .l5w-cap-prob { font-size: 11px; fill: var(--s-a); }
+.l5w .l5w-cap-w { font-size: 10px; }
+.l5w-cap .l5w-readout sub { font-size: 0.72em; }
