@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lecture 4: Lossy data compression · Elements of Information Theory</title>
+<meta name="description" content="Lecture 4 of Elements of Information Theory: notes, quiz and exercises.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>window.MathJax = {"tex": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "macros": {"Acal": "\\mathcal{A}", "Bern": "\\mathrm{Bern}", "Ccal": "\\mathcal{C}", "EE": "\\mathbb{E}", "Ncal": "\\mathcal{N}", "P": "\\mathrm{P}", "PP": "\\mathbb{P}", "Pcal": "\\mathcal{P}", "Q": "\\mathrm{Q}", "Rcal": "\\mathcal{R}", "Tcal": "\\mathcal{T}", "Xcal": "\\mathcal{X}", "circnum": ["\\enclose{circle}{\\kern1pt #1\\kern1pt}", 1], "cond": "\\,\\vert\\,", "epsilon": "\\varepsilon", "ind": ["\\pmb{1}{\\left\\{#1\\right\\}}", 1], "rv": ["\\mathrm{#1}", 1]}, "processEscapes": false}, "svg": {"fontCache": "global"}, "options": {"skipHtmlTags": ["script", "noscript", "style", "textarea", "pre", "code"]}};</script>
+<script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<script defer src="assets/site.js"></script>
+<script defer src="https://bit2noisy-telemetry.sheng-yang-e9e.workers.dev/v.js" data-site="it"></script>
+<link rel="stylesheet" href="assets/widgets/l4-threebits.css">
+<script defer src="assets/widgets/l4-threebits.js"></script>
+<link rel="stylesheet" href="assets/widgets/l4-covering.css">
+<script defer src="assets/widgets/l4-covering.js"></script>
+<link rel="stylesheet" href="assets/widgets/l4-binary.css">
+<script defer src="assets/widgets/l4-binary.js"></script>
+<link rel="stylesheet" href="assets/widgets/l4-applications.css">
+<script defer src="assets/widgets/l4-applications.js"></script>
+</head>
+<body>
+<canvas id="bitfield" aria-hidden="true"></canvas>
+<div class="page page-lecture">
+
+<header class="lec-hero">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="index.html">&larr; Elements of Information Theory</a></nav>
+    <div class="lecture-box">
+      <div class="lb-top"><span>Elements of Information Theory</span><span>2026–2027</span></div>
+      <h1><span class="lb-n">Lecture 4:</span> Lossy data compression</h1>
+      <div class="lb-bottom"><span class="lb-lect">Lecturer: <a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a></span><span>Wed 25 Nov 2026</span></div>
+    </div>
+    <div class="huff" data-quiet>
+  <p class="huff-bits" aria-hidden="true"><span class="cw cw0" title="L &rarr; 11110">11110</span><span class="cw cw1" title="o &rarr; 100">100</span><span class="cw cw0" title="s &rarr; 110">110</span><span class="cw cw1" title="s &rarr; 110">110</span><span class="cw cw0" title="y &rarr; 1010">1010</span><span class="cw cw1" title="space &rarr; 1011">1011</span><span class="cw cw0" title="d &rarr; 0000">0000</span><span class="cw cw1" title="a &rarr; 1110">1110</span><span class="cw cw0" title="t &rarr; 0111">0111</span><span class="cw cw1" title="a &rarr; 1110">1110</span><span class="cw cw0" title="space &rarr; 1011">1011</span><span class="cw cw1" title="c &rarr; 11111">11111</span><span class="cw cw0" title="o &rarr; 100">100</span><span class="cw cw1" title="m &rarr; 0011">0011</span><span class="cw cw0" title="p &rarr; 0101">0101</span><span class="cw cw1" title="r &rarr; 0110">0110</span><span class="cw cw0" title="e &rarr; 0001">0001</span><span class="cw cw1" title="s &rarr; 110">110</span><span class="cw cw0" title="s &rarr; 110">110</span><span class="cw cw1" title="i &rarr; 0010">0010</span><span class="cw cw0" title="o &rarr; 100">100</span><span class="cw cw1" title="n &rarr; 0100">0100</span></p>
+  <p class="huff-cap">The title above, Huffman-coded from its own letter frequencies: 83 bits, 3.77 bits per character (entropy 3.70). Alternate shading separates the codewords.</p>
+</div>
+    <nav class="jump" aria-label="On this page" data-quiet><a href="#notes">Notes</a><a href="#quiz">Quiz <span class="count">22</span></a><a href="#exercises">Exercises <span class="count">10</span></a></nav>
+  </div>
+</header>
+<div class="sheet-wrap wrap"><main class="sheet">
+<section class="block" id="notes" aria-labelledby="notes-h">
+  <div class="block-head"><h2 id="notes-h">Lecture notes</h2></div>
+  <div class="summary cn-summary"><h3 class="minor">Summary</h3><ul class="tex-list"><li>A lossy code \((f_n,g_n)\) maps a block \(x^n\) to a binary string and back to a reconstruction \(\hat{x}^n\). Its rate \(R_n\) is the expected number of bits per symbol, and its distortion \(D_n\) the expected distortion per symbol, with a separable distortion \(d_n(x^n,\hat{x}^n) = \sum_id(x_i,\hat{x}_i)\) (e.g., Hamming or squared error). Without loss of optimality, it quantizes \(x^n\) to a reconstruction and encodes the reconstruction losslessly.</li><li>\((R,D)\) is achievable if some codes have \(\limsup_nR_n\le R\) and \(\limsup_nD_n\le D\). The closure \(\Rcal\) of the achievable pairs is convex (time sharing), and the rate-distortion function \(R(D) := \min\{R :\ (R,D)\in\Rcal\}\) is decreasing and convex.</li><li>The information rate-distortion function \(\phi(D) := \min_{\P_{\hat{\rv{X}}|\rv{X}}:\ \EE[d(\rv{X},\hat{\rv{X}})]\le D} I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) is decreasing, convex and continuous.</li><li>Shannon’s lossy source coding theorem: for an i.i.d. source, \(R(D) = \phi(D)\). Converse: \(R_n\ge\phi(D_n)-\frac{\log(n\log M+2)}{n}\) for every code, by the chain rule (memoryless source), the averaged channel (separable distortion), and the convexity of the mutual information in the channel. Achievability: about \(2^{nI(\rv{X};\hat{\rv{X}})}\) random codewords drawn i.i.d. from \(\P_{\hat{\rv{X}}}^n\) cover the typical source sequences (covering lemma), and the joint-typicality encoder achieves \((I(\rv{X};\hat{\rv{X}}),\EE[d(\rv{X},\hat{\rv{X}})])\).</li><li>Binary source \(\Bern(p)\) with the Hamming distortion: \(R(D) = H_2(p)-H_2(D)\) for \(D &lt; \min\{p,1-p\}\), and \(0\) beyond. Encoding \(30000\) fair bits with \(10000\) bits gives a distortion at least \(0.174\), and about \(0.174\) is possible with long blocks, against \(\frac14\) for majority votes on three bits.</li></ul></div>
+  <div class="files"><a class="file-btn" href="notes/lecture-4-class-notes.pdf"><span class="file-kind">PDF</span><span class="file-name">Class notes</span><span class="file-size">352 KB</span></a></div>
+  <h3 class="minor">Contents</h3><ol class="outline outline-links"><li class="o-l1"><span class="o-num">4.1</span> <a href="#cn-4-1">Lossy source coding</a></li><li class="o-l1"><span class="o-num">4.2</span> <a href="#cn-4-2">Operational rate-distortion function</a></li><li class="o-l1"><span class="o-num">4.3</span> <a href="#cn-4-3">Information rate-distortion function</a></li><li class="o-l1"><span class="o-num">4.4</span> <a href="#cn-4-4">Shannon’s lossy source coding theorem</a></li><li class="o-l2"><span class="o-num">4.4.1</span> <a href="#cn-4-4-1">Converse</a></li><li class="o-l2"><span class="o-num">4.4.2</span> <a href="#cn-4-4-2">Achievability</a></li><li class="o-l1"><span class="o-num">4.5</span> <a href="#cn-4-5">Binary source with Hamming distortion</a></li></ol>
+  <div class="cnotes"><h3 class="cn-h cn-l1" id="cn-4-1"><span class="cn-num">4.1</span> Lossy source coding</h3>
+<p>In Lecture 3, a memoryless stationary (i.e., i.i.d.) source \(\rv{X}^n\sim\P^n\), encoded in blocks of \(n\) symbols, was recovered exactly, and the minimum expected number of bits per symbol tends to \(H(\P)\) as \(n\to\infty\). Images, sounds and videos need not be recovered exactly: a small error is acceptable, and it saves many bits. In <strong class="newword">lossy</strong> source coding, the decoder only returns a <strong class="newword">reconstruction</strong> \(\hat{\rv{X}}^n\) of the source:</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-4-ea6da8b1b96ad0415283.svg" alt="Figure 1 of the notes" style="width:569px"></figure></div>
+<p>Here \(\rv{X}^n = (\rv{X}_1,\ldots,\rv{X}_n)\sim\P_{\rv{X}}^n\), with \(\P_{\rv{X}}\in\Pcal(\Xcal)\) and the finite alphabet \(\Xcal = \{a_1,\ldots,a_M\}\). The <strong class="newword">encoder</strong> \(f_n:\Xcal^n\to\{0,1\}^*\) need not be one-to-one; its codewords form the <strong class="newword">code</strong> \(\Ccal_n := \{f_n(x^n) :\ x^n\in\Xcal^n\}\). The <strong class="newword">decoder</strong> \(g_n:\Ccal_n\to\Xcal^n\) returns the reconstruction \(\hat{\rv{X}}^n := g_n(f_n(\rv{X}^n))\), an element of the <strong class="newword">reconstruction codebook</strong> \(\hat{\Xcal}_n := \{g_n(y) :\ y\in\Ccal_n\}\subseteq\Xcal^n\). For \(n=1\), we write \(f\) and \(g\).</p>
+<h4 class="tex-h">Distortion.</h4>
+<p>A <strong class="newword">distortion function</strong> \(d:\Xcal\times\Xcal\to[0,\infty)\) measures the cost \(d(x,\hat{x})\) of reconstructing \(x\) as \(\hat{x}\). We assume that \(d(x,x) = 0\) for all \(x\), and we let \(D_{\max} := \max_{x,\hat{x}}d(x,\hat{x}) &lt; \infty\). Between blocks, the distortion is <strong class="newword">separable</strong>:</p>
+<div class="math-display">\[d_n(x^n,\hat{x}^n) := \sum_{i=1}^n d(x_i,\hat{x}_i).\]</div>
+<p>For example, the <strong class="newword">Hamming distortion</strong> \(d(x,\hat{x}) := \ind{x\ne\hat{x}}\) gives the number of symbols in error, \(d_n(x^n,\hat{x}^n) = \sum_{i=1}^n\ind{x_i\ne\hat{x}_i}\), and, for \(\Xcal\subset\mathbb{R}\) (or \(\mathbb{C}\)), the <strong class="newword">squared-error</strong> (Euclidean) distortion \(d(x,\hat{x}) := |x-\hat{x}|^2\) gives \(d_n(x^n,\hat{x}^n) = \|x^n-\hat{x}^n\|^2 = \sum_{i=1}^n|x_i-\hat{x}_i|^2\).</p>
+<h4 class="tex-h">Rate and distortion of a code.</h4>
+<p>The pair \((f_n,g_n)\) is an <strong class="newword">\((n,R_n,D_n)\) code</strong> if its <strong class="newword">rate</strong>, in bits per source symbol, and its <strong class="newword">distortion</strong>, per source symbol, are</p>
+<div class="math-display">\[R_n = \frac{1}{n}\EE_{\P_{\rv{X}}^n}\bigl[l(f_n(\rv{X}^n))\bigr]
+  \qquad\text{and}\qquad
+  D_n = \frac{1}{n}\EE_{\P_{\rv{X}}^n}\bigl[d_n(\rv{X}^n,\hat{\rv{X}}^n)\bigr].\]</div>
+<p>With the Hamming distortion, \(D_n\) is the expected fraction of symbols in error, e.g., the bit error rate of a binary source.</p>
+<h4 class="tex-h">One-to-one decoders.</h4>
+<p>Without loss of optimality, \(g_n\) is one-to-one: if \(g_n(y) = g_n(y')\) for two codewords \(y\ne y'\), the encoder can send the shorter of the two in place of the other, which changes no reconstruction and does not increase the rate. Then \(f_n(x^n) = g_n^{-1}(\hat{x}^n)\) with \(\hat{x}^n = g_n(f_n(x^n))\): a lossy code first maps \(x^n\) to a reconstruction \(\hat{x}^n\in\hat{\Xcal}_n\) (<strong class="newword">quantization</strong>), then encodes \(\hat{x}^n\) with the lossless code \(g_n^{-1}\).</p>
+<p><em>Example (three bits into one).</em> Let \(\rv{X}^3\sim\Bern(\frac12)^3\) be three fair bits, with the Hamming distortion, and let the encoder output one bit, \(f_3:\{0,1\}^3\to\{0,1\}\), so that \(R_3 = \frac13\).</p>
+<ul class="tex-list"><li>Keep the first bit: \(f_3(x^3) := x_1\), \(g_3(0) := 000\) and \(g_3(1) := 100\). The first bit is always correct, and each of the two others is wrong with probability \(\frac12\), so \(D_3 = \frac13(0+\frac12+\frac12) = \frac13\).</li><li>Majority vote: \(f_3(x^3) := 1\) if \(x^3\) has at least two \(1\)s and \(0\) otherwise, \(g_3(0) := 000\) and \(g_3(1) := 111\), so that \(\hat{\Xcal}_3 = \{000,111\}\). The reconstruction is the closer of \(000\) and \(111\) to \(x^3\): it equals \(x^3\) if \(x^3\in\{000,111\}\) (probability \(\frac14\)), and differs from \(x^3\) in one bit otherwise (probability \(\frac34\)). So \(D_3 = \frac34\cdot\frac13 = \frac14\).</li></ul>
+<p>No one-bit encoder of three bits does better (Problem 1). But what is the minimum distortion if \(n = 30000\) fair bits are encoded with \(10000\) bits, or, more generally, at the rate \(\frac13\) when \(n\to\infty\)? Section 4.5 answers: about \(0.174\).</p>
+<div class="widget" data-widget="l4-threebits" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h3 class="cn-h cn-l1" id="cn-4-2"><span class="cn-num">4.2</span> Operational rate-distortion function</h3>
+<p>A <strong class="newword">rate-distortion pair</strong> \((R,D)\) is <strong class="newword">achievable</strong> for the source \(\P_{\rv{X}}\) if there exists a sequence of \((n,R_n,D_n)\) codes, \(n = 1,2,\ldots\), such that</p>
+<div class="math-display">\[\limsup_{n\to\infty} R_n \le R
+  \qquad\text{and}\qquad
+  \limsup_{n\to\infty} D_n \le D.\]</div>
+<p>In words, for every \(\delta &gt; 0\) and every large enough \(n\), a code of length \(n\) has a rate at most \(R+\delta\) and a distortion at most \(D+\delta\). The <strong class="newword">rate-distortion region</strong> \(\Rcal\equiv\Rcal(\P_{\rv{X}})\) is the closure of the set of achievable pairs, and the <strong class="newword">(operational) rate-distortion function</strong> and the <strong class="newword">distortion-rate function</strong> are</p>
+<div class="math-display">\[R(D)\equiv R(D,\P_{\rv{X}}) := \min\{R :\ (R,D)\in\Rcal\},
+  \qquad
+  D(R) := \min\{D :\ (R,D)\in\Rcal\}.\]</div>
+<p>The minima exist, since \(\Rcal\) is closed, \((\lceil\log M\rceil,0)\) is achievable by encoding each symbol with \(\lceil\log M\rceil\) bits, and \((0,D_{\max})\) by sending nothing (\(f_n(x^n) := \emptyset\)). Codes that achieve \((R,D)\) also achieve every \((R',D')\) with \(R'\ge R\) and \(D'\ge D\), so \(\Rcal\) is the set of pairs above the graph of \(R(D)\) (figure below), and \(R(D)\) is decreasing.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Convexity of the rate-distortion region.</strong> \(\Rcal\) is convex. Consequently, \(D\mapsto R(D)\) is convex.</p></div></div></div>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-4-db898dbe331e1e89be01.svg" alt="Figure 2 of the notes" style="width:308px"></figure></div>
+<div class="tex-proof"><em>Proof.</em> <p>Let \((R',D')\) and \((R'',D'')\) be achievable, with codes \((f'_n,g'_n)\) and \((f''_n,g''_n)\), and let \(\lambda\in(0,1)\). For each \(n\), let \(n_1 := \lceil\lambda n\rceil\) and \(n_2 := n-n_1\). The <strong class="newword">time-sharing</strong> code encodes the first \(n_1\) symbols with the first code and the last \(n_2\) symbols with the second:</p>
+<div class="math-display">\[\tilde{f}_n(x^n) := \bigl[h,\ f'_{n_1}(x^{n_1}),\ f''_{n_2}(x_{n_1+1}^n)\bigr],
+  \qquad
+  \tilde{g}_n\bigl(\tilde{f}_n(x^n)\bigr) := \bigl[g'_{n_1}(f'_{n_1}(x^{n_1})),\
+  g''_{n_2}(f''_{n_2}(x_{n_1+1}^n))\bigr],\]</div>
+<p>where the header \(h\) gives the length \(l_1 := l(f'_{n_1}(x^{n_1}))\) of the first codeword, so that the decoder knows where the second one starts: \(h\) is the binary expansion of \(l_1+1\), preceded by as many zeros as it has bits, minus one (e.g., \(l_1 = 4\) gives \(h = 00101\)). This is a prefix code for the integers, with \(l(h)\le2\log(l_1+1)+1\) (Problem 10: the Shannon code of a distribution of the order of \(\frac{1}{k^2}\)). Since \(\rv{X}^{n_1}\sim\P_{\rv{X}}^{n_1}\) and \(\rv{X}_{n_1+1}^n\sim\P_{\rv{X}}^{n_2}\), the new code has</p>
+<div class="math-display">\[\tilde{R}_n = \frac{n_1}{n}R'_{n_1} + \frac{n_2}{n}R''_{n_2} + \frac{\EE[l(h)]}{n},
+  \qquad
+  \tilde{D}_n = \frac{n_1}{n}D'_{n_1} + \frac{n_2}{n}D''_{n_2},\]</div>
+<p>where \(\EE[l(h)]\le2\log(n_1R'_{n_1}+1)+1\) by Jensen’s inequality, as the first codeword has \(n_1R'_{n_1}\) bits on average. As \(n\to\infty\), \(\frac{n_1}{n}\to\lambda\), \(\frac{n_2}{n}\to1-\lambda\), and the header costs \(\frac{\EE[l(h)]}{n}\to0\) bits per symbol, since the rates \(R'_{n_1}\) are bounded, so \(\limsup_n\tilde{R}_n\le\lambda R'+(1-\lambda)R''\) and \(\limsup_n\tilde{D}_n\le\lambda D'+(1-\lambda)D''\). Hence the set of achievable pairs is convex, and so is its closure \(\Rcal\). Finally, \((R(D_1),D_1)\) and \((R(D_2),D_2)\) are in \(\Rcal\), hence so is \((\lambda R(D_1)+(1-\lambda)R(D_2),\ \lambda D_1+(1-\lambda)D_2)\), which gives \(R(\lambda D_1+(1-\lambda)D_2)\le\lambda R(D_1)+(1-\lambda)R(D_2)\).</p></div>
+<p>For instance, time sharing between the majority vote of Section 4.1 and a lossless code gives every pair on the segment from \((\frac13,\frac14)\) to \((1,0)\) (Problem 2).</p>
+<h3 class="cn-h cn-l1" id="cn-4-3"><span class="cn-num">4.3</span> Information rate-distortion function</h3>
+<p>The <strong class="newword">information rate-distortion function</strong> of the source \(\P_{\rv{X}}\) is</p>
+<div class="math-display">\[\boxed{\ \phi(D)\equiv\phi(D,\P_{\rv{X}}) :=
+  \min_{\substack{\P_{\hat{\rv{X}}|\rv{X}}\in\Pcal(\Xcal|\Xcal):\\
+  \EE_{\P_{\rv{X}}\P_{\hat{\rv{X}}|\rv{X}}}[d(\rv{X},\hat{\rv{X}})]\le D}}
+  I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}}),\qquad D\ge0,\ }\]</div>
+<p>the least mutual information between the source \(\rv{X}\sim\P_{\rv{X}}\) and a reconstruction \(\hat{\rv{X}}\) produced by a channel \(\P_{\hat{\rv{X}}|\rv{X}}\) with an expected distortion at most \(D\). The minimum exists: the set \(\Pcal(\Xcal|\Xcal)\) of channels (\(M\) pmfs on \(\Xcal\)) is compact, the constraint set is closed, since the expected distortion is linear in \(\P_{\hat{\rv{X}}|\rv{X}}\), and non-empty, since the channel \(\hat{\rv{X}} = \rv{X}\) has the distortion \(0\), and \(\P_{\hat{\rv{X}}|\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) is continuous. For example, with the Hamming distortion, \(\EE[d(\rv{X},\hat{\rv{X}})] = \PP(\rv{X}\ne\hat{\rv{X}})\le0\) forces \(\hat{\rv{X}} = \rv{X}\), so \(\phi(0) = I(\rv{X};\rv{X}) = H(\P_{\rv{X}})\), the minimum rate of lossless coding. At the other end, \(\phi(D) = 0\) if and only if \(D\ge\min_{\hat{x}}\EE[d(\rv{X},\hat{x})]\), the distortion of the best constant reconstruction (Problem 4).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Properties.</strong> \(D\mapsto\phi(D)\) is decreasing, convex, and continuous on \([0,\infty)\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p><em>Decreasing:</em> the constraint set grows with \(D\).</p>
+<p><em>Convex:</em> let \(D_1,D_2\ge0\) and \(\lambda\in[0,1]\), and let \(\P^{(1)}_{\hat{\rv{X}}|\rv{X}}\) and \(\P^{(2)}_{\hat{\rv{X}}|\rv{X}}\) attain \(\phi(D_1)\) and \(\phi(D_2)\). The channel \(\P_{\hat{\rv{X}}|\rv{X}} := \lambda\P^{(1)}_{\hat{\rv{X}}|\rv{X}} + (1-\lambda)\P^{(2)}_{\hat{\rv{X}}|\rv{X}}\) has the expected distortion \(\lambda\EE_{\P_{\rv{X}}\P^{(1)}_{\hat{\rv{X}}|\rv{X}}}[d(\rv{X},\hat{\rv{X}})] +(1-\lambda)\EE_{\P_{\rv{X}}\P^{(2)}_{\hat{\rv{X}}|\rv{X}}}[d(\rv{X},\hat{\rv{X}})] \le\lambda D_1+(1-\lambda)D_2\), hence</p>
+<div class="math-display">\[\begin{aligned}
+  \phi(\lambda D_1+(1-\lambda)D_2)
+  &amp;\le I\bigl(\P_{\rv{X}},\lambda\P^{(1)}_{\hat{\rv{X}}|\rv{X}}
+     +(1-\lambda)\P^{(2)}_{\hat{\rv{X}}|\rv{X}}\bigr)\\
+  &amp;\le \lambda I(\P_{\rv{X}},\P^{(1)}_{\hat{\rv{X}}|\rv{X}})
+     +(1-\lambda)I(\P_{\rv{X}},\P^{(2)}_{\hat{\rv{X}}|\rv{X}})
+  = \lambda\phi(D_1)+(1-\lambda)\phi(D_2),
+\end{aligned}\]</div>
+<p>by the convexity of \(\P_{\hat{\rv{X}}|\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) (Lecture 1).</p>
+<p><em>Continuous on \((0,\infty)\):</em> a convex function is continuous inside its interval, because the slopes of its chords increase: for \(0 &lt; a &lt; D &lt; D' &lt; b\),</p>
+<div class="math-display">\[\frac{\phi(D)-\phi(a)}{D-a} \le \frac{\phi(D')-\phi(D)}{D'-D} \le \frac{\phi(b)-\phi(D)}{b-D},\]</div>
+<p>so \(\phi(D')\to\phi(D)\) as \(D'\downarrow D\), and similarly as \(D'\uparrow D\).</p>
+<p><em>Continuous at \(0\):</em> let \(D_k\downarrow0\), and let \(\P^{(k)}_{\hat{\rv{X}}|\rv{X}}\) attain \(\phi(D_k)\). Since \(\Pcal(\Xcal|\Xcal)\) is compact, a subsequence converges to some \(\P^*_{\hat{\rv{X}}|\rv{X}}\). The expected distortion \(\P_{\hat{\rv{X}}|\rv{X}}\mapsto\EE_{\P_{\rv{X}}\P_{\hat{\rv{X}}|\rv{X}}}[d(\rv{X},\hat{\rv{X}})]\) is linear, hence continuous, so that of \(\P^*_{\hat{\rv{X}}|\rv{X}}\) is at most \(\lim_kD_k = 0\). Hence \(\phi(0)\le I(\P_{\rv{X}},\P^*_{\hat{\rv{X}}|\rv{X}}) = \lim_k\phi(D_k)\le\phi(0)\): the equality, with the limit along the subsequence, is the continuity of \(\P_{\hat{\rv{X}}|\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\), and the last inequality holds because \(\phi\) is decreasing.</p></div>
+<p>So \(R(D)\) and \(\phi(D)\) are both decreasing and convex. The main result of the lecture is that they are equal.</p>
+<h3 class="cn-h cn-l1" id="cn-4-4"><span class="cn-num">4.4</span> Shannon’s lossy source coding theorem</h3>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Shannon’s lossy source coding theorem (rate-distortion theorem).</strong> For every memoryless stationary source \(\P_{\rv{X}}^n\),</p>
+<div class="math-display">\[R(D) = \phi(D),\qquad D\ge0.\]</div>
+<ul class="tex-list"><li><em>Converse</em> (necessity): every achievable pair \((R,D)\) satisfies \(R\ge\phi(D)\), i.e., \(R(D)\ge\phi(D)\).</li><li><em>Achievability</em> (sufficiency): \((\phi(D),D)\) is achievable, i.e., \(R(D)\le\phi(D)\), with codewords of a fixed length.</li></ul></div></div></div>
+<p>The operational function \(R(D)\) is an optimization over all codes of all lengths; the information function \(\phi(D)\) is an optimization over a single channel, which can be computed (Section 4.5). Shannon introduced this rate in 1948, for a source with a fidelity criterion, and proved the theorem for discrete sources in 1959, where he named \(R(D)\) the rate-distortion function.</p>
+<h4 class="cn-h cn-l2" id="cn-4-4-1"><span class="cn-num">4.4.1</span> Converse</h4>
+<p>We first show a bound for every \((n,R_n,D_n)\) code, and then let \(n\to\infty\):</p>
+<div class="math-display">\[R_n \ge \phi(D_n) - \frac{\log(n\log M+2)}{n}. \qquad \circnum{*}\]</div>
+<h4 class="tex-h">Proof of the lower bound on \(R_n\).</h4>
+<p>By Section 4.1, making \(g_n\) one-to-one does not increase \(R_n\) and does not change \(D_n\), so we can assume that \(g_n\) is one-to-one. Then \(f_n(\rv{X}^n) = g_n^{-1}(\hat{\rv{X}}^n)\): the encoder is a lossless code for \(\hat{\rv{X}}^n\), which takes at most \(M^n\) values. By Lecture 3 (Section 3.1), its expected length is at least \(H(\hat{\rv{X}}^n) - \log\lceil\log(M^n+1)\rceil \ge H(\hat{\rv{X}}^n) - \log(n\log M+2)\). Since \(H(\hat{\rv{X}}^n) = I(\rv{X}^n;\hat{\rv{X}}^n) + H(\hat{\rv{X}}^n\cond\rv{X}^n) \ge I(\rv{X}^n;\hat{\rv{X}}^n)\),</p>
+<div class="math-display">\[nR_n = \EE\bigl[l(g_n^{-1}(\hat{\rv{X}}^n))\bigr]
+  \ge I(\rv{X}^n;\hat{\rv{X}}^n) - \log(n\log M+2).\]</div>
+<p>It remains to show that \(I(\rv{X}^n;\hat{\rv{X}}^n)\ge n\phi(D_n)\), for the joint distribution of \((\rv{X}^n,\hat{\rv{X}}^n)\) given by the code. Let \(\P_{\hat{\rv{X}}_i|\rv{X}_i}\) be the channel from \(\rv{X}_i\) to \(\hat{\rv{X}}_i\), and let \(\tilde{\P}_{\hat{\rv{X}}|\rv{X}} := \frac1n\sum_{i=1}^n\P_{\hat{\rv{X}}_i|\rv{X}_i}\) be their average.</p>
+<ul class="tex-list"><li><p><strong>Step \(\circnum{1}\)</strong> (memoryless source): \(I(\rv{X}^n;\hat{\rv{X}}^n)\ge\sum_iI(\rv{X}_i;\hat{\rv{X}}_i) = \sum_iI(\P_{\rv{X}},\P_{\hat{\rv{X}}_i|\rv{X}_i})\). By the chain rule, and since \(\rv{X}_i\) is independent of \(\rv{X}^{i-1}\),</p>
+<div class="math-display">\[I(\rv{X}^n;\hat{\rv{X}}^n)
+      = \sum_{i=1}^nI(\rv{X}_i;\hat{\rv{X}}^n\cond\rv{X}^{i-1})
+      = \sum_{i=1}^nI(\rv{X}_i;\hat{\rv{X}}^n,\rv{X}^{i-1})
+      \ge \sum_{i=1}^nI(\rv{X}_i;\hat{\rv{X}}_i),\]</div>
+<p>where the middle equality holds because, by the chain rule, \(I(\rv{X}_i;\hat{\rv{X}}^n,\rv{X}^{i-1})\) is the sum of \(I(\rv{X}_i;\rv{X}^{i-1}) = 0\) and \(I(\rv{X}_i;\hat{\rv{X}}^n\cond\rv{X}^{i-1})\), and the inequality drops variables (chain rule and \(I\ge0\)).</p></li><li><p><strong>Step \(\circnum{2}\)</strong> (separable distortion): \(D_n = \EE_{\P_{\rv{X}}\tilde{\P}_{\hat{\rv{X}}|\rv{X}}}[d(\rv{X},\hat{\rv{X}})]\). Indeed, since \(\rv{X}_i\sim\P_{\rv{X}}\) for every \(i\),</p>
+<div class="math-display">\[\begin{aligned}
+      D_n = \frac1n\sum_{i=1}^n\EE\bigl[d(\rv{X}_i,\hat{\rv{X}}_i)\bigr]
+      &amp;= \frac1n\sum_{i=1}^n\sum_{x,\hat{x}}\P_{\rv{X}}(x)
+         \P_{\hat{\rv{X}}_i|\rv{X}_i}(\hat{x}\cond x)d(x,\hat{x})\\
+      &amp;= \sum_{x,\hat{x}}\P_{\rv{X}}(x)\tilde{\P}_{\hat{\rv{X}}|\rv{X}}(\hat{x}\cond x)d(x,\hat{x}).
+    \end{aligned}\]</div></li><li><strong>Step \(\circnum{3}\)</strong> (convexity): \(\frac1n\sum_{i=1}^nI(\P_{\rv{X}},\P_{\hat{\rv{X}}_i|\rv{X}_i}) \ge I(\P_{\rv{X}},\tilde{\P}_{\hat{\rv{X}}|\rv{X}})\), by the convexity of \(\P_{\hat{\rv{X}}|\rv{X}}\mapsto I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) (Lecture 1).</li></ul>
+<p>By Step \(\circnum{2}\), the channel \(\tilde{\P}_{\hat{\rv{X}}|\rv{X}}\) satisfies the constraint of \(\phi(D_n)\), so Steps \(\circnum{1}\) and \(\circnum{3}\) give</p>
+<div class="math-display">\[\frac1nI(\rv{X}^n;\hat{\rv{X}}^n)
+  \ge \frac1n\sum_{i=1}^nI(\P_{\rv{X}},\P_{\hat{\rv{X}}_i|\rv{X}_i})
+  \ge I(\P_{\rv{X}},\tilde{\P}_{\hat{\rv{X}}|\rv{X}}) \ge \phi(D_n),\]</div>
+<p>which proves \(\circnum{*}\). The averaged channel \(\tilde{\P}_{\hat{\rv{X}}|\rv{X}}\) is the channel from \(\rv{X}_\rv{J}\) to \(\hat{\rv{X}}_\rv{J}\) at a time \(\rv{J}\) drawn uniformly from \(\{1,\ldots,n\}\): a block code becomes a single channel with the same distortion and less mutual information per symbol. Steps \(\circnum{2}\) and \(\circnum{3}\) can be replaced by \(\sum_iI(\rv{X}_i;\hat{\rv{X}}_i)\ge\sum_i\phi\bigl(\EE[d(\rv{X}_i,\hat{\rv{X}}_i)]\bigr) \ge n\phi(D_n)\), by the definition of \(\phi\) and its convexity.</p>
+<h4 class="tex-h">Conclusion.</h4>
+<p>Let \((R,D)\) be achievable, with codes as in the definition. Then</p>
+<div class="math-display">\[R \ge \limsup_{n\to\infty}R_n \ge \limsup_{n\to\infty}\phi(D_n)
+    \ge \phi\Bigl(\limsup_{n\to\infty}D_n\Bigr) \ge \phi(D),\]</div>
+<p>where the second inequality is \(\circnum{*}\), whose last term tends to \(0\), the third holds because \(\phi\) is continuous (along a subsequence \(D_{n_k}\to\limsup_nD_n\)), and the last as \(\phi\) is decreasing and \(\limsup_nD_n\le D\). By continuity, \(R\ge\phi(D)\) also holds on the closure \(\Rcal\), so \(R(D)\ge\phi(D)\).</p>
+<p>For a code whose codewords all have \(k_n\) bits, the term \(\frac{\log(n\log M+2)}{n}\) can be dropped: \(nR_n = k_n\ge H(f_n(\rv{X}^n))\ge H(\hat{\rv{X}}^n)\), since \(f_n(\rv{X}^n)\) takes at most \(2^{k_n}\) values and \(\hat{\rv{X}}^n\) is a function of it. So such a code satisfies \(\phi(D_n)\le\frac{k_n}{n}\) for every \(n\).</p>
+<h4 class="cn-h cn-l2" id="cn-4-4-2"><span class="cn-num">4.4.2</span> Achievability</h4>
+<p>Fix a channel \(\P_{\hat{\rv{X}}|\rv{X}}\in\Pcal(\Xcal|\Xcal)\), and let \(\P_{\rv{X}\hat{\rv{X}}} := \P_{\rv{X}}\P_{\hat{\rv{X}}|\rv{X}}\), with the marginal \(\P_{\hat{\rv{X}}} := \P_{\hat{\rv{X}}|\rv{X}}\circ\P_{\rv{X}}\). We show that</p>
+<div class="math-display">\[(R,D) := \Bigl(I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}}),\
+  \EE_{\P_{\rv{X}\hat{\rv{X}}}}\bigl[d(\rv{X},\hat{\rv{X}})\bigr]\Bigr)\]</div>
+<p>is achievable, with codewords of a fixed length. For a channel \(\P^*_{\hat{\rv{X}}|\rv{X}}\) that attains the minimum in \(\phi(D)\), this pair is \((\phi(D),D')\) with \(D'\le D\), so \((\phi(D),D)\) is achievable and \(R(D)\le\phi(D)\).</p>
+<h4 class="tex-h">Random coding.</h4>
+<p>Instead of constructing a good code, Shannon draws the codebook at random and computes the distortion averaged over the random codebooks: at least one codebook does at least as well as the average. The average is much easier to analyze than any particular code.</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Covering lemma.</strong> Let \(\epsilon\in(0,1]\), \(K\ge1\), \(\rv{X}^n\sim\P_{\rv{X}}^n\), and let \(\rv{Y}^n(1),\ldots,\rv{Y}^n(K)\) be i.i.d. with the distribution \(\P_{\hat{\rv{X}}}^n\), independent of \(\rv{X}^n\). Then</p>
+<div class="math-display">\[\begin{aligned}
+    \PP\Bigl(\text{no }j\text{ with }
+    \bigl(\rv{X}^n,\rv{Y}^n(j)\bigr)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\hat{\rv{X}}})\Bigr)
+    &amp;\le \delta_T(\tfrac{\epsilon}{2},n,\P_{\rv{X}}) + e^{-K\alpha_n},\\
+    \text{where}\quad \alpha_n &amp;:= \bigl(1-\delta_T(\tfrac{\epsilon}{2},n,\P_{\rv{X}\hat{\rv{X}}})\bigr)
+    2^{-n(I(\rv{X};\hat{\rv{X}})+2\epsilon H(\hat{\rv{X}}))},
+  \end{aligned}\]</div>
+<p>which tends to \(0\) if \(n\epsilon^2\to\infty\) and \(K2^{-n(I(\rv{X};\hat{\rv{X}})+2\epsilon H(\hat{\rv{X}}))}\to\infty\).</p></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>The event \(\rv{X}^n\notin\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{X}})\) has probability at most \(\delta_T(\frac{\epsilon}{2},n,\P_{\rv{X}})\) (Lecture 2, Section 2.3). Otherwise, fix \(\rv{X}^n = x^n\in\Tcal_{\epsilon/2}^{(n)}(\P_{\rv{X}})\). By the joint typicality lemma (Lecture 2, Section 2.4, with \(x^n\) given and the other sequence drawn from \(\P_{\hat{\rv{X}}}^n\)), each \(\rv{Y}^n(j)\) is jointly typical with \(x^n\) with a probability \(\alpha\ge\alpha_n\), independently of the others, so none of them is with probability \((1-\alpha)^K\le e^{-K\alpha}\le e^{-K\alpha_n}\), since \(1-t\le e^{-t}\). Finally, the two conditions make \(\delta_T\to0\) and \(K\alpha_n\to\infty\).</p></div>
+<p>Why \(I(\rv{X};\hat{\rv{X}})\)? About \(2^{nH(\rv{X})}\) typical source sequences must be covered, and a codeword is jointly typical with about \(2^{nH(\rv{X}\cond\hat{\rv{X}})}\) of them (Lecture 2), so at least about \(2^{n(H(\rv{X})-H(\rv{X}\cond\hat{\rv{X}}))} = 2^{nI(\rv{X};\hat{\rv{X}})}\) codewords are needed, and random codewords nearly suffice (Problem 9 makes this count exact for fair bits):</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-4-d7e4f790814d46ba68ed.svg" alt="Figure 3 of the notes" style="width:590px"></figure></div>
+<div class="widget" data-widget="l4-covering" data-args=""><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<h4 class="tex-h">The random code.</h4>
+<p>Let \(\epsilon := n^{-1/3}\), so that \(\epsilon\to0\) and \(n\epsilon^2 = n^{1/3}\to\infty\), and let</p>
+<div class="math-display">\[k_n := \bigl\lceil n\bigl(I(\rv{X};\hat{\rv{X}})+2\epsilon H(\hat{\rv{X}})+\epsilon\bigr)\bigr\rceil,
+  \qquad K := 2^{k_n}.\]</div>
+<ol class="tex-list enum-decimal enum-dot"><li><span class="item-label">\(\circnum{1}\)</span> <em>Codebook:</em> draw \(K\) codewords \(\rv{Y}^n(1),\ldots,\rv{Y}^n(K)\) i.i.d. \(\sim\P_{\hat{\rv{X}}}^n\). They form the reconstruction codebook \(\hat{\Xcal}_n\), known to the encoder and the decoder.</li><li><span class="item-label">\(\circnum{2}\)</span> <em>Encoder:</em> \(f_n(x^n)\) is the \(k_n\)-bit binary representation of \(j-1\), where \(j\) is the smallest index such that \((x^n,\rv{Y}^n(j))\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\hat{\rv{X}}})\), and \(j := 1\) if there is none.</li><li><span class="item-label">\(\circnum{3}\)</span> <em>Decoder:</em> \(g_n\) reads \(j\) from the \(k_n\) bits and returns \(\rv{Y}^n(j)\).</li></ol>
+<p>Each codeword is independent of \(\rv{X}^n\), but the reconstruction \(\hat{\rv{X}}^n\), chosen for \(\rv{X}^n\), is not.</p>
+<h4 class="tex-h">Rate.</h4>
+<p>Every \(f_n(x^n)\) has \(k_n\) bits, so \(R_n = \frac{k_n}{n}\le I(\rv{X};\hat{\rv{X}})+2\epsilon H(\hat{\rv{X}})+\epsilon+\frac1n \to I(\rv{X};\hat{\rv{X}}) = R\).</p>
+<h4 class="tex-h">Distortion.</h4>
+<p>Let \(\Acal\) be the event that some \(\rv{Y}^n(j)\) is jointly typical with \(\rv{X}^n\). On \(\Acal\), the reconstruction \(\hat{\rv{X}}^n\) satisfies \((\rv{X}^n,\hat{\rv{X}}^n)\in\Tcal_\epsilon^{(n)}(\P_{\rv{X}\hat{\rv{X}}})\), and the typical average lemma (Lecture 2) applied to \(d\ge0\) gives \(\frac1nd_n(\rv{X}^n,\hat{\rv{X}}^n)\le(1+\epsilon)\EE_{\P_{\rv{X}\hat{\rv{X}}}}[d(\rv{X},\hat{\rv{X}})] = (1+\epsilon)D\). Otherwise, \(\frac1nd_n(\rv{X}^n,\hat{\rv{X}}^n)\le D_{\max}\). Let \(D_n(\hat{\Xcal}_n)\) be the distortion of the code with the codebook \(\hat{\Xcal}_n\), an expectation over the source only. Averaged over the random codebook,</p>
+<div class="math-display">\[\EE\bigl[D_n(\hat{\Xcal}_n)\bigr] = \EE\Bigl[\frac1nd_n(\rv{X}^n,\hat{\rv{X}}^n)\Bigr]
+  \le (1+\epsilon)D + D_{\max}\PP(\Acal^c),\]</div>
+<p>where the middle expectation is over the source and the codebook. So some codebook \(\hat{\Xcal}_n^*\) gives a code with \(D_n := D_n(\hat{\Xcal}_n^*)\) at most the right-hand side. By the covering lemma, \(\PP(\Acal^c)\to0\), since \(n\epsilon^2\to\infty\) and \(K2^{-n(I(\rv{X};\hat{\rv{X}})+2\epsilon H(\hat{\rv{X}}))}\ge2^{n\epsilon} = 2^{n^{2/3}}\). These codes have \(\limsup_nR_n = R\) and \(\limsup_nD_n\le D\), so \((R,D)\) is achievable. The proof is complete.</p>
+<h3 class="cn-h cn-l1" id="cn-4-5"><span class="cn-num">4.5</span> Binary source with Hamming distortion</h3>
+<p>Let \(\rv{X}\sim\Bern(p)\), \(p\in[0,1]\) (i.e., \(\P_{\rv{X}}(1) = p\)), with the Hamming distortion \(d(x,\hat{x}) = \ind{x\ne\hat{x}} = x\oplus\hat{x}\), where \(\oplus\) is the addition modulo \(2\). Let \(H_2(p) := H(\Bern(p)) = p\log\frac1p+(1-p)\log\frac{1}{1-p}\), which increases on \([0,\frac12]\).</p>
+<div class="tex-center"><div class="cn-box"><div class="tex-block"><p><strong>Rate-distortion function of a binary source.</strong> With the Hamming distortion,</p>
+<div class="math-display">\[R(D) = \begin{cases}
+      H_2(p) - H_2(D), &amp; 0\le D &lt; \min\{p,1-p\},\\
+      0, &amp; D\ge\min\{p,1-p\}.
+    \end{cases}\]</div></div></div></div>
+<div class="tex-proof"><em>Proof.</em> <p>By the theorem, \(R(D) = \phi(D)\). Exchanging the symbols \(0\) and \(1\) changes neither the mutual information nor the distortion, and \(H_2(p) = H_2(1-p)\), so we can assume \(p\le\frac12\).</p>
+<p><em>Case \(D\ge p\):</em> the constant reconstruction \(\hat{\rv{X}} = 0\) has \(\EE[d(\rv{X},\hat{\rv{X}})] = \PP(\rv{X} = 1) = p\le D\) and \(I(\rv{X};\hat{\rv{X}}) = 0\), so \(\phi(D) = 0\).</p>
+<p><em>Case \(D &lt; p\), lower bound:</em> take a channel with \(\EE[d(\rv{X},\hat{\rv{X}})] = \PP(\rv{X}\ne\hat{\rv{X}})\le D\), and let \(\rv{Z} := \rv{X}\oplus\hat{\rv{X}}\sim\Bern(\PP(\rv{X}\ne\hat{\rv{X}}))\). Given \(\hat{\rv{X}} = \hat{x}\), the map \(x\mapsto x\oplus\hat{x}\) is one-to-one, so \(H(\rv{X}\cond\hat{\rv{X}}) = H(\rv{Z}\cond\hat{\rv{X}})\), and</p>
+<div class="math-display">\[I(\rv{X};\hat{\rv{X}}) = H(\rv{X}) - H(\rv{Z}\cond\hat{\rv{X}})
+  \ge H_2(p) - H(\rv{Z}) = H_2(p) - H_2\bigl(\PP(\rv{X}\ne\hat{\rv{X}})\bigr)
+  \ge H_2(p) - H_2(D),\]</div>
+<p>since conditioning reduces entropy and \(H_2\) increases on \([0,\frac12]\) (\(\PP(\rv{X}\ne\hat{\rv{X}})\le D &lt; \frac12\)).</p>
+<p><em>Case \(D &lt; p\), a channel that attains it:</em> both inequalities are equalities if \(\rv{Z}\sim\Bern(D)\) is independent of \(\hat{\rv{X}}\). So let \(\hat{\rv{X}}\sim\Bern(q)\) and \(\rv{Z}\sim\Bern(D)\) be independent, and \(\rv{X} := \hat{\rv{X}}\oplus\rv{Z}\), a binary symmetric channel from \(\hat{\rv{X}}\) to \(\rv{X}\). Then \(\rv{X}\sim\Bern(q\star D)\) with \(q\star D = q(1-D)+(1-q)D = q(1-2D)+D\) (Lecture 1), and the choice \(q := \frac{p-D}{1-2D}\in[0,1]\) gives \(\rv{X}\sim\Bern(p)\). This joint distribution of \((\rv{X},\hat{\rv{X}})\) defines a channel \(\P_{\hat{\rv{X}}|\rv{X}}\) with \(\EE[d(\rv{X},\hat{\rv{X}})] = \PP(\rv{Z} = 1) = D\) and \(I(\rv{X};\hat{\rv{X}}) = H_2(p) - H(\rv{Z}\cond\hat{\rv{X}}) = H_2(p) - H_2(D)\).</p></div>
+<p>For \(D = 0\), \(R(0) = H_2(p)\): lossless coding (Lecture 3) is the case \(D = 0\). For fair bits (\(p = \frac12\)), \(R(D) = 1-H_2(D)\) on \([0,\frac12]\), plotted below with the simple codes discussed next, and the distortion-rate function \(D(R)\) is the solution \(D\in[0,\frac12]\) of \(H_2(D) = 1-R\).</p>
+<div class="tex-center"><figure class="tikz"><img src="figures/lecture-4-8a3680ec314210da1bb3.svg" alt="Figure 4 of the notes" style="width:624px"></figure></div>
+<div class="widget" data-widget="l4-binary" data-args="p=0.5"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div>
+<p><em>Back to the example of Section 4.1.</em> Encoding \(n = 30000\) fair bits with \(10000\) bits is a code with codewords of \(k_n = 10000\) bits. By the converse, its distortion satisfies \(\phi(D_n)\le\frac13\), i.e., \(D_n\ge D(\frac13)\approx0.174\), the solution of \(H_2(D) = \frac23\), and by the achievability, distortions close to \(0.174\) are possible at the rate \(\frac13\) for large \(n\), while the majority vote on blocks of three bits gives \(\frac14\). Simple codes stay far from \(R(D)\): keeping a fraction \(R\) of the bits and setting the others to \(0\) gives \(D = \frac{1-R}{2}\), majority votes on blocks of \(2m+1\) bits give rates \(\frac{1}{2m+1}\) (Problem 2), and the Hamming code of length \(7\) gives \((R,D) = (\frac47,\frac18)\), while \(R(\frac18)\approx0.456\) (Problem 3). The same method gives the rate-distortion function of a uniform source on \(m\) symbols (Problem 5) and, beyond finite alphabets, of a Gaussian source with the squared-error distortion, \(R(D) = \frac12\log\frac{\sigma^2}{D}\) for \(D\le\sigma^2\) (Problem 8, which compares it with scalar quantization). In practice, images, sounds and videos are compressed by quantization followed by a lossless code, as in Section 4.1.</p>
+<div class="widget" data-widget="l4-applications" data-args="place=end"><noscript><p class="hint">Turn on JavaScript to see this illustration.</p></noscript></div></div>
+</section>
+<section class="block" id="quiz" aria-labelledby="quiz-h">
+  <div class="block-head"><h2 id="quiz-h">Quiz</h2><p class="block-sub">22 questions &middot; one correct answer each</p></div>
+  <p class="hint">Pick an answer to check it. Your answers are kept in this browser only.</p>
+  <noscript><p class="hint">Turn on JavaScript to check your answers.</p></noscript>
+  <div class="scoreboard" data-board>
+    <div class="score-bits" data-score-bits></div>
+    <p class="score-text" data-score-text>0 of 22 answered</p>
+    <button type="button" class="btn-quiet" data-reset>Start again</button>
+  </div>
+  <ol class="quiz" data-quiz="lecture-4">
+<li class="q" id="q1" data-key="db59b94c" data-check="32ebd715">
+  <div class="q-num" aria-hidden="true">Q1</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A lossy code \((f_n,g_n)\) differs from a lossless code in that</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 1"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">its encoder \(f_n\) must be one-to-one.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the reconstruction \(g_n(f_n(x^n))\) may differ from \(x^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">its codewords must form a prefix code.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">its rate is always below the entropy \(H(\P_{\rv{X}})\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q2" data-key="bdd186ba" data-check="9e451f64">
+  <div class="q-num" aria-hidden="true">Q2</div>
+  <div class="q-body">
+    <div class="q-stem"><p>With the Hamming distortion, what is \(d_4(0110,0011)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 2"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\frac12\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(1\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(2\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(3\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q3" data-key="8a3027f9" data-check="77123681">
+  <div class="q-num" aria-hidden="true">Q3</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A code for blocks of \(n = 8\) symbols has codewords that all have \(3\) bits. What is its rate \(R_8\), in bits per source symbol?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 3"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(3\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\frac83\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac18\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\frac38\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q4" data-key="959ccc4d" data-check="3ad33e05">
+  <div class="q-num" aria-hidden="true">Q4</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Three fair bits are encoded with one bit, their majority vote \(b\), and reconstructed as \(bbb\). What is the distortion \(D_3\) with the Hamming distortion (the bit error rate)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 4"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\frac18\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\frac14\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac13\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\frac12\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q5" data-key="d1daa764" data-check="d9cc3c9e">
+  <div class="q-num" aria-hidden="true">Q5</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Why can we assume, without loss of optimality, that the decoder \(g_n\) is one-to-one?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 5"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">If two codewords have the same reconstruction, the encoder can always send the shorter one: no reconstruction changes and the rate does not increase.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">Because the decoder of a lossy code must recover \(x^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">Because otherwise the distortion \(D_n\) is not defined.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">Because the encoder \(f_n\) is one-to-one.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q6" data-key="c4733581" data-check="b3fb8595">
+  <div class="q-num" aria-hidden="true">Q6</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Which statement is the definition of an achievable pair \((R,D)\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 6"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">There is one \((n,R_n,D_n)\) code, for some \(n\), with \(R_n\le R\) and \(D_n\le D\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">Every \((n,R_n,D_n)\) code has \(R_n\ge R\) and \(D_n\ge D\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">There are \((n,R_n,D_n)\) codes, \(n = 1,2,\ldots\), with \(\lim_nR_n = R\) and \(\lim_nD_n = 0\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">There are \((n,R_n,D_n)\) codes, \(n = 1,2,\ldots\), with \(\limsup_nR_n\le R\) and \(\limsup_nD_n\le D\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q7" data-key="f783fafd" data-check="852ab6cb">
+  <div class="q-num" aria-hidden="true">Q7</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The pair \((R,D)\) is achievable. Which pair is then always achievable?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 7"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\((R-0.1,D)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\((R,D-0.1)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\((R+0.1,D+0.1)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\((R-0.1,D+0.1)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q8" data-key="4e5089fb" data-check="b3805c79">
+  <div class="q-num" aria-hidden="true">Q8</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For fair bits with the Hamming distortion, the majority vote on blocks of three bits achieves \((\frac13,\frac14)\), and sending every bit achieves \((1,0)\). Time sharing, with each code on half of the symbols, achieves</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 8"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\((\frac23,\frac18)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\((\frac12,\frac18)\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\((\frac23,\frac14)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\((\frac13,\frac18)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q9" data-key="c23d8809" data-check="bece8660">
+  <div class="q-num" aria-hidden="true">Q9</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the time-sharing code of Section 4.2, the codeword starts with a short header. What is it for?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 9"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">It makes the distortions of the two parts add up.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">It gives the length of the first codeword, so that the decoder knows where the second one starts.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">It tells the decoder the value of \(\lambda\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">It makes the code a prefix code.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q10" data-key="b8953ffb" data-check="388dc9f2">
+  <div class="q-num" aria-hidden="true">Q10</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Since the rate-distortion region \(\Rcal\) is convex, the function \(R(D)\) is</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 10"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">concave.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">strictly decreasing.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">linear between \(D = 0\) and \(D = D_{\max}\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">convex.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q11" data-key="2b0bb690" data-check="38134841">
+  <div class="q-num" aria-hidden="true">Q11</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The information rate-distortion function \(\phi(D)\) is</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 11"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">the maximum of \(I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) over the channels with \(\EE[d(\rv{X},\hat{\rv{X}})]\le D\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the minimum of \(I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) over the channels with \(\EE[d(\rv{X},\hat{\rv{X}})]\ge D\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">the minimum of \(I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) over the channels with \(\EE[d(\rv{X},\hat{\rv{X}})]\le D\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">the minimum of \(H(\hat{\rv{X}})\) over the channels with \(\EE[d(\rv{X},\hat{\rv{X}})]\le D\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q12" data-key="f9bcb1eb" data-check="624dce04">
+  <div class="q-num" aria-hidden="true">Q12</div>
+  <div class="q-body">
+    <div class="q-stem"><p>With the Hamming distortion, for every source \(\P_{\rv{X}}\) on an alphabet of size \(M\), \(\phi(0)\) equals</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 12"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(H(\P_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\log M\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q13" data-key="f41cc027" data-check="1c37695b">
+  <div class="q-num" aria-hidden="true">Q13</div>
+  <div class="q-body">
+    <div class="q-stem"><p>Why is \(\phi\) convex?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 13"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">Because the mutual information is concave in the source distribution \(\P_{\rv{X}}\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">Because \(I(\P_{\rv{X}},\P_{\hat{\rv{X}}|\rv{X}})\) is convex in the channel \(\P_{\hat{\rv{X}}|\rv{X}}\), and the expected distortion is linear in the channel.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">Because the entropy is concave.</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">Because \(\phi\) is decreasing.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q14" data-key="8b91b84e" data-check="2530d516">
+  <div class="q-num" aria-hidden="true">Q14</div>
+  <div class="q-body">
+    <div class="q-stem"><p>When is \(\phi(D) = 0\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 14"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">If and only if \(D\ge D_{\max}\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">If and only if \(D\ge H(\P_{\rv{X}})\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">If and only if \(D &gt; 0\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">If and only if \(D\ge\min_{\hat{x}}\EE[d(\rv{X},\hat{x})]\), the distortion of the best constant reconstruction.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q15" data-key="711cc7d3" data-check="276375d7">
+  <div class="q-num" aria-hidden="true">Q15</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For a memoryless source on a finite alphabet, Shannon’s lossy source coding theorem states that</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 15"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(R(D) = \phi(D)\) for all \(D\ge0\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(R(D) = \phi(D)\) for \(D &gt; 0\) only.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(R(D)\le\phi(D)\), with equality only at \(D = 0\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(R(D) = H(\P_{\rv{X}})-\phi(D)\).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q16" data-key="477c966c" data-check="6fce7f61">
+  <div class="q-num" aria-hidden="true">Q16</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the proof of the converse, where is the independence of \(\rv{X}_1,\ldots,\rv{X}_n\) used?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 16"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">In Step 2: \(D_n\) is the distortion of the averaged channel \(\tilde{\P}_{\hat{\rv{X}}|\rv{X}}\).</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">In Step 3: the convexity of the mutual information in the channel.</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">In Step 1: \(I(\rv{X}^n;\hat{\rv{X}}^n)\ge\sum_{i=1}^nI(\rv{X}_i;\hat{\rv{X}}_i)\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">In the lower bound on the expected length of a lossless code (Lecture 3).</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q17" data-key="1d2c0edb" data-check="40018376">
+  <div class="q-num" aria-hidden="true">Q17</div>
+  <div class="q-body">
+    <div class="q-stem"><p>The codewords of an \((n,R_n,D_n)\) code all have \(k_n\) bits. Which statement holds for every \(n\)?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 17"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(\phi(D_n)\ge\frac{k_n}{n}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\phi(D_n)\le\frac{k_n}{n}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac{k_n}{n}\ge H(\P_{\rv{X}})\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(\phi(D_n)\le\frac{k_n}{n}-\frac{\log(n\log M+2)}{n}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q18" data-key="a1d5117f" data-check="fbcb65cd">
+  <div class="q-num" aria-hidden="true">Q18</div>
+  <div class="q-body">
+    <div class="q-stem"><p>In the proof of achievability, the codewords \(\rv{Y}^n(1),\ldots,\rv{Y}^n(K)\) are</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 18"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">chosen so that the disks around them do not overlap.</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">the \(K\) most likely sequences under \(\P_{\rv{X}}^n\).</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">drawn uniformly from the typical set \(\Tcal_\epsilon^{(n)}(\P_{\rv{X}})\).</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">i.i.d., each with the distribution \(\P_{\hat{\rv{X}}}^n\), where \(\P_{\hat{\rv{X}}}\) is the output distribution of the chosen channel.</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q19" data-key="afff4256" data-check="2263669e">
+  <div class="q-num" aria-hidden="true">Q19</div>
+  <div class="q-body">
+    <div class="q-stem"><p>About how many codewords does the random code of the achievability proof use?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 19"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(2^{nI(\rv{X};\hat{\rv{X}})}\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(2^{nH(\rv{X})}\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(2^{nH(\rv{X}\cond\hat{\rv{X}})}\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(2^{nH(\hat{\rv{X}})}\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q20" data-key="3c1e4ca2" data-check="4e827344">
+  <div class="q-num" aria-hidden="true">Q20</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For fair bits with the Hamming distortion, \(R(\frac14)\) is about</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 20"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0.811\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(0.25\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(0.189\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(0.5\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q21" data-key="5f003fbb" data-check="790390d7">
+  <div class="q-num" aria-hidden="true">Q21</div>
+  <div class="q-body">
+    <div class="q-stem"><p>For the source \(\mathrm{Bern}(0.1)\) with the Hamming distortion, \(R(0.2)\) equals</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 21"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(H_2(0.1)-H_2(0.2)\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(H_2(0.2)-H_2(0.1)\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(1-H_2(0.2)\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+<li class="q" id="q22" data-key="1774335d" data-check="e5c7b00f">
+  <div class="q-num" aria-hidden="true">Q22</div>
+  <div class="q-body">
+    <div class="q-stem"><p>A file of \(30000\) fair bits is stored with \(10000\) bits, with the best code of a large block length. About what fraction of the bits is wrong after decoding?</p></div>
+    <div class="q-opts" role="group" aria-label="Answers to question 22"><button type="button" class="opt" data-letter="A"><span class="opt-letter">A</span><span class="opt-text">\(0\)</span></button><button type="button" class="opt" data-letter="B"><span class="opt-letter">B</span><span class="opt-text">\(\frac13\)</span></button><button type="button" class="opt" data-letter="C"><span class="opt-letter">C</span><span class="opt-text">\(\frac14\)</span></button><button type="button" class="opt" data-letter="D"><span class="opt-letter">D</span><span class="opt-text">\(0.174\)</span></button></div>
+    <p class="q-feedback" aria-live="polite"></p>
+  </div>
+</li>
+  </ol>
+</section>
+<section class="block" id="exercises" aria-labelledby="exo-h">
+  <div class="block-head"><h2 id="exo-h">Exercises</h2><p class="block-sub">10 problems</p></div>
+  
+  <ol class="problems">
+<li class="problem" id="p1">
+  <h3 class="p-head"><span class="p-num">Problem 1</span> <span class="p-title">Three bits into one bit</span></h3>
+  <div class="p-body"><p>Let \(\rv{X}^3\) be three fair bits (i.i.d. \(\mathrm{Bern}(\frac12)\)), with the Hamming distortion, and let \(f_3:\{0,1\}^3\to\{0,1\}\) be a one-bit encoder, with a decoder \(g_3\) and the reconstruction words \(c_0 := g_3(0)\) and \(c_1 := g_3(1)\) in \(\{0,1\}^3\).</p>
+<ul class="tex-list"><li><p>Show that, for given \(c_0\) and \(c_1\), the best encoder maps \(x^3\) to the index \(b\) of the closer word \(c_b\), and that its distortion is then</p>
+<div class="math-display">\[D_3 = \frac13\EE\bigl[\min\{d_3(\rv{X}^3,c_0),d_3(\rv{X}^3,c_1)\}\bigr].\]</div></li><li>Let \(k := d_3(c_0,c_1)\) be the number of positions where \(c_0\) and \(c_1\) differ. Show that \(D_3\) only depends on \(k\), and compute it for \(k = 0,1,2,3\). <em>Hint: in the positions where \(c_0\) and \(c_1\) agree, the error does not depend on the encoder.</em></li><li>Deduce that every one-bit encoder of three fair bits has \(D_3\ge\frac14\), with equality for the majority vote of Section 4.1. Which value of \(k\) does “keep the first bit” have?</li><li>Compare with \(R(\frac14)\) and \(D(\frac13)\) (Section 4.5).</li></ul></div>
+</li>
+<li class="problem" id="p2">
+  <h3 class="p-head"><span class="p-num">Problem 2</span> <span class="p-title">Majority votes and time sharing</span></h3>
+  <div class="p-body"><p>The source is fair bits with the Hamming distortion. For \(n = 2m+1\), the majority code sends one bit \(b\), the majority bit of \(x^n\), and reconstructs \(b\,b\cdots b\) (\(n\) copies).</p>
+<ul class="tex-list"><li>Show that its distortion is \(D_n = \frac1n\EE[\min\{\rv{W},n-\rv{W}\}]\), where \(\rv{W}\sim\mathrm{Bin}(n,\frac12)\), and compute it for \(n = 3,5,7\).</li><li>Show that \(D_n\ge\frac12-\frac{1}{2\sqrt{n}}\), so that \(D_n\to\frac12\) while the rate \(\frac1n\to0\). <em>Hint: \(\min\{\rv{W},n-\rv{W}\} = \frac n2-|\rv{W}-\frac n2|\) and \(\EE[|\rv{Y}|]\le\sqrt{\EE[\rv{Y}^2]}\).</em></li><li>Time sharing (Section 4.2): the majority code of length \(3\) is used on a fraction \(\lambda\in[0,1]\) of the symbols, and the rest is sent uncoded, with one bit per symbol. Show that this achieves \((R,D) = (1-\frac{2\lambda}{3},\frac{\lambda}{4})\). Which rate does it need for \(D = \frac18\)? Compare with the Hamming code of Problem 3 and with \(R(\frac18)\approx0.456\).</li><li>Keeping a fraction \(R\) of the bits and setting the others to \(0\) gives \(D = \frac{1-R}{2}\). Show that it is time sharing between two trivial codes, and that \(R(D) = 1-H_2(D) &lt; 1-2D\) for \(0 &lt; D &lt; \frac12\).</li></ul></div>
+</li>
+<li class="problem" id="p3">
+  <h3 class="p-head"><span class="p-num">Problem 3</span> <span class="p-title">Hamming codes as lossy codes</span></h3>
+  <div class="p-body"><p>Let \(A\) be the \(3\times7\) binary matrix whose columns are the binary representations of \(1,2,\ldots,7\), and let \(\Ccal_{\mathrm{H}} := \{c\in\{0,1\}^7 :\ Ac = 0\}\) (modulo \(2\)), the Hamming code of length \(7\).</p>
+<ul class="tex-list"><li>Show that \(|\Ccal_{\mathrm{H}}| = 16\) and that every \(x\in\{0,1\}^7\) is at Hamming distance at most \(1\) from exactly one codeword. <em>Hint: the syndrome \(Ax\) is \(0\) or a column of \(A\).</em></li><li>Use \(\Ccal_{\mathrm{H}}\) as the reconstruction codebook for blocks of \(7\) fair bits, with the Hamming distortion: the encoder sends the \(4\)-bit index of the closest codeword. Show that \((R,D) = (\frac47,\frac18)\), and compare with \(R(\frac18)\approx0.456\).</li><li>The Hamming code of length \(n = 2^m-1\) is defined in the same way, with an \(m\times n\) matrix whose columns are all the nonzero vectors of \(\{0,1\}^m\). Show that it gives \((R,D) = (1-\frac{m}{2^m-1},2^{-m})\). Which code is it for \(m = 2\)? Compute \(R-R(D)\) for \(m = 2,3,4,5\).</li></ul></div>
+</li>
+<li class="problem" id="p4">
+  <h3 class="p-head"><span class="p-num">Problem 4</span> <span class="p-title">When the rate is zero</span></h3>
+  <div class="p-body"><p>Let \(\P_{\rv{X}}\in\Pcal(\Xcal)\), a distortion \(d\) with \(d(x,x) = 0\), and \(D_0 := \min_{\hat{x}\in\Xcal}\EE[d(\rv{X},\hat{x})]\), the distortion of the best constant reconstruction.</p>
+<ul class="tex-list"><li>Show that \(\phi(D) = 0\) if and only if \(D\ge D_0\). <em>Hint: \(I = 0\) if and only if \(\hat{\rv{X}}\) is independent of \(\rv{X}\).</em></li><li>Show that \(\phi(D)\le H(\P_{\rv{X}})\) for all \(D\ge0\), with equality at \(D = 0\) if \(d(x,\hat{x}) &gt; 0\) for all \(x\ne\hat{x}\).</li><li>Show that \(\phi\) is strictly decreasing on \([0,D_0]\). <em>Hint: use the convexity of \(\phi\) between \(D_1 &lt; D_2\) and \(D_0\).</em></li><li>For the binary source \(\mathrm{Bern}(p)\) with the Hamming distortion, compute \(D_0\) and check it with Section 4.5.</li></ul></div>
+</li>
+<li class="problem" id="p5">
+  <h3 class="p-head"><span class="p-num">Problem 5</span> <span class="p-title">Uniform source with the Hamming distortion</span> <span class="p-ref">CT 10.5</span></h3>
+  <div class="p-body"><p>Let \(\rv{X}\) be uniform on \(\Xcal = \{1,\ldots,m\}\), \(m\ge2\), with the Hamming distortion. Show that</p>
+<div class="math-display">\[R(D) = \begin{cases}
+      \log m - H_2(D) - D\log(m-1), &amp; 0\le D\le1-\frac1m,\\
+      0, &amp; D\ge1-\frac1m.
+    \end{cases}\]</div>
+<ul class="tex-list"><li>Lower bound: let \(\rv{E} := \ind{\rv{X}\ne\hat{\rv{X}}}\). Show that \(H(\rv{X}\cond\hat{\rv{X}})\le H_2(\PP(\rv{X}\ne\hat{\rv{X}})) + \PP(\rv{X}\ne\hat{\rv{X}})\log(m-1)\) (Fano’s inequality), and deduce \(\phi(D)\ge\log m-H_2(D)-D\log(m-1)\) for \(D\le1-\frac1m\).</li><li>Achievability: let \(\hat{\rv{X}}\) be uniform and, given \(\hat{\rv{X}} = \hat{x}\), let \(\rv{X} = \hat{x}\) with probability \(1-D\), and each other symbol with probability \(\frac{D}{m-1}\). Show that \(\rv{X}\) is uniform, and compute the distortion and \(I(\rv{X};\hat{\rv{X}})\).</li><li>Check the case \(m = 2\) with Section 4.5, and the value \(D_0 = 1-\frac1m\) with Problem 4.</li></ul></div>
+</li>
+<li class="problem" id="p6">
+  <h3 class="p-head"><span class="p-num">Problem 6</span> <span class="p-title">Changing the distortion</span> <span class="p-ref">CT 10.20</span></h3>
+  <div class="p-body"><p>Let \(R(D)\) be the rate-distortion function of a source \(\P_{\rv{X}}\) with a distortion \(d\).</p>
+<ul class="tex-list"><li>Let \(\tilde{d}(x,\hat{x}) := d(x,\hat{x})+a\) with \(a &gt; 0\). Show that the rate-distortion function for \(\tilde{d}\) is \(\tilde{R}(D) = R(D-a)\) for \(D\ge a\), and that no pair \((R,D)\) with \(D &lt; a\) is achievable.</li><li>Let \(d^*(x,\hat{x}) := b\,d(x,\hat{x})\) with \(b &gt; 0\). Show that \(R^*(D) = R(\frac Db)\).</li><li>For the Gaussian source of Problem 8, with the squared error, \(R(D) = \frac12\log\frac{\sigma^2}{D}\) for \(0 &lt; D\le\sigma^2\) (admitted). Find \(R(D)\) for \(d(x,\hat{x}) = 5(x-\hat{x})^2+3\).</li><li>Two distortions at once (CT 10.18). Let \(d_1\le d_2\) be two distortions, with the rate-distortion functions \(R_1\) and \(R_2\). Show that \(R_1(D)\le R_2(D)\). Now the decoder outputs two reconstructions \(\hat{\rv{X}}_1^n\) and \(\hat{\rv{X}}_2^n\) from the same codeword, and both distortions, \(D_n^{(1)}\) of \(\hat{\rv{X}}_1^n\) for \(d_1\) and \(D_n^{(2)}\) of \(\hat{\rv{X}}_2^n\) for \(d_2\), must be at most \(D\) in the limit. Show that the minimum rate is \(R_2(D)\).</li></ul></div>
+</li>
+<li class="problem" id="p7">
+  <h3 class="p-head"><span class="p-num">Problem 7</span> <span class="p-title">Collapsing the alphabet</span> <span class="p-ref">CT 10.13</span></h3>
+  <div class="p-body"><p>Let \(\Xcal = \{1,2,3,4\}\), \(\rv{X}\) uniform, and \(d(x,\hat{x}) := 0\) if \(x\) and \(\hat{x}\) are both in \(\{1,2\}\) or both in \(\{3,4\}\), and \(d(x,\hat{x}) := 1\) otherwise.</p>
+<ul class="tex-list"><li>Find \(R(0)\).</li><li>Show that \(R(D) = 1-H_2(D)\) for \(0\le D\le\frac12\), and \(R(D) = 0\) for \(D\ge\frac12\). <em>Hint: let \(\rv{Y} := \ind{\rv{X}\in\{3,4\}}\) and \(\hat{\rv{Y}} := \ind{\hat{\rv{X}}\in\{3,4\}}\), so that \(d(\rv{X},\hat{\rv{X}}) = \ind{\rv{Y}\ne\hat{\rv{Y}}}\), and use the data processing inequality.</em></li><li>Find \(R(D)\) for a source \(\P_{\rv{X}} = [p_1,p_2,p_3,p_4]\).</li></ul></div>
+</li>
+<li class="problem" id="p8">
+  <h3 class="p-head"><span class="p-num">Problem 8</span> <span class="p-title">Scalar quantization of a Gaussian source</span> <span class="p-ref">CT 10.1</span></h3>
+  <div class="p-body"><p>Beyond the finite alphabets of the lecture, let \(\rv{X}\sim\Ncal(0,\sigma^2)\) with the squared-error distortion \(d(x,\hat{x}) = (x-\hat{x})^2\). A <em>scalar quantizer</em> with \(M\) levels maps each \(x\) to one of the points \(c_1 &lt; \cdots &lt; c_M\), sent with \(\lceil\log M\rceil\) bits.</p>
+<ul class="tex-list"><li>Lloyd’s conditions: show that, for given points, the best encoder maps \(x\) to the nearest point, so that the regions are intervals with boundaries \(\frac{c_j+c_{j+1}}{2}\); and that, for given regions \(\Acal_j\), the best points are the conditional means \(c_j = \EE[\rv{X}\cond\rv{X}\in\Acal_j]\). <em>Hint: \(\EE[(\rv{Y}-c)^2] = \mathrm{Var}(\rv{Y})+(\EE[\rv{Y}]-c)^2\).</em> Lloyd’s algorithm alternates the two steps.</li><li>One bit (\(M = 2\)): show that the points \(\pm\sigma\sqrt{2/\pi}\), with the threshold \(0\), satisfy both conditions, and that their distortion is \((1-\frac2\pi)\sigma^2\approx0.363\,\sigma^2\). (It is the best one-bit quantizer, admitted here.)</li><li>The theorem extends to this source, with \(R(D) = \frac12\log\frac{\sigma^2}{D}\) for \(0 &lt; D\le\sigma^2\), i.e., \(D(R) = \sigma^22^{-2R}\) (admitted). Compare the one-bit quantizer with \(D(1)\), and find the rate that long blocks need for the distortion \(0.363\,\sigma^2\).</li></ul></div>
+</li>
+<li class="problem" id="p9">
+  <h3 class="p-head"><span class="p-num">Problem 9</span> <span class="p-title">Random coding with Hamming balls</span></h3>
+  <div class="p-body"><p>The source is fair bits with the Hamming distortion, and \(0 &lt; D &lt; \frac12\). A random codebook has \(K\) codewords \(\rv{Y}^n(1),\ldots,\rv{Y}^n(K)\), i.i.d. uniform on \(\{0,1\}^n\), and the encoder sends the index of a codeword closest to \(x^n\) (Hamming distance).</p>
+<ul class="tex-list"><li>Let \(r := \lfloor nD\rfloor\). Show that, for every \(x^n\), a random codeword is within distance \(r\) of \(x^n\) with probability at least \(2^{-n}\binom{n}{r}\ge\frac{2^{-n(1-H_2(r/n))}}{n+1}\). <em>Hint: Lecture 2, size of a type class, with \(K_{n,2} = n+1\).</em></li><li>Deduce that the probability that no codeword is within distance \(r\) of \(x^n\) is at most \(\exp\bigl(-K\frac{2^{-n(1-H_2(r/n))}}{n+1}\bigr)\).</li><li>Let \(\delta &gt; 0\) and \(K := 2^{\lceil n(1-H_2(D)+\delta)\rceil}\). Show that the distortion, averaged over the codebook, is at most \(D\) plus a term that tends to \(0\), and conclude that \(R(D)\le1-H_2(D)\), without typical sets.</li><li>Compare with the covering lemma: what play the roles of \(2^{nH(\rv{X})}\) and \(2^{nH(\rv{X}\cond\hat{\rv{X}})}\)?</li></ul></div>
+</li>
+<li class="problem" id="p10">
+  <h3 class="p-head"><span class="p-num">Problem 10</span> <span class="p-title">Coding the integers</span></h3>
+  <div class="p-body"><p>The header of the time-sharing code (Section 4.2) is followed by other bits, so it needs a prefix code for the positive integers \(k = 1,2,\ldots\), with codewords of lengths \(l(k)\).</p>
+<ul class="tex-list"><li>Show that no prefix code for the integers has \(l(k)\le\log k+c\) for all \(k\), whatever the constant \(c\). <em>Hint: the Kraft–McMillan inequality (Lecture 3) for the first \(m\) codewords, and \(\sum_{k=1}^m\frac1k\to\infty\).</em></li><li>Elias’s code \(f_{\mathrm{E}}\): the codeword \(f_{\mathrm{E}}(k)\) is the binary expansion of \(k\), which has \(\lfloor\log k\rfloor+1\) bits and starts with a \(1\), preceded by \(\lfloor\log k\rfloor\) zeros. Write the codewords of \(k = 1,\ldots,5\), explain how the decoder finds the end of a codeword, and show that \(f_{\mathrm{E}}\) is a prefix code with \(l(f_{\mathrm{E}}(k)) = 2\lfloor\log k\rfloor+1\le2\log k+1\).</li><li>Show that \(\Q(k) := 2^{-l(f_{\mathrm{E}}(k))}\) is a distribution on the positive integers, and that \(\frac{1}{2k^2}\le\Q(k) &lt; \frac{2}{k^2}\): Elias’s code is the Shannon code of a distribution of the order of \(\frac{1}{k^2}\).</li><li>Let \(\rv{K}\ge1\) be a random integer. Show that \(\EE[l(f_{\mathrm{E}}(\rv{K}))]\le2\log\EE[\rv{K}]+1\), and deduce that the header of Section 4.2 takes at most \(2\log(n_1R'_{n_1}+1)+1\) bits on average.</li></ul></div>
+</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Other lectures"><a class="prev" href="lecture-3.html"><span class="dir">&larr; Lecture 3</span><span class="ttl">Lossless data compression</span></a></nav>
+</main></div>
+<footer class="site-footer" data-quiet>
+  <div class="wrap footer-grid">
+    <p class="footer-who">Elements of Information Theory &middot; 2026–2027<br><a href="https://l2s.centralesupelec.fr/u/yang-sheng/">Sheng Yang</a> &middot; CentraleSupélec &middot; <a href="mailto:sheng.yang@centralesupelec.fr">sheng.yang@centralesupelec.fr</a><br>Visits are counted anonymously, without cookies.</p>
+  </div>
+</footer>
+</div>
+</body>
+</html>

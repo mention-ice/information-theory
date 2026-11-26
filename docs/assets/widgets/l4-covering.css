@@ -1,0 +1,84 @@
+/* Shared by the Lecture 4 widgets (copied into each l4-*.css; colours are the theme tokens). */
+.l4w { margin: 1.2rem 0; padding: 0.9rem 1rem 0.8rem; border: 1px solid var(--rule); border-radius: var(--radius);
+  background: var(--band); font-family: var(--serif); color: var(--ink);
+  --s-a: #2346b5; --s-b: #cf531b; --s-c: #0e8a6a; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .l4w { --s-a: #3987e5; --s-b: #d95926; --s-c: #199e70; }
+}
+:root[data-theme="dark"] .l4w { --s-a: #3987e5; --s-b: #d95926; --s-c: #199e70; }
+.l4w-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: center; margin-bottom: 0.6rem; }
+.l4w-ctl { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); }
+.l4w-ctl input[type="range"] { flex: 0 1 8.5rem; width: 8.5rem; min-width: 4.5rem; accent-color: var(--signal); }
+.l4w-ctl-val { min-width: 2.8rem; color: var(--ink); }
+.l4w-ctl-name { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); white-space: nowrap; }
+.l4w-hint { margin: 0.2rem 0 0.5rem; font-size: 0.88rem; color: var(--ink-2); }
+.l4w-btn { font: inherit; font-family: var(--mono); font-size: 0.75rem; padding: 0.25rem 0.7rem; border-radius: 999px;
+  border: 1px solid var(--rule-strong); background: var(--sheet); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.l4w-btn:hover { border-color: var(--signal); color: var(--ink); }
+.l4w-btn[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--on-accent); }
+.l4w-btn:disabled { opacity: 0.45; cursor: default; }
+.l4w-btn:focus-visible, .l4w-ctl input:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.l4w-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule-strong); border-radius: 14px; overflow: hidden; }
+.l4w-seg .l4w-btn { border: 0; border-radius: 0; background: transparent; }
+.l4w-seg .l4w-btn[aria-pressed="true"] { background: var(--signal); color: var(--on-accent); }
+@media (max-width: 30rem) { .l4w-seg .l4w-btn { font-size: 0.7rem; padding: 0.25rem 0.5rem; } }
+.l4w-figure svg { display: block; width: 100%; height: auto; max-width: 38rem; margin: 0 auto; }
+.l4w-readout { margin: 0.5rem 0 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.45; }
+.l4w-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.l4w-table { border-collapse: collapse; margin: 0.6rem auto 0; font-size: 0.82rem; }
+.l4w-table th, .l4w-table td { padding: 0.18rem 0.6rem; text-align: center; white-space: nowrap; }
+.l4w-table th { font-family: var(--mono); font-size: 0.72rem; font-weight: normal; color: var(--ink-3); border-bottom: 1px solid var(--rule-strong); }
+.l4w-table td { border-bottom: 1px solid var(--rule); color: var(--ink); }
+.l4w-bin { font-family: var(--mono); letter-spacing: 0.04em; }
+.l4w-bin .l4w-err { color: var(--bad); font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.l4w svg text { font-family: var(--mono); }
+.l4w .l4w-tick { font-size: 11px; fill: var(--ink-3); }
+.l4w .l4w-lbl { font-size: 11px; fill: var(--ink-2); paint-order: stroke; stroke: var(--band); stroke-width: 4px; stroke-linejoin: round; }
+.l4w .l4w-axis { stroke: var(--rule-strong); stroke-width: 1; }
+.l4w .l4w-grid { stroke: var(--rule); stroke-width: 1; }
+.l4w .l4w-cursor { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.l4w .l4w-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.l4w .l4w-line.s-limit { stroke: var(--ink); stroke-width: 2; }
+.l4w .l4w-line.s-a { stroke: var(--s-a); }
+.l4w .l4w-line.s-b { stroke: var(--s-b); }
+.l4w .l4w-line.s-c { stroke: var(--s-c); }
+.l4w .l4w-line.s-dash { stroke-dasharray: 5 4; stroke-width: 1.6; }
+.l4w .l4w-mark { stroke: var(--band); stroke-width: 2; }
+.l4w .l4w-mark.s-limit { fill: var(--ink); }
+.l4w .l4w-mark.s-a { fill: var(--s-a); }
+.l4w .l4w-mark.s-b { fill: var(--s-b); }
+.l4w .l4w-mark.s-c { fill: var(--s-c); }
+.l4w .l4w-mark.s-hollow { fill: var(--band); stroke-width: 2; }
+.l4w .l4w-mark.s-hollow.s-limit { stroke: var(--ink); }
+.l4w-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem; margin: 0.5rem 0 0; padding: 0;
+  font-size: 0.82rem; color: var(--ink-2); }
+.l4w-legend li { display: inline-flex; align-items: center; gap: 0.4rem; }
+.l4w-legend .l4w-sw { width: 26px; height: 10px; flex: none; }
+.l4w .l4w-ylbl { stroke: none; }
+.l4w-bars { display: grid; grid-template-columns: minmax(8rem, 15rem) 1fr 3.4rem; align-items: center; gap: 0.45rem 0.7rem; margin-top: 0.7rem; }
+.l4w-bar-name { font-size: 0.86rem; color: var(--ink-2); }
+.l4w-bar-track { position: relative; height: 14px; border-left: 1px solid var(--rule-strong); }
+.l4w-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 4px 4px 0; transition: width 0.25s ease; }
+.l4w-bar-fill.s-a { background: var(--s-a); }
+.l4w-bar-fill.s-b { background: var(--s-b); }
+.l4w-bar-fill.s-c { background: var(--s-c); }
+.l4w-bar-fill.s-ink { background: var(--ink-3); }
+.l4w-bar-val { font-family: var(--mono); font-size: 0.8rem; color: var(--ink); text-align: right; }
+.l4w-bar-axis { position: relative; height: 1.2rem; border-top: 1px solid var(--rule-strong); }
+.l4w-bar-axis span { position: absolute; top: 0.1rem; transform: translateX(-50%); font-family: var(--mono); font-size: 0.68rem; color: var(--ink-3); }
+@media (max-width: 34rem) {
+  .l4w-bars { grid-template-columns: 1fr 3.4rem; gap: 0.15rem 0.6rem; }
+  .l4w-bar-name { grid-column: 1 / -1; margin-top: 0.35rem; }
+}
+
+/* l4-covering */
+.l4w-cv svg { touch-action: pan-y; }
+.l4w .l4w-mark.l4w-cv-dot { stroke-width: 1; }
+.l4w-cv-demo { margin-top: 0.9rem; padding-top: 0.7rem; border-top: 1px solid var(--rule); }
+.l4w-cv-demo .l4w-controls { margin-bottom: 0.4rem; }
+.l4w-cv-dtitle { font-family: var(--serif); font-size: 0.98rem; font-weight: 600; color: var(--ink); margin-right: 0.3rem; }
+.l4w-cv-seqs { display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.8rem; align-items: baseline; min-width: min-content; }
+.l4w-cv-name { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); white-space: nowrap; }
+.l4w-cv-bits { font-size: 0.8rem; white-space: nowrap; letter-spacing: 0.06em; }
+.l4w-cv-index { color: var(--signal); }
+.l4w-cv-off .l4w-cv-seqs { display: none; }
